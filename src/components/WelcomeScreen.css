@@ -1,0 +1,50 @@
+/* src/components/WelcomeScreen.css */
+.welcome-screen {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #b7ffd0, #2f4f4f);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #ffffff;
+  text-align: center;
+  padding: 40px 20px;
+}
+
+.welcome-content {
+  max-width: 400px;
+  background: rgba(255, 255, 255, 0.08);
+  padding: 32px;
+  border-radius: 20px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  backdrop-filter: blur(6px);
+}
+
+.welcome-content img {
+  max-width: 100%;
+  margin-bottom: 20px;
+}
+
+.welcome-content h1 {
+  font-size: 2em;
+  margin-bottom: 10px;
+}
+
+.welcome-content p {
+  font-size: 1.1em;
+  margin-bottom: 20px;
+}
+
+.welcome-content button {
+  background: #0b9444;
+  color: white;
+  padding: 12px 22px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.welcome-content button:hover {
+  background: #087a39;
+}

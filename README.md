@@ -1,12 +1,42 @@
-# React + Vite
+# 🧭 Kompass App
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+**Dein digitaler Begleiter nach der Klinik.**  
+Skills, Selbsthilfepläne, Krisenhilfe & Motivation – alles direkt auf deinem Gerät.
 
-Currently, two official plugins are available:
+## 🎯 Ziel der App
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+Die Kompass App unterstützt Jugendliche nach einem Klinikaufenthalt im Alltag:  
+mit einfachen Tools zur Selbsthilfe, Reflexion und Orientierung – jederzeit abrufbar.
 
-## Expanding the ESLint configuration
+---
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## 🔧 Features
+
+- ✨ **Skills & Achtsamkeit**: Übungen, um Stress und Emotionen besser zu regulieren
+- 🧭 **Mein Kompass**: Ziele setzen, Symptome tracken & Fortschritte sehen
+- 📚 **Guide**: Hilfe bei der Therapeut:innensuche und Kontaktdaten
+- 💬 **Chatbot**: Interaktive Unterstützung
+- 🎨 **Design & Themen**: Modernes Layout, auswählbare Farben & Hintergründe
+- 📱 **Mobile-optimiert** & **offline nutzbar**
+- 🔒 **Datenschutzfreundlich** – keine Cloud, keine Server, alles bleibt im Browser
+
+🛡️ **Datenschutz**  
+Deine Daten bleiben auf deinem Gerät. Keine Server, kein Tracking, keine Werbung.  
+Dein Kompass = deine Daten. 🌱
+
+---
+
+## 👤 Entwickler
+
+**Florian Pahn**  
+Erzieher, digitaler Ideenentwickler & UX-Pionier für Jugendhilfe
+
+---
+
+## 🚀 Installation (lokal)
+
+```bash
+git clone https://github.com/Pahnini/kompass-app.git
+cd kompass-app
+npm install
+npm run dev

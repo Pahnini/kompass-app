@@ -1,6 +1,5 @@
 import { BookOpen, Search, Phone, UserPlus, AlertCircle } from "lucide-react"; // optional
 import BackButton from "./BackButton";
-
 export default function Guide({ onBack }) {
   return (
     <div className="card info-card">

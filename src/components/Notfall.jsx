@@ -1,6 +1,4 @@
-import React from "react";
 import BackButton from "./BackButton";
-
 export default function Notfall({ hilfeWebsites }) {
   return (
     <div className="card notfall-card">

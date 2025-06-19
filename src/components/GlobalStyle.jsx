@@ -210,30 +210,32 @@ export default function GlobalStyle() {
       }
 
       /* Neues Desktop-Layout */
-      @media (min-width: 700px) {
-        body {
-          display: flex;
-          flex-direction: row;
-        }
+     @media (min-width: 700px) {
+  .main-area {
+    margin-left: 240px; /* Platz für die Sidebar schaffen */
+    min-height: 100vh;
+    background: #2f4f4f;
+    padding: 24px 32px;
+  }
 
-        .sidebar {
-          position: relative;
-          transform: none !important;
-          opacity: 1 !important;
-          visibility: visible !important;
-          height: 100vh;
-          flex-shrink: 0;
-        }
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 240px;
+    height: 100vh;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    background: #2f4f4f;
+    z-index: 200;
+    box-shadow: 4px 0 18px rgba(0, 0, 0, 0.2);
+  }
 
-        .sidebar-toggle-mobile {
-          display: none;
-        }
-
-        .main-area {
-          flex: 1;
-          padding: 24px 32px;
-        }
-      }
+  .sidebar-toggle-mobile {
+    display: none;
+  }
+}
     `;
     document.head.appendChild(styleTag);
     return () => {

@@ -16,7 +16,7 @@ export default function HomeScreen({ setCurrent }) {
           <button className="quick-btn" onClick={() => setCurrent("skills")}>
             Skills
           </button>
-          <button className="quick-btn" onClick={() => setCurrent("meinweg")}>
+          <button className="quick-btn" onClick={() => setCurrent("deinweg")}>
             Mein Kompass
           </button>
           <button className="quick-btn" onClick={() => setCurrent("notfall")}>

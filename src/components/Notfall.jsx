@@ -1,5 +1,5 @@
 import BackButton from "./BackButton";
-export default function Notfall({ hilfeWebsites }) {
+export default function Notfall({ hilfeWebsites, onBack }) {
   return (
     <div className="card notfall-card">
         <button className="back-btn-icon" onClick={onBack} aria-label="Zurück">

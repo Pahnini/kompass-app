@@ -121,7 +121,7 @@ export default function App() {
     { key: "chat", label: "Chatbot", icon: <MessageCircle size={18} /> },
     { key: "quickedit", label: "Homescreen anpassen", icon: <Settings size={18} /> },
   ]);
-  
+
   const [theme, setTheme] = useState(() => modernBlueGrey);
   const [background, setBackground] = useState(() => backgrounds[0]);
   const [current, setCurrent] = useState("home");
@@ -177,7 +177,7 @@ export default function App() {
     deinweg: <DeinWeg goals={goals} setGoals={setGoals} achievements={achievements} setAchievements={setAchievements} calendarNotes={calendarNotes} setCalendarNotes={setCalendarNotes} symptome={symptome} setSymptome={setSymptome} shareErfolg={shareErfolg} showReminder={goals.length > 0 && !goals.some((g) => g.done)} emojiList={emojiList} vorlagen={vorlagen} onBack={() => setCurrent("home")} />,
     skills: <Skills shareSkill={shareSkill} wordFiles={wordFiles} setWordFiles={setWordFiles} skillsList={skillsList} onBack={() => setCurrent("home")} />,
     designs: <Designs theme={theme} setTheme={setTheme} background={background} setBackground={setBackground} themes={themes} backgrounds={backgrounds} onBack={() => setCurrent("home")} />,
-    notfall: <Notfall hilfeWebsites={hilfeWebsites} />,
+    notfall: <Notfall hilfeWebsites={hilfeWebsites} onBack={() => setCurrent("home")} />,
     guide: <Guide onBack={() => setCurrent("home")} />,
     chat: <Chatbot onBack={() => setCurrent("home")} />,
     quickedit: <QuickEdit quickItems={favorites} setQuickItems={setFavorites} allItems={sidebarItems} onBack={() => setCurrent("home")} />,

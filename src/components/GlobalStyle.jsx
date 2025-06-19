@@ -4,17 +4,21 @@ export default function GlobalStyle() {
   useEffect(() => {
     const styleTag = document.createElement("style");
     styleTag.innerHTML = `
-      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+  @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 
-      html, body {
-        min-height: 100%;
-        margin: 0;
-        padding: 0;
-        font-family: 'Poppins', sans-serif;
-        background: #f0f4f8;
-        color: #1e1e1e;
-        transition: background 0.4s ease;
-      }
+  html, body {
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
+    background: #2f4f4f; /* blue-grey wie Sidebar */
+    color: #e0e0e0;
+    font-size: 17px;
+    line-height: 1.6;
+    letter-spacing: 0.2px;
+    scroll-behavior: smooth;
+    -webkit-font-smoothing: antialiased;
+  }
 html, body {
   font-size: 17px;
   line-height: 1.6;
@@ -23,19 +27,20 @@ html, body {
   -webkit-font-smoothing: antialiased;
 }
   h1, h2, h3 {
-  font-weight: 600;
-  margin-top: 1.2em;
-  margin-bottom: 0.4em;
-}
+    font-weight: 600;
+    color: #ffffff;
+    margin-top: 1.2em;
+    margin-bottom: 0.4em;
+  }
 .quick-btn:active {
   transform: scale(1.04);
   box-shadow: 0 0 12px #b7ffd0aa;
 }
-p, li {
-  font-size: 1em;
-  margin-bottom: 0.7em;
-  color: #2f4f4f;
-}
+ p, li {
+    font-size: 1em;
+    margin-bottom: 0.7em;
+    color: #d0d0d0;
+  }
 
 @media (max-width: 600px) {
   html {
@@ -43,62 +48,63 @@ p, li {
   }
 }
       .main-area {
-        padding: 16px 12px 80px;
-        transition: background 0.3s ease;
-      }
+    padding: 16px 12px 80px;
+    background: #2f4f4f !important; /* übersteuert evtl. Image-Hintergründe */
+    transition: background 0.3s ease;
+  }
+
 button, input, textarea, select {
     font-size: 1.1em;
     min-height: 42px;
   }
       /* Card */
       .card {
-        background: #ffffff;
-        border-radius: 16px;
-        box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-        padding: 18px 14px;
-        margin-bottom: 20px;
-        transition: box-shadow 0.2s ease;
-      }
+    background: #3b5b5b;
+    border-radius: 16px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+    padding: 18px 14px;
+    margin-bottom: 20px;
+    color: #f5f5f5;
+  }
       .card:hover {
-        box-shadow: 0 6px 24px rgba(0,0,0,0.08);
-      }
-
+    box-shadow: 0 6px 24px rgba(0,0,0,0.2);
+  }
       /* Buttons */
       button {
-        background-color: #0b9444;
-        color: #fff;
-        border: none;
-        border-radius: 8px;
-        padding: 10px 18px;
-        font-size: 16px;
-        cursor: pointer;
-        transition: background-color 0.2s ease;
-        font-family: inherit;
-      }
+    background-color: #5dade2;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 18px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    font-family: inherit;
+  }
       button:hover {
-        background-color: #097c38;
-      }
+    background-color: #4a92c7;
+  }
       button:focus-visible {
-        outline: 3px solid #5dade2;
-        outline-offset: 2px;
-      }
+    outline: 3px solid #97ccf0;
+    outline-offset: 2px;
+  }
 
       /* Inputs */
       input, select, textarea {
-        font-family: inherit;
-        font-size: 1em;
-        padding: 10px;
-        border: 1px solid #cde3da;
-        border-radius: 8px;
-        width: 100%;
-        box-sizing: border-box;
-        margin-bottom: 12px;
-        transition: border 0.2s ease;
-      }
+    background-color: #4a6a6a;
+    color: white;
+    border: 1px solid #a0d0c0;
+    border-radius: 8px;
+    padding: 10px;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 12px;
+  }
       input:focus, select:focus, textarea:focus {
-        border-color: #0b9444;
-        outline: none;
-      }
+    border-color: #5dade2;
+    outline: none;
+  }
+
 
       /* Sidebar */
       .sidebar {
@@ -191,12 +197,12 @@ aside {
 
       /* Scrollbar */
       ::-webkit-scrollbar {
-        width: 6px;
-      }
+    width: 6px;
+  }
       ::-webkit-scrollbar-thumb {
-        background: #b7ffd0;
-        border-radius: 6px;
-      }
+    background: #5dade2;
+    border-radius: 6px;
+  }
 
       /* Toast */
       .toast-success {
@@ -204,7 +210,7 @@ aside {
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
-        background: #16c66b;
+        background: #5dade2;
         color: white;
         padding: 12px 24px;
         border-radius: 24px;

@@ -49,9 +49,10 @@ html, body {
 }
       .main-area {
     padding: 16px 12px 80px;
-    background: #2f4f4f !important; /* übersteuert evtl. Image-Hintergründe */
-    transition: background 0.3s ease;
-  }
+  background: #2f4f4f !important;
+  transition: background 0.3s ease;
+  min-height: 100vh;
+}
 
 button, input, textarea, select {
     font-size: 1.1em;
@@ -193,7 +194,10 @@ aside {
         .sidebar-toggle-mobile {
           display: none;
         }
-      }
+        .main-area {
+    margin-left: 240px;
+  }
+}
 
       /* Scrollbar */
       ::-webkit-scrollbar {

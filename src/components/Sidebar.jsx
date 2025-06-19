@@ -1,71 +1,40 @@
-import React from "react";
-import {
-  Home,
-  Compass,
-  Sparkles,
-  Paintbrush,
-  PhoneCall,
-  Info,
-  MessageCircle,
-  Settings,
-} from "lucide-react";
+import React, { useEffect, useState } from "react";
 
-const iconMap = {
-  home: <Home size={18} />,
-  deinweg: <Compass size={18} />,
-  skills: <Sparkles size={18} />,
-  designs: <Paintbrush size={18} />,
-  notfall: <PhoneCall size={18} />,
-  guide: <Info size={18} />,
-  chat: <MessageCircle size={18} />,
-  quickedit: <Settings size={18} />,
-};
+export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen }) {
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 700);
 
-export default function Sidebar({
-  items,
-  current,
-  setCurrent,
-  isOpen,
-  setIsOpen,
-}) {
+  useEffect(() => {
+    const handleResize = () => setIsDesktop(window.innerWidth > 700);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const toggleSidebar = () => setIsOpen(!isOpen);
+  const handleClick = (key) => {
+    setCurrent(key);
+    if (!isDesktop) setIsOpen(false);
+  };
+
   return (
-    <nav aria-label="Hauptmenü" className={`sidebar${isOpen ? " open" : ""}`}>
-      {!isOpen && (
-        <button
-          className="sidebar-toggle-mobile"
-          onClick={() => setIsOpen(true)}
-          aria-label="Menü öffnen"
-        >
+    <>
+      {!isDesktop && (
+        <button className="sidebar-toggle-mobile" onClick={toggleSidebar} aria-label="Menü öffnen">
           ☰
         </button>
       )}
-      {isOpen && (
-        <button
-          className="sidebar-close-btn"
-          onClick={() => setIsOpen(false)}
-          aria-label="Menü schließen"
-        >
-          ✖
-        </button>
-      )}
-      <div className="sidebar-content">
+
+      <aside className={`sidebar ${isOpen || isDesktop ? "open" : ""}`}>
         {items.map((item) => (
           <button
             key={item.key}
-            className={current === item.key ? "active" : ""}
-            onClick={() => {
-              setCurrent(item.key);
-              setIsOpen(false);
-            }}
-            aria-label={item.label}
+            className={`sidebar-item ${current === item.key ? "active" : ""}`}
+            onClick={() => handleClick(item.key)}
           >
-            <span className="icon-gradient">
-              {iconMap[item.key] || item.icon}
-            </span>
-            <span className="txt">{item.label}</span>
+            <span className="icon">{item.icon}</span>
+            <span className="label">{item.label}</span>
           </button>
         ))}
-      </div>
-    </nav>
+      </aside>
+    </>
   );
 }

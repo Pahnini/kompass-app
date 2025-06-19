@@ -102,52 +102,79 @@ button, input, textarea, select {
 
       /* Sidebar */
       .sidebar {
-        background: #2f4f4f;
-        color: white;
-        position: fixed;
-        top: 0;
-        left: -240px;
-        width: 240px;
-        height: 100vh;
-        z-index: 200;
-        box-shadow: 4px 0 18px rgba(0,0,0,0.2);
-        transition: left 0.3s ease;
-        display: flex;
-        flex-direction: column;
-      }
-      .sidebar.open {
-        left: 0;
-      }
-      .sidebar button {
-        background: transparent;
-        border: none;
-        color: inherit;
-        font-size: 16px;
-        text-align: left;
-        padding: 12px 20px;
-        width: 100%;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-      .sidebar button:hover,
-      .sidebar button.active {
-        background: rgba(255, 255, 255, 0.1);
-      }
+  background: #2f4f4f;
+  color: white;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100vh;
+  z-index: 200;
+  box-shadow: 4px 0 18px rgba(0,0,0,0.2);
+  transform: translateX(-100%);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+  display: flex;
+  flex-direction: column;
+}
 
-      .sidebar-toggle-mobile {
-        position: fixed;
-        top: 16px;
-        right: 16px;
-        background: #0b9444;
-        color: white;
-        border: none;
-        border-radius: 50%;
-        width: 44px;
-        height: 44px;
-        font-size: 24px;
-        z-index: 210;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-      }
+.sidebar.open {
+  transform: translateX(0);
+  opacity: 1;
+  visibility: visible;
+}
+
+.sidebar button {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font-size: 16px;
+  text-align: left;
+  padding: 12px 20px;
+  width: 100%;
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Abstand zwischen Icon und Text */
+}
+
+.sidebar button .icon {
+  display: flex;
+  align-items: center;
+}
+
+.sidebar button .label {
+  flex: 1;
+  text-align: left;
+}
+
+.sidebar button:hover,
+.sidebar button.active {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar-toggle-mobile {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  background: #0b9444;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 44px;
+  height: 44px;
+  font-size: 24px;
+  z-index: 210;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+}
+
+/* Sidebar Transition */
+aside {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
 
       @media (min-width: 700px) {
         .sidebar {

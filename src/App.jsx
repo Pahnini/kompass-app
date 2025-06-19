@@ -1,4 +1,14 @@
 import React, { useState, useEffect, useRef } from "react";
+import {
+  Home,
+  Compass,
+  Sparkles,
+  Paintbrush,
+  AlertCircle,
+  Info,
+  MessageCircle,
+  Settings,
+} from "lucide-react";
 import Sidebar from "./components/Sidebar";
 import HomeScreen from "./components/HomeScreen";
 import DeinWeg from "./components/DeinWeg";
@@ -99,109 +109,51 @@ const hilfeWebsites = [
 const dsHinweis =
   "Hey! Alles, was du hier machst, bleibt auf deinem Gerät. Keine Cloud, kein Tracking, keine Werbung. Dein Kompass = deine Daten. 🚀";
 
-// --- App Root ---
 export default function App() {
-  // State
   const [showWelcome, setShowWelcome] = useState(true);
-
   const [sidebarItems] = useState([
-    { key: "home", label: "Home", icon: "🏠" },
-    { key: "deinweg", label: "Mein Kompass", icon: "🧭" },
-    { key: "skills", label: "Skills & Achtsamkeit", icon: "✨" },
-    { key: "designs", label: "Designs", icon: "🎨" },
-    { key: "notfall", label: "Notfall", icon: "🚨" },
-    { key: "guide", label: "Guide", icon: "ℹ️" },
-    { key: "chat", label: "Chatbot", icon: "💬" },
-    { key: "quickedit", label: "Homescreen anpassen", icon: "🛠️" },
+    { key: "home", label: "Home", icon: <Home size={18} /> },
+    { key: "deinweg", label: "Mein Kompass", icon: <Compass size={18} /> },
+    { key: "skills", label: "Skills & Achtsamkeit", icon: <Sparkles size={18} /> },
+    { key: "designs", label: "Designs", icon: <Paintbrush size={18} /> },
+    { key: "notfall", label: "Notfall", icon: <AlertCircle size={18} /> },
+    { key: "guide", label: "Guide", icon: <Info size={18} /> },
+    { key: "chat", label: "Chatbot", icon: <MessageCircle size={18} /> },
+    { key: "quickedit", label: "Homescreen anpassen", icon: <Settings size={18} /> },
   ]);
+  
   const [theme, setTheme] = useState(() => modernBlueGrey);
   const [background, setBackground] = useState(() => backgrounds[0]);
   const [current, setCurrent] = useState("home");
-  const [favorites, setFavorites] = useState(
-    () =>
-      JSON.parse(localStorage.getItem("kompass_favorites")) || [
-        "deinweg",
-        "skills",
-      ]
-  );
-  const [username, setUsername] = useState(
-    () => localStorage.getItem("kompass_username") || ""
-  );
-  const [goals, setGoals] = useState(
-    () => JSON.parse(localStorage.getItem("kompass_goals")) || []
-  );
-  const [achievements, setAchievements] = useState(
-    () => JSON.parse(localStorage.getItem("kompass_achievements")) || []
-  );
-  const [calendarNotes, setCalendarNotes] = useState(
-    () => JSON.parse(localStorage.getItem("kompass_calendar_notes")) || {}
-  );
-  const [symptome, setSymptome] = useState(
-    () => JSON.parse(localStorage.getItem("kompass_symptome")) || {}
-  );
+  const [favorites, setFavorites] = useState(() => JSON.parse(localStorage.getItem("kompass_favorites")) || ["deinweg", "skills"]);
+  const [username, setUsername] = useState(() => localStorage.getItem("kompass_username") || "");
+  const [goals, setGoals] = useState(() => JSON.parse(localStorage.getItem("kompass_goals")) || []);
+  const [achievements, setAchievements] = useState(() => JSON.parse(localStorage.getItem("kompass_achievements")) || []);
+  const [calendarNotes, setCalendarNotes] = useState(() => JSON.parse(localStorage.getItem("kompass_calendar_notes")) || {});
+  const [symptome, setSymptome] = useState(() => JSON.parse(localStorage.getItem("kompass_symptome")) || {});
   const [wordFiles, setWordFiles] = useState([]);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showDS, setShowDS] = useState(
-    () => !localStorage.getItem("kompass_ds_accepted")
-  );
-  const [onboarding, setOnboarding] = useState(
-    () => !localStorage.getItem("kompass_onboarding")
-  );
+  const [showDS, setShowDS] = useState(() => !localStorage.getItem("kompass_ds_accepted"));
+  const [onboarding, setOnboarding] = useState(() => !localStorage.getItem("kompass_onboarding"));
   const [showGuide, setShowGuide] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [quickEdit, setQuickEdit] = useState(false);
 
-  // Persistenz
-  useEffect(() => {
-    localStorage.setItem("kompass_favorites", JSON.stringify(favorites));
-  }, [favorites]);
-  useEffect(() => {
-    localStorage.setItem("kompass_username", username);
-  }, [username]);
-  useEffect(() => {
-    localStorage.setItem("kompass_goals", JSON.stringify(goals));
-  }, [goals]);
-  useEffect(() => {
-    localStorage.setItem("kompass_achievements", JSON.stringify(achievements));
-  }, [achievements]);
-  useEffect(() => {
-    localStorage.setItem(
-      "kompass_calendar_notes",
-      JSON.stringify(calendarNotes)
-    );
-  }, [calendarNotes]);
-  useEffect(() => {
-    localStorage.setItem("kompass_symptome", JSON.stringify(symptome));
-  }, [symptome]);
-  useEffect(() => {
-    if (!showDS) localStorage.setItem("kompass_ds_accepted", "1");
-  }, [showDS]);
-  useEffect(() => {
-    if (!onboarding) localStorage.setItem("kompass_onboarding", "1");
-  }, [onboarding]);
+  useEffect(() => localStorage.setItem("kompass_favorites", JSON.stringify(favorites)), [favorites]);
+  useEffect(() => localStorage.setItem("kompass_username", username), [username]);
+  useEffect(() => localStorage.setItem("kompass_goals", JSON.stringify(goals)), [goals]);
+  useEffect(() => localStorage.setItem("kompass_achievements", JSON.stringify(achievements)), [achievements]);
+  useEffect(() => localStorage.setItem("kompass_calendar_notes", JSON.stringify(calendarNotes)), [calendarNotes]);
+  useEffect(() => localStorage.setItem("kompass_symptome", JSON.stringify(symptome)), [symptome]);
+  useEffect(() => { if (!showDS) localStorage.setItem("kompass_ds_accepted", "1") }, [showDS]);
+  useEffect(() => { if (!onboarding) localStorage.setItem("kompass_onboarding", "1") }, [onboarding]);
   useEffect(() => {
     if (!localStorage.getItem("kompass_sidebar_hint")) {
       alert("Tipp: Über ☰ oben rechts erreichst du das Menü.");
       localStorage.setItem("kompass_sidebar_hint", "1");
     }
   }, []);
-  // Share
-  function shareErfolg(e) {
-    if (navigator.share)
-      navigator.share({
-        title: "Erfolg",
-        text: `${e.text} (${e.date})`,
-        url: window.location.href,
-      });
-    else alert("Teilen nicht unterstützt.");
-  }
-  function shareSkill(s) {
-    if (navigator.share)
-      navigator.share({ title: "Skill", text: s, url: window.location.href });
-    else alert("Teilen nicht unterstützt.");
-  }
 
-  // Main Views Logic
   function handleSidebarNav(key) {
     setCurrent(key);
     setIsSidebarOpen(false);
@@ -210,108 +162,52 @@ export default function App() {
     setQuickEdit(key === "quickedit");
   }
 
-  // AppViews: Routing
+  function shareErfolg(e) {
+    if (navigator.share) navigator.share({ title: "Erfolg", text: `${e.text} (${e.date})`, url: window.location.href });
+    else alert("Teilen nicht unterstützt.");
+  }
+
+  function shareSkill(s) {
+    if (navigator.share) navigator.share({ title: "Skill", text: s, url: window.location.href });
+    else alert("Teilen nicht unterstützt.");
+  }
+
   const appViews = {
-    home: (
-      <HomeScreen
-        username={username}
-        setUsername={setUsername}
-        quickItems={favorites}
-        setQuickEdit={setQuickEdit}
-        allItems={sidebarItems}
-        setCurrent={setCurrent}
-      />
-    ),
-    deinweg: (
-      <DeinWeg
-        goals={goals}
-        setGoals={setGoals}
-        achievements={achievements}
-        setAchievements={setAchievements}
-        calendarNotes={calendarNotes}
-        setCalendarNotes={setCalendarNotes}
-        symptome={symptome}
-        setSymptome={setSymptome}
-        shareErfolg={shareErfolg}
-        showReminder={goals.length > 0 && !goals.some((g) => g.done)}
-        emojiList={emojiList}
-        vorlagen={vorlagen}
-        onBack={() => setCurrent("home")}
-      />
-    ),
-    skills: (
-      <Skills
-        shareSkill={shareSkill}
-        wordFiles={wordFiles}
-        setWordFiles={setWordFiles}
-        skillsList={skillsList}
-        onBack={() => setCurrent("home")}
-      />
-    ),
-    designs: (
-      <Designs
-        theme={theme}
-        setTheme={setTheme}
-        background={background}
-        setBackground={setBackground}
-        themes={themes}
-        backgrounds={backgrounds}
-        onBack={() => setCurrent("home")}
-      />
-    ),
+    home: <HomeScreen username={username} setUsername={setUsername} quickItems={favorites} setQuickEdit={setQuickEdit} allItems={sidebarItems} setCurrent={setCurrent} />,
+    deinweg: <DeinWeg goals={goals} setGoals={setGoals} achievements={achievements} setAchievements={setAchievements} calendarNotes={calendarNotes} setCalendarNotes={setCalendarNotes} symptome={symptome} setSymptome={setSymptome} shareErfolg={shareErfolg} showReminder={goals.length > 0 && !goals.some((g) => g.done)} emojiList={emojiList} vorlagen={vorlagen} onBack={() => setCurrent("home")} />,
+    skills: <Skills shareSkill={shareSkill} wordFiles={wordFiles} setWordFiles={setWordFiles} skillsList={skillsList} onBack={() => setCurrent("home")} />,
+    designs: <Designs theme={theme} setTheme={setTheme} background={background} setBackground={setBackground} themes={themes} backgrounds={backgrounds} onBack={() => setCurrent("home")} />,
     notfall: <Notfall hilfeWebsites={hilfeWebsites} />,
     guide: <Guide onBack={() => setCurrent("home")} />,
     chat: <Chatbot onBack={() => setCurrent("home")} />,
-    quickedit: (
-      <QuickEdit
-        quickItems={favorites}
-        setQuickItems={setFavorites}
-        allItems={sidebarItems}
-        onBack={() => setCurrent("home")}
-      />
-    ),
+    quickedit: <QuickEdit quickItems={favorites} setQuickItems={setFavorites} allItems={sidebarItems} onBack={() => setCurrent("home")} />,
   };
 
-  // Theme
   useEffect(() => {
     document.body.style.background = theme.bg;
     document.body.style.fontFamily = theme.font;
     document.body.style.color = theme.dark ? "#fff" : "#222";
     document.body.className = theme.dark ? "night" : "";
   }, [theme]);
-  const [toast, setToast] = useState("");
 
+  const [toast, setToast] = useState("");
   function showToast(msg) {
     setToast(msg);
     setTimeout(() => setToast(""), 1200);
   }
-  if (showWelcome) {
-    return <WelcomeScreen onContinue={() => setShowWelcome(false)} />;
-  }
+
+  if (showWelcome) return <WelcomeScreen onContinue={() => setShowWelcome(false)} />;
+
   return (
     <div>
       <GlobalStyle />
       {toast && <div className="toast-success">{toast}</div>}
-      <Sidebar
-        items={sidebarItems}
-        current={current}
-        setCurrent={handleSidebarNav}
-        isOpen={isSidebarOpen}
-        setIsOpen={setIsSidebarOpen}
-      />
-      <main
-        className="main-area"
-        style={{
-          background: background.url
-            ? `url(${background.url}) center/cover`
-            : theme.bg,
-          minHeight: "100vh",
-        }}
-      >
+      <Sidebar items={sidebarItems} current={current} setCurrent={handleSidebarNav} isOpen={isSidebarOpen} setIsOpen={setIsSidebarOpen} />
+      <main className="main-area" style={{ background: background.url ? `url(${background.url}) center/cover` : theme.bg, minHeight: "100vh" }}>
         {quickEdit ? appViews.quickedit : appViews[current]}
       </main>
-      {showDS && <DatenschutzModal onClose={() => setShowDS(false)} />}
-      {onboarding && <OnboardingModal onClose={() => setOnboarding(false)} />}
+      {showDS && <DatenschutzModal onClose={() => setShowDS(false)} />} 
+      {onboarding && <OnboardingModal onClose={() => setOnboarding(false)} />} 
     </div>
   );
 }

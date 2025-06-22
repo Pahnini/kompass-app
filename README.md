@@ -92,3 +92,14 @@ Bei Fragen, Ideen oder Feedback:
 Oder direkt via GitHub Issues.
 
 ---
+---
+---
+
+##⚠️ Lizenzhinweis
+
+Dieses Projekt ist **nicht Open Source**.
+
+Der Code ist urheberrechtlich geschützt und darf **nicht ohne ausdrückliche Genehmigung** verwendet, kopiert, verändert oder veröffentlicht werden – auch nicht auszugsweise.
+
+Bei Interesse an einer Nutzung oder Kooperation:
+> **florianpahn@aol.com**

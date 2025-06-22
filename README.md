@@ -1,26 +1,17 @@
-# 🧭 Kompass App
+# 🧭 Kompass-App
 
 **Dein digitaler Begleiter nach der Klinik.**  
-Skills, Selbsthilfepläne, Krisenhilfe & Motivation – alles direkt auf deinem Gerät.
+Die Kompass-App unterstützt junge Menschen nach einem psychiatrischen Klinikaufenthalt mit Skills, Selbsthilfetools, einem Symptom-Tagebuch, Kriseninfos und mehr.
 
-## 🎯 Ziel der App
+## 🌟 Funktionen
 
-Die Kompass App unterstützt Jugendliche nach einem Klinikaufenthalt im Alltag:  
-mit einfachen Tools zur Selbsthilfe, Reflexion und Orientierung – jederzeit abrufbar.
-
----
-
-## 🔧 Features
-
-- ✨ **Skills & Achtsamkeit**: Übungen, um Stress und Emotionen besser zu regulieren
-- 🧭 **Mein Kompass**: Ziele setzen, Symptome tracken & Fortschritte sehen
-- 📚 **Guide**: Hilfe bei der Therapeut:innensuche und Kontaktdaten
-- 💬 **Chatbot**: Interaktive Unterstützung
-- 🎨 **Design & Themen**: Modernes Layout, auswählbare Farben & Hintergründe
-- 📱 **Mobile-optimiert** & **offline nutzbar**
-- 🔒 **Datenschutzfreundlich** – keine Cloud, keine Server, alles bleibt im Browser
-  
----
+- 🧠 Selbsthilfe-Pläne & Skills
+- 📘 Symptom-Tagebuch mit Ausprägungs-Skala
+- 📍 Mein Kompass: persönliche Ziele & Tagesstruktur
+- 🆘 Notfallhilfe & direkte Kontakte
+- 🤖 Chatbot für Hilfe & Orientierung
+- 💬 (Geplant): Guide zur Therapeut*innensuche
+- 📱 Mobile-optimiertes Design
 
 ## 🛠 Tech-Stack
 
@@ -29,50 +20,75 @@ mit einfachen Tools zur Selbsthilfe, Reflexion und Orientierung – jederzeit ab
 - **Icons:** [lucide-react](https://lucide.dev/)
 - **Hosting:** Vercel
 - **State/Storage:** useState, useEffect, localStorage
-🛡️ **Datenschutz**  
-Deine Daten bleiben auf deinem Gerät. Keine Server, kein Tracking, keine Werbung.  
-Dein Kompass = deine Daten. 🌱
 
 ---
 
-🤝 Mitmachen
+## 🚀 Installation
+
+### 1. Klonen
+```bash
+git clone https://github.com/DEIN-NUTZERNAME/kompass-app.git
+cd kompass-app
+```
+
+### 2. Abhängigkeiten installieren
+```bash
+npm install
+```
+
+### 3. Lokalen Dev-Server starten
+```bash
+npm run dev
+```
+
+Die App läuft dann unter `http://localhost:5173`.
+
+---
+
+## 🤝 Mitmachen
+
 Du willst helfen? Großartig! Jede Unterstützung ist willkommen – ob UX-Ideen, Bugfixes oder neue Features.
 
-Einstieg:
-Repo forken & klonen
+### Einstieg:
 
-Schau ins Project Board für offene Tickets
+1. Repo forken & klonen
+2. Schau ins [Project Board](https://github.com/pahnini/kompass-app/projects/1) für offene Tickets
+3. Wähle ein `good first issue` oder sprich dich mit mir ab
+4. Branch erstellen, PR öffnen, fertig 💪
 
-Wähle ein good first issue oder sprich dich mit mir ab
-
-Branch erstellen, PR öffnen, fertig 💪
+### Labels:
+- `good first issue`: ideal zum Reinkommen
+- `bug`: Fehler beheben
+- `enhancement`: Verbesserungen
+- `UX`: Design & Benutzerfreundlichkeit
+- `help wanted`: Ideen oder Unterstützung gesucht
 
 ---
-📂 Projektstruktur
 
+## 📂 Projektstruktur
+
+```
 src/
 ├── components/     # Reusable Components (Sidebar, BackButton, etc.)
 ├── screens/        # Views: WelcomeScreen, HomeScreen, Notfall, etc.
 ├── styles/         # GlobalStyle.js + CSS
 ├── App.js          # Hauptlogik & Routing
 ├── main.jsx        # Entry Point
-
----
-## 👤 Entwickler
-
-**Florian Pahn**  
-Erzieher, digitaler Ideenentwickler & UX-Pionier für Jugendhilfe
-
-📣 Kontakt
-Bei Fragen, Ideen oder Feedback:
-florianpahn@aol.com
+```
 
 ---
 
-## 🚀 Installation (lokal)
+## 📜 Lizenz
 
-```bash
-git clone https://github.com/Pahnini/kompass-app.git
-cd kompass-app
-npm install
-npm run dev
+MIT License – siehe [LICENSE](./LICENSE)  
+
+
+---
+
+## 📣 Kontakt
+
+Bei Fragen, Ideen oder Feedback:  
+> **florianpahn@aol.com**  
+Oder direkt via GitHub Issues.
+
+---

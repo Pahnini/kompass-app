@@ -103,7 +103,7 @@ export default function GlobalStyle() {
         transform: translateX(-100%);
         opacity: 0;
         visibility: hidden;
-        transition: transform 0.5s ease, opacity 0.5s ease, visibility 0.5s ease;
+        transition: transform 0.6s ease, opacity 0.6s ease, visibility 0.6s ease;
         display: flex;
         flex-direction: column;
         position: fixed;
@@ -116,6 +116,7 @@ export default function GlobalStyle() {
 
       .sidebar.open {
         transform: translateX(0);
+        transition: transform 0.6s ease, opacity 0.6s ease, visibility 0.6s ease;
         opacity: 1;
         visibility: visible;
       }

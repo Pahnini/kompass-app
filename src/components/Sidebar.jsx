@@ -1,7 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }) {
+export default function Sidebar({ 
+   items,
+  current,
+  setCurrent,
+  isOpen,
+  setIsOpen,
+}) {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 700);
   const location = useLocation();
 
@@ -11,18 +17,17 @@ export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }) {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // Filter items to show only favorites, but always show 'home' and 'quickedit'
-  const filteredItems = items.filter(
-    (item) =>
-      favorites.includes(item.key) ||
-      item.key === "home" ||
-      item.key === "quickedit"
-  );
-
-  const toggleSidebar = () => setIsOpen(!isOpen);
-  const handleClick = () => {
-    if (!isDesktop) setIsOpen(false);
+  const toggleSidebar = (e) => {
+    e.stopPropagation();
+    setIsOpen(!isOpen);
   };
+
+  const handleClick = (key) => {
+    setCurrent(key);
+      if (!isDesktop) {
+      setTimeout(() => setIsOpen(false), 300);
+    }
+ };
 
   // Convert item key to path
   const getPath = (key) => (key === "home" ? "/" : `/${key}`);
@@ -30,7 +35,7 @@ export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }) {
   return (
     <>
       {!isDesktop && (
-        <button
+              <button
           className="sidebar-toggle-mobile"
           onClick={toggleSidebar}
           aria-label="Menü öffnen"

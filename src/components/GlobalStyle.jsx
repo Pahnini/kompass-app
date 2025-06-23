@@ -116,7 +116,7 @@ export default function GlobalStyle() {
 
       .sidebar.open {
         transform: translateX(0);
-        transition: transform 0.6s ease, opacity 0.6s ease, visibility 0.6s ease;
+                transition: transform 0.6s ease, opacity 0.6s ease, visibility 0.6s ease;
         opacity: 1;
         visibility: visible;
       }

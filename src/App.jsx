@@ -111,7 +111,7 @@ export default function App() {
     ),
     notfall: (
       <Notfall
-        hilfeWebsites={helpResources}
+        helpResources={helpResources}
         onBack={() => setCurrent("home")}
       />
     ),

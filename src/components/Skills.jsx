@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from "react";
-import BackButton from "./BackButton";
+import { useEffect, useState } from "react";
+import { showSuccessToast } from "../utils/toastUtils";
+
 export default function Skills({
   shareSkill,
   wordFiles,
@@ -13,7 +14,7 @@ export default function Skills({
   useEffect(() => {
     localStorage.setItem("kompass_skills_done", JSON.stringify(done));
   }, [done]);
-  const [uploadMsg, setUploadMsg] = useState("");
+
   function handleFile(e) {
     const file = e.target.files[0];
     if (!file) return;
@@ -21,8 +22,7 @@ export default function Skills({
       ...wordFiles,
       { name: file.name, url: URL.createObjectURL(file) },
     ]);
-    setUploadMsg("Datei erfolgreich hochgeladen!");
-    setTimeout(() => setUploadMsg(""), 1800);
+    showSuccessToast("Datei erfolgreich hochgeladen! 📄");
   }
   return (
     <div className="card">

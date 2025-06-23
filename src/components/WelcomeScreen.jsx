@@ -1,6 +1,5 @@
-import React from "react";
-import "./WelcomeScreen.css";
 import compassImg from "../assets/kompass-welcome.png";
+import "./WelcomeScreen.css";
 
 export default function WelcomeScreen({ onContinue }) {
   return (

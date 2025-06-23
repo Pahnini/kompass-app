@@ -1,5 +1,4 @@
-import BackButton from "./BackButton";
-export default function Notfall({ hilfeWebsites, onBack }) {
+export default function Notfall({ helpResources, onBack }) {
   return (
     <div className="card notfall-card">
         <button className="back-btn-icon" onClick={onBack} aria-label="Zurück">
@@ -21,7 +20,7 @@ export default function Notfall({ hilfeWebsites, onBack }) {
         Websites & Hilfe:
       </div>
       <ul>
-        {hilfeWebsites.map((h) => (
+        {helpResources.map((h) => (
           <li key={h.url}>
             <a href={h.url} target="_blank" rel="noopener noreferrer">
               {h.name}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen }) {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 700);

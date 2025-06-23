@@ -19,6 +19,7 @@ import { templates } from "./data/templates";
 import { useTheme } from "./hooks/useTheme";
 import { useUI } from "./hooks/useUI";
 import { useUserData } from "./hooks/useUserData";
+import { shareAchievement, shareSkill } from "./utils/shareUtils";
 
 export default function App() {
   // Use theme context
@@ -59,21 +60,6 @@ export default function App() {
     setQuickEdit,
     handleSidebarNav
   } = useUI();
-  function shareSuccess(e) {
-    if (navigator.share)
-      navigator.share({
-        title: "Erfolg",
-        text: `${e.text} (${e.date})`,
-        url: window.location.href,
-      });
-    else alert("Teilen nicht unterstützt.");
-  }
-
-  function shareSkill(s) {
-    if (navigator.share)
-      navigator.share({ title: "Skill", text: s, url: window.location.href });
-    else alert("Teilen nicht unterstützt.");
-  }
 
   const appViews = {
     home: (
@@ -96,7 +82,7 @@ export default function App() {
         setCalendarNotes={setCalendarNotes}
         symptome={symptome}
         setSymptome={setSymptome}
-        shareErfolg={shareSuccess}
+        shareErfolg={shareAchievement}
         showReminder={hasGoalsReminder}
         emojiList={emojiList}
         vorlagen={templates}
@@ -156,7 +142,7 @@ export default function App() {
       />
       <main
         className="main-area"
-        style={{
+        style={{  
           background: background.url
             ? `url(${background.url}) center/cover`
             : theme.bg,

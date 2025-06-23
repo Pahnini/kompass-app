@@ -11,12 +11,13 @@ export default function DeinWeg({
   setAchievements,
   calendarNotes,
   setCalendarNotes,
-  symptoms,
-  setSymptoms,
-  shareAchievement,
+  symptome,
+  setSymptome,
+  shareErfolg,
   showReminder,
   emojiList,
-  templates,
+  vorlagen,
+  onBack,
 }) {
   const [goalInput, setGoalInput] = useState("");
   const [achievementInput, setAchievementInput] = useState("");
@@ -53,39 +54,18 @@ export default function DeinWeg({
     const note = calendarNotes[selectedDate] || { emoji: "", text: "" };
     setEmoji(note.emoji);
     setNoteText(note.text);
-    setSymptomScore(symptoms[selectedDate] || 0);
-  }, [selectedDate, calendarNotes, symptoms]);
-
+    setSymptomScore(symptome[selectedDate] || 0);
+  }, [selectedDate, calendarNotes, symptome]);
   const saveNote = () => {
-    // Validation: Check if there's any meaningful content
-    if (!emoji && !noteText.trim() && symptomScore === 0) {
-      showErrorToast(
-        "Bitte füge mindestens ein Emoji, eine Notiz oder einen Symptom-Score hinzu"
-      );
-      return;
-    }
-
-    const updatedCalendarNotes = {
-      ...calendarNotes,
-      [selectedDate]: { emoji, text: noteText },
-    };
-    setCalendarNotes(updatedCalendarNotes);
-    const updatedSymptoms = { ...symptoms, [selectedDate]: symptomScore };
-    setSymptoms(updatedSymptoms);
-
-    showSuccessToast("Tagebucheintrag gespeichert! 📝");
+    setSaveMsg("Gespeichert!");
+    setTimeout(() => setSaveMsg(""), 1200);
+    const u = { ...calendarNotes, [selectedDate]: { emoji, text: noteText } };
+    setCalendarNotes(u);
+    localStorage.setItem("kompass_calendar_notes", JSON.stringify(u));
+    const us = { ...symptome, [selectedDate]: symptomScore };
+    setSymptome(us);
+    localStorage.setItem("kompass_symptome", JSON.stringify(us));
   };
-
-  // Helper function to format date in German format (DD.MM.YYYY)
-  const formatDateGerman = (dateString) => {
-    const [year, month, day] = dateString.split("-");
-    return `${day}.${month}.${year}`;
-  };
-
-  // Get current note for display
-  const currentNote = calendarNotes[selectedDate];
-  const hasCurrentNote = currentNote && (currentNote.emoji || currentNote.text);
-
   return (
     <div className="card">
       <BackButton />
@@ -227,7 +207,7 @@ export default function DeinWeg({
       <div className="section">
         <h3>Erfolge</h3>
         <div className="templates">
-          {templates.map((value, i) => (
+          {vorlagen.map((v, i) => (
             <button
               key={i}
               className="template-btn"

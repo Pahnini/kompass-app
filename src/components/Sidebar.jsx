@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen }) {
+export default function Sidebar({ 
+   items,
+  current,
+  setCurrent,
+  isOpen,
+  setIsOpen,
+}) {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 700);
 
   useEffect(() => {
@@ -9,16 +15,26 @@ export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
+  const toggleSidebar = (e) => {
+    e.stopPropagation();
+    setIsOpen(!isOpen);
+  };
+
   const handleClick = (key) => {
     setCurrent(key);
-    if (!isDesktop) setIsOpen(false);
-  };
+      if (!isDesktop) {
+      setTimeout(() => setIsOpen(false), 300);
+    }
+ };
 
   return (
     <>
       {!isDesktop && (
-        <button className="sidebar-toggle-mobile" onClick={toggleSidebar} aria-label="Menü öffnen">
+              <button
+          className="sidebar-toggle-mobile"
+          onClick={toggleSidebar}
+          aria-label="Menü öffnen"
+        >
           ☰
         </button>
       )}

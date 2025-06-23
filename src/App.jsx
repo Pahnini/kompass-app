@@ -84,7 +84,7 @@ export default function App() {
         setCalendarNotes={setCalendarNotes}
         symptoms={symptoms}
         setSymptoms={setSymptoms}
-        shareErfolg={shareAchievement}
+        shareAchievement={shareAchievement}
         showReminder={hasGoalsReminder}
         emojiList={emojiList}
         templates={templates}

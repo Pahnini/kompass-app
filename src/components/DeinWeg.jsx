@@ -9,7 +9,7 @@ export default function DeinWeg({
   setCalendarNotes,
   symptoms,
   setSymptoms,
-  shareErfolg,
+  shareAchievement,
   showReminder,
   emojiList,
   templates,
@@ -193,7 +193,7 @@ export default function DeinWeg({
           {achievements.map((a, i) => (
             <li key={i}>
               {a.date}: {a.text}{" "}
-              <button className="share-btn" onClick={() => shareErfolg(a)}>
+              <button className="share-btn" onClick={() => shareAchievement(a)}>
                 Teilen
               </button>
               <button

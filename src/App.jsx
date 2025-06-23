@@ -35,8 +35,8 @@ export default function App() {
     setAchievements,
     calendarNotes,
     setCalendarNotes,
-    symptome,
-    setSymptome,
+    symptoms,
+    setSymptoms,
     favorites,
     setFavorites,
     wordFiles,
@@ -80,12 +80,12 @@ export default function App() {
         setAchievements={setAchievements}
         calendarNotes={calendarNotes}
         setCalendarNotes={setCalendarNotes}
-        symptome={symptome}
-        setSymptome={setSymptome}
+        symptoms={symptoms}
+        setSymptoms={setSymptoms}
         shareErfolg={shareAchievement}
         showReminder={hasGoalsReminder}
         emojiList={emojiList}
-        vorlagen={templates}
+        templates={templates}
         onBack={() => setCurrent("home")}
       />
     ),

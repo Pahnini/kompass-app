@@ -173,12 +173,11 @@ export default function GlobalStyle() {
         border-radius: 6px;
       }
 
-      .toast-success {
+      .toast-notification {
         position: fixed;
         bottom: 20px;
         left: 50%;
         transform: translateX(-50%);
-        background: #5dade2;
         color: white;
         padding: 12px 24px;
         border-radius: 24px;
@@ -186,6 +185,18 @@ export default function GlobalStyle() {
         font-weight: bold;
         animation: fadeInOut 1.3s ease-in-out;
         z-index: 9999;
+      }
+
+      .toast-success {
+        background: #5dade2;
+      }
+
+      .toast-error {
+        background: #e74c3c;
+      }
+
+      .toast-info {
+        background: #3498db;
       }
 
       @keyframes fadeInOut {

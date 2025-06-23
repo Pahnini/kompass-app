@@ -1,5 +1,4 @@
-import React, { useState, useEffect } from "react";
-import BackButton from "./BackButton";
+import { useEffect, useState } from "react";
 
 export default function DeinWeg({
   goals,
@@ -8,12 +7,12 @@ export default function DeinWeg({
   setAchievements,
   calendarNotes,
   setCalendarNotes,
-  symptome,
-  setSymptome,
+  symptoms,
+  setSymptoms,
   shareErfolg,
   showReminder,
   emojiList,
-  vorlagen,
+  templates,
   onBack,
 }) {
   const [goalInput, setGoalInput] = useState("");
@@ -24,7 +23,7 @@ export default function DeinWeg({
   const [emoji, setEmoji] = useState("");
   const [noteText, setNoteText] = useState("");
   const [symptomScore, setSymptomScore] = useState(
-    () => symptome[selectedDate] || 0
+    () => symptoms[selectedDate] || 0
   );
   const [saveMsg, setSaveMsg] = useState("");
 
@@ -48,16 +47,16 @@ export default function DeinWeg({
     const note = calendarNotes[selectedDate] || { emoji: "", text: "" };
     setEmoji(note.emoji);
     setNoteText(note.text);
-    setSymptomScore(symptome[selectedDate] || 0);
-  }, [selectedDate, calendarNotes, symptome]);
+    setSymptomScore(symptoms[selectedDate] || 0);
+  }, [selectedDate, calendarNotes, symptoms]);
   const saveNote = () => {
     setSaveMsg("Gespeichert!");
     setTimeout(() => setSaveMsg(""), 1200);
     const u = { ...calendarNotes, [selectedDate]: { emoji, text: noteText } };
     setCalendarNotes(u);
     localStorage.setItem("kompass_calendar_notes", JSON.stringify(u));
-    const us = { ...symptome, [selectedDate]: symptomScore };
-    setSymptome(us);
+    const us = { ...symptoms, [selectedDate]: symptomScore };
+    setSymptoms(us);
     localStorage.setItem("kompass_symptome", JSON.stringify(us));
   };
   return (
@@ -172,7 +171,7 @@ export default function DeinWeg({
           Erfolge <span style={{ fontSize: "80%" }}>(teilen möglich)</span>
         </h3>
         <div className="templates">
-          {vorlagen.map((v, i) => (
+          {templates.map((v, i) => (
             <button
               key={i}
               className="template-btn"

@@ -34,11 +34,8 @@ export default function Skills({
       ...wordFiles,
       { name: file.name, url: URL.createObjectURL(file) },
     ]);
-    setIsUploading(false);
-    showSuccessToast("Datei erfolgreich hochgeladen! 📄");
-  }
-  if (isUploading) {
-    return <Loading message="Datei wird hochgeladen..." />;
+    setUploadMsg("Datei erfolgreich hochgeladen!");
+    setTimeout(() => setUploadMsg(""), 1800);
   }
 
   return (

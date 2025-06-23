@@ -1,3 +1,4 @@
+/* src/components/WelcomeScreen.css
 .welcome-screen {
   min-height: 100vh;
   background: linear-gradient(135deg, #b7ffd0 0%, #5dade2 50%, #2f4f4f 100%);
@@ -192,110 +193,6 @@
   transform: translateX(4px);
 }
 
-.welcome-note {
-  font-size: 0.9em;
-  opacity: 0.8;
-  margin: 0;
-  font-style: italic;
-  line-height: 1.4;
-}
-
-/* Mobile Responsiveness */
-@media (max-width: 480px) {
-  .welcome-screen {
-    padding: 16px;
-  }
-
-  .welcome-content {
-    padding: 32px 24px;
-    max-width: 100%;
-  }
-
-  .welcome-title {
-    font-size: 1.8em;
-  }
-
-  .welcome-subtitle {
-    font-size: 1em;
-  }
-
-  .welcome-features {
-    grid-template-columns: 1fr;
-    gap: 12px;
-    margin-bottom: 28px;
-  }
-
-  .feature-item {
-    flex-direction: row;
-    text-align: left;
-    padding: 12px 16px;
-  }
-
-  .feature-icon {
-    font-size: 1.5em;
-    margin-bottom: 0;
-    margin-right: 8px;
-  }
-
-  .feature-text {
-    font-size: 0.95em;
-    text-align: left;
-  }
-
-  .continue-btn {
-    padding: 14px 28px;
-    font-size: 1em;
-  }
-
-  .welcome-image {
-    max-width: 140px;
-    padding: 6px;
-    border-radius: 16px;
-  }
-}
-
-@media (max-width: 360px) {
-  .welcome-content {
-    padding: 28px 20px;
-  }
-
-  .welcome-title {
-    font-size: 1.6em;
-  }
-
-  .continue-btn {
-    padding: 12px 24px;
-    font-size: 0.95em;
-  }
-}
-
-/* Landscape mobile */
-@media (max-height: 600px) and (orientation: landscape) {
-  .welcome-screen {
-    padding: 12px;
-  }
-
-  .welcome-content {
-    padding: 24px 28px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
-  .welcome-image {
-    max-width: 80px;
-    margin-bottom: 16px;
-  }
-
-  .welcome-title {
-    font-size: 1.6em;
-    margin-bottom: 8px;
-  }
-
-  .welcome-features {
-    margin-bottom: 20px;
-  }
-
-  .feature-item {
-    padding: 10px 12px;
-  }
+.welcome-content button:hover {
+  background: #087a39;
 }

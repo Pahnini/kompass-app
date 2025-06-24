@@ -1167,7 +1167,7 @@ export default function GlobalStyle() {
       }
 
       .share-btn:hover {
-        background: #097c38;
+        background:rgb(19, 163, 79);
         color: #ffffff;
       }
 

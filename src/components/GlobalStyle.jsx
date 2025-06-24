@@ -1357,6 +1357,35 @@ export default function GlobalStyle() {
         border-color: rgba(93, 173, 226, 0.4);
       }
 
+      /* Notfall page contact list styling */
+      .contact-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin: 16px 0;
+        padding: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+      }
+
+      .contact-list a {
+        display: block;
+        padding: 12px 16px;
+        background: rgba(171, 235, 198, 0.1);
+        border: 1px solid rgba(171, 235, 198, 0.3);
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: all 0.2s ease;
+      }
+
+      .contact-list a:hover {
+        background: rgba(171, 235, 198, 0.2);
+        border-color: rgba(171, 235, 198, 0.5);
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
       /* Neues Desktop-Layout */
       @media (min-width: 700px) {
         .main-area {

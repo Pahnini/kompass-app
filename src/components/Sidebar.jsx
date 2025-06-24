@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen }) {
+export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen, favorites = [] }) {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 700);
 
   useEffect(() => {
@@ -8,6 +8,11 @@ export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen 
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  // Filter items to show only favorites, but always show 'home' and 'quickedit'
+  const filteredItems = items.filter(item => 
+    favorites.includes(item.key) || item.key === 'home' || item.key === 'quickedit'
+  );
 
   const toggleSidebar = () => setIsOpen(!isOpen);
   const handleClick = (key) => {
@@ -24,7 +29,7 @@ export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen 
       )}
 
       <aside className={`sidebar ${isOpen || isDesktop ? "open" : ""}`}>
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <button
             key={item.key}
             className={`sidebar-item ${current === item.key ? "active" : ""}`}

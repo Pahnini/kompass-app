@@ -139,6 +139,7 @@ export default function App() {
         setCurrent={handleSidebarNav}
         isOpen={isSidebarOpen}
         setIsOpen={setIsSidebarOpen}
+        favorites={favorites}
       />
       <main
         className="main-area"

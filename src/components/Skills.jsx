@@ -35,12 +35,18 @@ export default function Skills({
           <li
             key={i}
             className={done[i] ? "done" : ""}
-            onClick={() => setDone((prev) => ({ ...prev, [i]: !prev[i] }))}
           >
-            {s}{" "}
-            <button className="share-btn" onClick={() => shareSkill(s)}>
-              Teilen
-            </button>
+            <input
+              type="checkbox"
+              checked={done[i] || false}
+              onChange={() => setDone((prev) => ({ ...prev, [i]: !prev[i] }))}
+            />
+            <span className="text-content">{s}</span>
+            <div className="actions">
+              <button className="share-btn" onClick={() => shareSkill(s)}>
+                Teilen
+              </button>
+            </div>
           </li>
         ))}
       </ul>
@@ -56,33 +62,23 @@ export default function Skills({
         </label>
         <ul>
           {wordFiles.map((f, i) => (
-            <li key={i} style={{ display: "flex", alignItems: "center" }}>
-              <a href={f.url} target="_blank" rel="noopener noreferrer">
-                {f.name}
-              </a>
-              <button
-                style={{
-                  background: "#ffeded",
-                  color: "#c22",
-                  marginLeft: 6,
-                  border: "none",
-                  borderRadius: "50%",
-                  width: 28,
-                  height: 28,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 17,
-                  cursor: "pointer",
-                }}
-                aria-label="Datei löschen"
-                onClick={() => {
-                  setWordFiles(wordFiles.filter((_, idx) => idx !== i));
-                  // Hier kann ein Feedback (Toast) angezeigt werden, siehe unten
-                }}
-              >
-                🗑️
-              </button>
+            <li key={i}>
+              <span className="text-content">
+                <a href={f.url} target="_blank" rel="noopener noreferrer" style={{ color: "#5dade2", textDecoration: "none" }}>
+                  📄 {f.name}
+                </a>
+              </span>
+              <div className="actions">
+                <button
+                  className="delete-btn"
+                  aria-label="Datei löschen"
+                  onClick={() => {
+                    setWordFiles(wordFiles.filter((_, idx) => idx !== i));
+                  }}
+                >
+                  🗑️
+                </button>
+              </div>
             </li>
           ))}
         </ul>

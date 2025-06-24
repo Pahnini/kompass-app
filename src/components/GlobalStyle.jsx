@@ -308,6 +308,321 @@ export default function GlobalStyle() {
         animation: emojiSelect 0.3s ease;
       }
 
+      /* Form and Layout Improvements */
+      .section {
+        margin: 24px 0;
+        padding: 16px 0;
+      }
+
+      .section h3 {
+        margin-top: 0;
+        margin-bottom: 16px;
+        color: #ffffff;
+        font-size: 1.3em;
+      }
+
+      .form-row {
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        margin-bottom: 16px;
+      }
+
+      .form-row input {
+        flex: 1;
+        margin-bottom: 0;
+      }
+
+      .form-row button {
+        flex-shrink: 0;
+        min-width: 44px;
+        height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 18px;
+        font-weight: bold;
+      }
+
+      /* List styling improvements */
+      ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      li {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin-bottom: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        transition: background 0.2s ease;
+      }
+
+      li:hover {
+        background: rgba(255, 255, 255, 0.08);
+      }
+
+      li.done {
+        opacity: 0.7;
+        text-decoration: line-through;
+      }
+
+      li input[type="checkbox"] {
+        width: auto;
+        margin: 0;
+        flex-shrink: 0;
+      }
+
+      li .text-content {
+        flex: 1;
+        word-break: break-word;
+      }
+
+      li .actions {
+        display: flex;
+        gap: 8px;
+        flex-shrink: 0;
+      }
+
+      /* Template buttons */
+      .templates {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 16px;
+      }
+
+      .template-btn {
+        background: rgba(93, 173, 226, 0.2);
+        border: 1px solid rgba(93, 173, 226, 0.4);
+        color: #ffffff;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 14px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .template-btn:hover {
+        background: rgba(93, 173, 226, 0.3);
+        border-color: rgba(93, 173, 226, 0.6);
+      }
+
+      /* Action buttons in lists */
+      .share-btn {
+        background: #0b9444;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: background 0.2s ease;
+      }
+
+      .share-btn:hover {
+        background: #097c38;
+      }
+
+      .delete-btn {
+        background: #ffdddd;
+        color: #bb2222;
+        border: none;
+        border-radius: 4px;
+        padding: 4px 8px;
+        font-size: 12px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        min-width: 28px;
+        height: 28px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .delete-btn:hover {
+        background: #ffcccc;
+        color: #aa1111;
+      }
+
+      /* Stat banner */
+      .stat-banner {
+        background: rgba(11, 148, 68, 0.1);
+        border: 1px solid rgba(11, 148, 68, 0.3);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin: 16px 0;
+        color: #ffffff;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      .reminder {
+        background: rgba(255, 193, 7, 0.1);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        border-radius: 8px;
+        padding: 12px 16px;
+        margin: 16px 0;
+        color: #ffffff;
+        text-align: center;
+        font-weight: 500;
+      }
+
+      /* Textarea improvements */
+      textarea {
+        min-height: 80px;
+        resize: vertical;
+        font-family: inherit;
+      }
+
+      /* Range input styling */
+      input[type="range"] {
+        width: 100%;
+        margin: 8px 0;
+        background: transparent;
+        -webkit-appearance: none;
+      }
+
+      input[type="range"]::-webkit-slider-track {
+        background: #4a6a6a;
+        height: 6px;
+        border-radius: 3px;
+      }
+
+      input[type="range"]::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        background: #5dade2;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+      }
+
+      input[type="range"]::-moz-range-track {
+        background: #4a6a6a;
+        height: 6px;
+        border-radius: 3px;
+        border: none;
+      }
+
+      input[type="range"]::-moz-range-thumb {
+        background: #5dade2;
+        height: 20px;
+        width: 20px;
+        border-radius: 50%;
+        cursor: pointer;
+        border: none;
+      }
+
+      /* Design page specific styles */
+      .theme-options, .background-options {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .theme-options button, .background-options button {
+        background: rgba(255, 255, 255, 0.1);
+        border: 2px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        padding: 12px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-weight: 500;
+      }
+
+      .theme-options button:hover, .background-options button:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(93, 173, 226, 0.5);
+      }
+
+      .theme-options button.selected, .background-options button.selected {
+        background: #5dade2;
+        border-color: #4a92c7;
+        color: #ffffff;
+        box-shadow: 0 2px 8px rgba(93, 173, 226, 0.3);
+      }
+
+      /* Quick items grid for HomeScreen */
+      .quick-items-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 12px;
+        margin: 16px 0;
+      }
+
+      .quick-item {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        padding: 16px 12px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+        min-height: 80px;
+      }
+
+      .quick-item:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(93, 173, 226, 0.3);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      }
+
+      .quick-item .icon {
+        font-size: 24px;
+        margin-bottom: 4px;
+      }
+
+      .quick-item .label {
+        font-size: 14px;
+        font-weight: 500;
+        color: #ffffff;
+      }
+
+      /* Welcome section */
+      .welcome-section {
+        background: rgba(93, 173, 226, 0.1);
+        border: 1px solid rgba(93, 173, 226, 0.2);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 16px 0;
+        text-align: center;
+      }
+
+      .welcome-section h3 {
+        margin-top: 0;
+        color: #5dade2;
+      }
+
+      /* Edit button for quick items */
+      .edit-quick-items {
+        background: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        color: #ffffff;
+        padding: 8px 16px;
+        border-radius: 6px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 14px;
+        margin-top: 12px;
+      }
+
+      .edit-quick-items:hover {
+        background: rgba(255, 255, 255, 0.15);
+        border-color: rgba(93, 173, 226, 0.4);
+      }
+
       /* Neues Desktop-Layout */
      @media (min-width: 700px) {
   .main-area {

@@ -199,22 +199,17 @@ export default function DeinWeg({
                 type="checkbox"
                 checked={g.done}
                 onChange={() => toggleGoal(i)}
-              />{" "}
-              {g.text}
-              <button
-                style={{
-                  marginLeft: 8,
-                  background: "#ffdddd",
-                  color: "#bb2222",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "2px 8px",
-                }}
-                onClick={() => setGoals(goals.filter((_, idx) => idx !== i))}
-                aria-label="Ziel entfernen"
-              >
-                ✖
-              </button>
+              />
+              <span className="text-content">{g.text}</span>
+              <div className="actions">
+                <button
+                  className="delete-btn"
+                  onClick={() => setGoals(goals.filter((_, idx) => idx !== i))}
+                  aria-label="Ziel entfernen"
+                >
+                  ✖
+                </button>
+              </div>
             </li>
           ))}
         </ul>
@@ -245,26 +240,23 @@ export default function DeinWeg({
         <ul>
           {achievements.map((a, i) => (
             <li key={i}>
-              {a.date}: {a.text}{" "}
-              <button className="share-btn" onClick={() => shareAchievement(a)}>
-                Teilen
-              </button>
-              <button
-                style={{
-                  marginLeft: 8,
-                  background: "#ffdddd",
-                  color: "#bb2222",
-                  border: "none",
-                  borderRadius: "6px",
-                  padding: "2px 8px",
-                }}
-                onClick={() =>
-                  setAchievements(achievements.filter((_, idx) => idx !== i))
-                }
-                aria-label="Erfolg entfernen"
-              >
-                ✖
-              </button>
+              <span className="text-content">
+                {a.date}: {a.text}
+              </span>
+              <div className="actions">
+                <button className="share-btn" onClick={() => shareAchievement(a)}>
+                  Teilen
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() =>
+                    setAchievements(achievements.filter((_, idx) => idx !== i))
+                  }
+                  aria-label="Erfolg entfernen"
+                >
+                  ✖
+                </button>
+              </div>
             </li>
           ))}
         </ul>

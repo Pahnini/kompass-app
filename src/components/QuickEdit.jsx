@@ -38,10 +38,6 @@ export default function QuickEdit({ quickItems, setQuickItems, allItems }) {
               </li>
             ))}
         </ul>
-
-        <div style={{ marginTop: "24px", textAlign: "center" }}>
-          <button onClick={onBack}>✓ Fertig</button>
-        </div>
       </div>
     </div>
   );

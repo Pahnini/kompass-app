@@ -1167,7 +1167,7 @@ export default function GlobalStyle() {
       }
 
       .share-btn:hover {
-        background:rgb(19, 163, 79);
+        background: #097c38;
         color: #ffffff;
       }
 
@@ -1384,6 +1384,127 @@ export default function GlobalStyle() {
         border-color: rgba(171, 235, 198, 0.5);
         transform: translateY(-1px);
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* Guide page mobile-friendly styling */
+      .card ul {
+        padding-left: 0;
+        margin: 16px 0;
+      }
+
+      .card ul li {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        line-height: 1.5;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        position: relative;
+      }
+
+
+      .card ul li span:first-child {
+        flex-shrink: 0;
+        font-size: 1.2em;
+        margin-top: 2px;
+        margin-left: 8px;
+      }
+
+      .card ul li .content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .card ul li a {
+        color: #abebc6;
+        text-decoration: none;
+        word-break: break-all;
+        display: inline-block;
+        margin: 0 2px;
+        padding: 2px 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+      }
+
+      .card ul li a:hover {
+        background: rgba(171, 235, 198, 0.1);
+        text-decoration: underline;
+        color: #9de4b8;
+      }
+
+      .card ul li b {
+        color: #ffffff;
+        font-weight: 600;
+        margin-right: 6px;
+      }
+
+      /* QuickEdit page specific styling */
+      .card .section ul li {
+        align-items: center;
+        padding: 12px 16px;
+        gap: 12px;
+      }
+
+      .card .section ul li input[type="checkbox"] {
+        margin: 0;
+        flex-shrink: 0;
+      }
+
+      .card .section ul li .text-content {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        margin: 0;
+      }
+
+      /* Mobile specific adjustments for Guide */
+      @media (max-width: 480px) {
+        .card ul li {
+          padding: 14px 12px;
+          gap: 10px;
+        }
+
+        .card ul li span:first-child {
+          font-size: 1.1em;
+          margin-left: 6px;
+        }
+
+        .card ul li a {
+          word-break: break-word;
+          line-height: 1.4;
+        }
+
+        .card h2 {
+          font-size: 1.4em;
+          line-height: 1.3;
+        }
+
+        .card p {
+          font-size: 0.95em;
+          line-height: 1.5;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .card ul li {
+          padding: 12px 10px;
+          gap: 8px;
+        }
+
+        .card ul li::before {
+          min-width: 20px;
+          height: 20px;
+          font-size: 12px;
+        }
+
+        .card ul li span:first-child {
+          font-size: 1em;
+          margin-left: 4px;
+        }
       }
 
       /* Neues Desktop-Layout */

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 
 export default function DeinWeg({
   goals,
@@ -16,7 +17,7 @@ export default function DeinWeg({
   onBack,
 }) {
   const [goalInput, setGoalInput] = useState("");
-  const [erfolgInput, setErfolgInput] = useState("");
+  const [achievementInput, setAchievementInput] = useState("");
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
@@ -25,7 +26,7 @@ export default function DeinWeg({
   const [symptomScore, setSymptomScore] = useState(
     () => symptoms[selectedDate] || 0
   );
-  const [saveMsg, setSaveMsg] = useState("");
+  const [justSelectedEmoji, setJustSelectedEmoji] = useState("");
 
   const addGoal = () => {
     if (goalInput.trim())
@@ -34,13 +35,13 @@ export default function DeinWeg({
   };
   const toggleGoal = (i) =>
     setGoals(goals.map((g, idx) => (idx === i ? { ...g, done: !g.done } : g)));
-  const addErfolg = () => {
-    if (erfolgInput.trim())
+  const addAchievement = () => {
+    if (achievementInput.trim())
       setAchievements([
-        { text: erfolgInput, date: new Date().toISOString().split("T")[0] },
+        { text: achievementInput, date: new Date().toISOString().split("T")[0] },
         ...achievements,
       ]);
-    setErfolgInput("");
+    setAchievementInput("");
   };
 
   useEffect(() => {
@@ -49,16 +50,26 @@ export default function DeinWeg({
     setNoteText(note.text);
     setSymptomScore(symptoms[selectedDate] || 0);
   }, [selectedDate, calendarNotes, symptoms]);
+  
   const saveNote = () => {
-    setSaveMsg("Gespeichert!");
-    setTimeout(() => setSaveMsg(""), 1200);
-    const u = { ...calendarNotes, [selectedDate]: { emoji, text: noteText } };
-    setCalendarNotes(u);
-    localStorage.setItem("kompass_calendar_notes", JSON.stringify(u));
-    const us = { ...symptoms, [selectedDate]: symptomScore };
-    setSymptoms(us);
-    localStorage.setItem("kompass_symptome", JSON.stringify(us));
+    // Validation: Check if there's any meaningful content
+    if (!emoji && !noteText.trim() && symptomScore === 0) {
+      showErrorToast("Bitte füge mindestens ein Emoji, eine Notiz oder einen Symptom-Score hinzu");
+      return;
+    }
+
+    const updatedCalendarNotes = { ...calendarNotes, [selectedDate]: { emoji, text: noteText } };
+    setCalendarNotes(updatedCalendarNotes);
+    const updatedSymptoms = { ...symptoms, [selectedDate]: symptomScore };
+    setSymptoms(updatedSymptoms);
+    
+    showSuccessToast("Tagebucheintrag gespeichert! 📝");
   };
+
+  // Get current note for display
+  const currentNote = calendarNotes[selectedDate];
+  const hasCurrentNote = currentNote && (currentNote.emoji || currentNote.text);
+
   return (
     <div className="card">
      <button className="back-btn-icon" onClick={onBack} aria-label="Zurück">
@@ -84,6 +95,37 @@ export default function DeinWeg({
             onChange={(e) => setSelectedDate(e.target.value)}
           />
         </label>
+        
+        {/* Display existing note if available */}
+        {hasCurrentNote && (
+          <div style={{ 
+            background: "#f0f8ff", 
+            padding: "10px", 
+            borderRadius: "8px", 
+            margin: "10px 0",
+            border: "1px solid #d0e7ff"
+          }}>
+            <h4 style={{ margin: "0 0 8px 0", color: "#2c5aa0" }}>
+              Gespeicherter Eintrag für {selectedDate}:
+            </h4>
+            {currentNote.emoji && (
+              <div style={{ fontSize: "24px", marginBottom: "5px" }}>
+                {currentNote.emoji}
+              </div>
+            )}
+            {currentNote.text && (
+              <div style={{ fontStyle: "italic", color: "#555" }}>
+                "{currentNote.text}"
+              </div>
+            )}
+            {symptoms[selectedDate] !== undefined && (
+              <div style={{ marginTop: "5px", color: "#666" }}>
+                Symptom-Score: {symptoms[selectedDate]}/10
+              </div>
+            )}
+          </div>
+        )}
+
         <div style={{ margin: "10px 0", color: "#0b9444" }}>
           Diese Woche geschafft: {goals.filter((g) => g.done).length} Ziele
         </div>
@@ -107,10 +149,24 @@ export default function DeinWeg({
         {emojiList.map((em) => (
           <span
             key={em.emoji}
-            className={emoji === em.emoji ? "active" : ""}
-            onClick={() => setEmoji(em.emoji)}
+            className={`emoji-selector ${emoji === em.emoji ? "active" : ""} ${justSelectedEmoji === em.emoji ? "just-selected" : ""}`}
+            onClick={() => {
+              setEmoji(em.emoji);
+              setJustSelectedEmoji(em.emoji);
+              // Remove animation class after animation completes
+              setTimeout(() => setJustSelectedEmoji(""), 300);
+            }}
             title={em.label}
             aria-label={em.label}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                setEmoji(em.emoji);
+                setJustSelectedEmoji(em.emoji);
+                setTimeout(() => setJustSelectedEmoji(""), 300);
+              }
+            }}
           >
             {em.emoji}
           </span>
@@ -123,9 +179,6 @@ export default function DeinWeg({
       />
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <button onClick={saveNote}>Speichern</button>
-        {saveMsg && (
-          <span style={{ color: "#0b9444", fontWeight: 600 }}>{saveMsg}</span>
-        )}
       </div>
       <div className="section">
         <h3>Ziele</h3>
@@ -175,7 +228,7 @@ export default function DeinWeg({
             <button
               key={i}
               className="template-btn"
-              onClick={() => setErfolgInput(v)}
+              onClick={() => setAchievementInput(v)}
             >
               {v}
             </button>
@@ -183,11 +236,11 @@ export default function DeinWeg({
         </div>
         <div className="form-row">
           <input
-            value={erfolgInput}
-            onChange={(e) => setErfolgInput(e.target.value)}
+            value={achievementInput}
+            onChange={(e) => setAchievementInput(e.target.value)}
             placeholder="Erfolg heute?"
           />
-          <button onClick={addErfolg}>+</button>
+          <button onClick={addAchievement}>+</button>
         </div>
         <ul>
           {achievements.map((a, i) => (

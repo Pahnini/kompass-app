@@ -220,6 +220,94 @@ export default function GlobalStyle() {
         color: #097c38;
       }
 
+      /* Emoji Selection Styles */
+      .emoji-row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 12px 0;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+      }
+
+      .emoji-selector {
+        font-size: 28px;
+        padding: 8px;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        background: transparent;
+        border: 2px solid transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
+        user-select: none;
+        position: relative;
+      }
+
+      /* Desktop hover effects */
+      @media (hover: hover) {
+        .emoji-selector:hover {
+          transform: scale(1.1);
+          background: rgba(93, 173, 226, 0.1);
+          border-color: rgba(93, 173, 226, 0.3);
+          box-shadow: 0 2px 8px rgba(93, 173, 226, 0.2);
+        }
+
+        .emoji-selector:hover::after {
+          content: attr(title);
+          position: absolute;
+          bottom: -30px;
+          left: 50%;
+          transform: translateX(-50%);
+          background: #2f4f4f;
+          color: white;
+          padding: 4px 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          white-space: nowrap;
+          z-index: 1000;
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+      }
+
+      /* Active/selected state */
+      .emoji-selector.active {
+        background: #5dade2;
+        border-color: #4a92c7;
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(93, 173, 226, 0.3);
+      }
+
+      /* Mobile touch feedback */
+      @media (hover: none) {
+        .emoji-selector:active {
+          transform: scale(0.95);
+          background: rgba(93, 173, 226, 0.2);
+          transition: all 0.1s ease;
+        }
+      }
+
+      /* Focus styles for accessibility */
+      .emoji-selector:focus {
+        outline: 2px solid #5dade2;
+        outline-offset: 2px;
+      }
+
+      /* Animation for selection */
+      @keyframes emojiSelect {
+        0% { transform: scale(1); }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1.05); }
+      }
+
+      .emoji-selector.just-selected {
+        animation: emojiSelect 0.3s ease;
+      }
+
       /* Neues Desktop-Layout */
      @media (min-width: 700px) {
   .main-area {

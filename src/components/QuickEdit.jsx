@@ -43,10 +43,6 @@ export default function QuickEdit({
               </li>
             ))}
         </ul>
-
-        <div style={{ marginTop: "24px", textAlign: "center" }}>
-          <button onClick={onBack}>✓ Fertig</button>
-        </div>
       </div>
     </div>
   );

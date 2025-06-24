@@ -153,15 +153,30 @@ export default function GlobalStyle() {
         position: fixed;
         top: 16px;
         right: 16px;
-        background: #0b9444;
-        color: white;
+        background: #abebc6;
+        color: #2f4f4f;
         border: none;
         border-radius: 50%;
         width: 44px;
         height: 44px;
-        font-size: 24px;
+        font-size: 20px;
         z-index: 210;
         box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .sidebar-toggle-mobile:hover {
+        background: #9de4b8;
+        transform: scale(1.05);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+      }
+
+      .sidebar-toggle-mobile:active {
+        transform: scale(0.95);
       }
 
       ::-webkit-scrollbar {
@@ -204,20 +219,6 @@ export default function GlobalStyle() {
         10% { opacity: 1; transform: translateY(0); }
         90% { opacity: 1; }
         100% { opacity: 0; transform: translateY(-10px); }
-      }
-
-      .back-btn-icon {
-        background: transparent;
-        border: none;
-        font-size: 1.2em;
-        color: #0b9444;
-        margin-bottom: 14px;
-        cursor: pointer;
-        transition: color 0.2s;
-      }
-
-      .back-btn-icon:hover {
-        color: #097c38;
       }
 
       /* BackButton component styling */
@@ -460,7 +461,7 @@ export default function GlobalStyle() {
       }
 
       .share-btn:hover {
-        background:rgb(19, 163, 79);
+        background: #097c38;
         color: #ffffff;
       }
 
@@ -679,33 +680,154 @@ export default function GlobalStyle() {
         box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
       }
 
+      /* Guide page mobile-friendly styling */
+      .card ul {
+        padding-left: 0;
+        margin: 16px 0;
+      }
+
+      .card ul li {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        line-height: 1.5;
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+        position: relative;
+      }
+
+
+      .card ul li span:first-child {
+        flex-shrink: 0;
+        font-size: 1.2em;
+        margin-top: 2px;
+        margin-left: 8px;
+      }
+
+      .card ul li .content {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .card ul li a {
+        color: #abebc6;
+        text-decoration: none;
+        word-break: break-all;
+        display: inline-block;
+        margin: 0 2px;
+        padding: 2px 4px;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+      }
+
+      .card ul li a:hover {
+        background: rgba(171, 235, 198, 0.1);
+        text-decoration: underline;
+        color: #9de4b8;
+      }
+
+      .card ul li b {
+        color: #ffffff;
+        font-weight: 600;
+        margin-right: 6px;
+      }
+
+      /* QuickEdit page specific styling */
+      .card .section ul li {
+        align-items: center;
+        padding: 12px 16px;
+        gap: 12px;
+      }
+
+      .card .section ul li input[type="checkbox"] {
+        margin: 0;
+        flex-shrink: 0;
+      }
+
+      .card .section ul li .text-content {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        margin: 0;
+      }
+
+      /* Mobile specific adjustments for Guide */
+      @media (max-width: 480px) {
+        .card ul li {
+          padding: 14px 12px;
+          gap: 10px;
+        }
+
+        .card ul li span:first-child {
+          font-size: 1.1em;
+          margin-left: 6px;
+        }
+
+        .card ul li a {
+          word-break: break-word;
+          line-height: 1.4;
+        }
+
+        .card h2 {
+          font-size: 1.4em;
+          line-height: 1.3;
+        }
+
+        .card p {
+          font-size: 0.95em;
+          line-height: 1.5;
+        }
+      }
+
+      @media (max-width: 360px) {
+        .card ul li {
+          padding: 12px 10px;
+          gap: 8px;
+        }
+
+        .card ul li::before {
+          min-width: 20px;
+          height: 20px;
+          font-size: 12px;
+        }
+
+        .card ul li span:first-child {
+          font-size: 1em;
+          margin-left: 4px;
+        }
+      }
+
       /* Neues Desktop-Layout */
-     @media (min-width: 700px) {
-  .main-area {
-    margin-left: 240px; /* Platz für die Sidebar schaffen */
-    min-height: 100vh;
-    background: #2f4f4f;
-    padding: 24px 32px;
-  }
+      @media (min-width: 700px) {
+        .main-area {
+          margin-left: 240px;
+          min-height: 100vh;
+          background: #2f4f4f;
+          padding: 24px 32px;
+        }
 
-  .sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 240px;
-    height: 100vh;
-    transform: none !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    background: #2f4f4f;
-    z-index: 200;
-    box-shadow: 4px 0 18px rgba(0, 0, 0, 0.2);
-  }
+        .sidebar {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 240px;
+          height: 100vh;
+          transform: none !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+          background: #2f4f4f;
+          z-index: 200;
+          box-shadow: 4px 0 18px rgba(0, 0, 0, 0.2);
+        }
 
-  .sidebar-toggle-mobile {
-    display: none;
-  }
-}
+        .sidebar-toggle-mobile {
+          display: none;
+        }
+      }
     `;
     document.head.appendChild(styleTag);
     return () => {

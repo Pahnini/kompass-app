@@ -10,28 +10,37 @@ export default function Guide({ onBack }) {
           🧭
         </span>
       </h2>
-      <ol>
+      <ul>
         <li>
           <span style={{ marginRight: 4 }}>🔍</span>
-          <b>Online-Suche:</b> Portale wie{" "}
-          <a
-            href="https://www.therapie.de/psychotherapie/"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "#abebc6" }}
-          >
-            therapie.de
-          </a>{" "}
-          oder{" "}
-          <a
-            href="https://www.kbv.de/html/arztsuche.php"
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{ color: "#abebc6" }}
-          >
-            KBV-Arztsuche
-          </a>
-          .
+          <div>
+            <b>Online-Suche:</b> Nutze diese Portale:
+            <div
+              style={{
+                marginTop: 8,
+                display: "flex",
+                flexDirection: "column",
+                gap: "6px",
+              }}
+            >
+              <a
+                href="https://www.therapie.de/psychotherapie/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#abebc6", display: "block" }}
+              >
+                → therapie.de
+              </a>
+              <a
+                href="https://www.kbv.de/html/arztsuche.php"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#abebc6", display: "block" }}
+              >
+                → KBV-Arztsuche
+              </a>
+            </div>
+          </div>
         </li>
         <li>
           <span style={{ marginRight: 4 }}>📞</span>
@@ -49,7 +58,7 @@ export default function Guide({ onBack }) {
           <span style={{ marginRight: 4 }}>🚨</span>
           Notfall-Angebote nutzen, wenn schnelle Hilfe nötig ist!
         </li>
-      </ol>
+      </ul>
       <p style={{ marginTop: 18, color: "#888" }}>
         Sprich immer mit Vertrauenspersonen – und nutze im Zweifel die
         Notfallnummern im Menü{" "}

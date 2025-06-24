@@ -225,9 +225,7 @@ export default function DeinWeg({
         </ul>
       </div>
       <div className="section">
-        <h3>
-          Erfolge <span style={{ fontSize: "80%" }}>(teilen möglich)</span>
-        </h3>
+        <h3>Erfolge</h3>
         <div className="templates">
           {templates.map((value, i) => (
             <button

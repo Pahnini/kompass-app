@@ -479,43 +479,34 @@ export default function GlobalStyle() {
         font-family: inherit;
       }
 
-      /* Range input styling */
+      /* Simple range input styling - let browser handle track */
       input[type="range"] {
         width: 100%;
-        margin: 8px 0;
+        height: 25px;
         background: transparent;
-        -webkit-appearance: none;
-      }
-
-      input[type="range"]::-webkit-slider-track {
-        background: #4a6a6a;
-        height: 6px;
-        border-radius: 3px;
+        outline: none;
       }
 
       input[type="range"]::-webkit-slider-thumb {
         -webkit-appearance: none;
-        background: #5dade2;
+        appearance: none;
         height: 20px;
         width: 20px;
         border-radius: 50%;
+        background: #5dade2;
         cursor: pointer;
-      }
-
-      input[type="range"]::-moz-range-track {
-        background: #4a6a6a;
-        height: 6px;
-        border-radius: 3px;
-        border: none;
+        border: 2px solid #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
       input[type="range"]::-moz-range-thumb {
-        background: #5dade2;
         height: 20px;
         width: 20px;
         border-radius: 50%;
+        background: #5dade2;
         cursor: pointer;
-        border: none;
+        border: 2px solid #ffffff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
       }
 
       /* Design page specific styles */

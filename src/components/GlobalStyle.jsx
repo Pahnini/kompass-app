@@ -348,6 +348,10 @@ export default function GlobalStyle() {
       .section {
         margin: 24px 0;
         padding: 16px 0;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
       }
 
       .section h3 {
@@ -626,6 +630,10 @@ export default function GlobalStyle() {
         padding: 20px;
         margin: 16px 0;
         text-align: center;
+        user-select: none;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        -ms-user-select: none;
       }
 
       .welcome-section h3 {

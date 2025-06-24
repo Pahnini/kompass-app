@@ -159,13 +159,13 @@ export default function App() {
       >
         {quickEdit ? appViews.quickedit : appViews[currentPage]}
       </main>
-      {showDS && (
+      {onboarding && <OnboardingModal onClose={() => setOnboarding(false)} />}
+      {!onboarding && showDS && (
         <DatenschutzModal
           onClose={() => setShowDS(false)}
           dsHinweis="Diese App speichert deine Daten lokal in deinem Browser. Es werden keine Daten an externe Server übertragen. Durch die Nutzung stimmst du der lokalen Speicherung zu."
         />
       )}
-      {onboarding && <OnboardingModal onClose={() => setOnboarding(false)} />}
     </div>
   );
 }

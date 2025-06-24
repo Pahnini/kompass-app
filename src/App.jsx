@@ -131,7 +131,10 @@ export default function App() {
         quickItems={favorites}
         setQuickItems={setFavorites}
         allItems={sidebarItems}
-        onBack={() => setCurrentPage("home")}
+        onBack={() => {
+          setCurrentPage("home");
+          setQuickEdit(false);
+        }}
       />
     ),
   };

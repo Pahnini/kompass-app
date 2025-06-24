@@ -51,18 +51,16 @@ export default function Skills({
 
       <h2>Skills & Achtsamkeit</h2>
       <ul>
-        {skillsList.map((s, i) => (
+        {skillsList.map((skill, i) => (
           <li key={i} className={done[i] ? "done" : ""}>
             <input
               type="checkbox"
               checked={done[i] || false}
               onChange={() => setDone((prev) => ({ ...prev, [i]: !prev[i] }))}
             />
-            <span className="text-content">{s}</span>
+            <span className="text-content">{skill}</span>
             <div className="actions">
-              <button className="share-btn" onClick={() => shareSkill(s)}>
-                Teilen
-              </button>
+              <ShareButton onClick={() => shareSkill(skill)} />
             </div>
           </li>
         ))}

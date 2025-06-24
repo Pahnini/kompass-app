@@ -41,10 +41,7 @@ export default function DeinWeg({
   const addAchievement = () => {
     if (achievementInput.trim())
       setAchievements([
-        {
-          text: achievementInput,
-          date: new Date().toISOString().split("T")[0],
-        },
+        { text: erfolgInput, date: new Date().toISOString().split("T")[0] },
         ...achievements,
       ]);
     setAchievementInput("");
@@ -54,16 +51,16 @@ export default function DeinWeg({
     const note = calendarNotes[selectedDate] || { emoji: "", text: "" };
     setEmoji(note.emoji);
     setNoteText(note.text);
-    setSymptomScore(symptome[selectedDate] || 0);
-  }, [selectedDate, calendarNotes, symptome]);
+    setSymptomScore(symptoms[selectedDate] || 0);
+  }, [selectedDate, calendarNotes, symptoms]);
   const saveNote = () => {
     setSaveMsg("Gespeichert!");
     setTimeout(() => setSaveMsg(""), 1200);
     const u = { ...calendarNotes, [selectedDate]: { emoji, text: noteText } };
     setCalendarNotes(u);
     localStorage.setItem("kompass_calendar_notes", JSON.stringify(u));
-    const us = { ...symptome, [selectedDate]: symptomScore };
-    setSymptome(us);
+    const us = { ...symptoms, [selectedDate]: symptomScore };
+    setSymptoms(us);
     localStorage.setItem("kompass_symptome", JSON.stringify(us));
   };
   return (
@@ -89,37 +86,9 @@ export default function DeinWeg({
             onChange={(e) => setSelectedDate(e.target.value)}
           />
         </label>
-        {/* Display existing note if available */}
-        {hasCurrentNote && (
-          <div
-            style={{
-              background: "#f0f8ff",
-              padding: "10px",
-              borderRadius: "8px",
-              margin: "10px 0",
-              border: "1px solid #d0e7ff",
-            }}
-          >
-            <h4 style={{ margin: "0 0 8px 0", color: "#2c5aa0" }}>
-              Gespeicherter Eintrag für {formatDateGerman(selectedDate)}:
-            </h4>
-            {currentNote.emoji && (
-              <div style={{ fontSize: "24px", marginBottom: "5px" }}>
-                {currentNote.emoji}
-              </div>
-            )}
-            {currentNote.text && (
-              <div style={{ fontStyle: "italic", color: "#555" }}>
-                "{currentNote.text}"
-              </div>
-            )}
-            {symptoms[selectedDate] !== undefined && (
-              <div style={{ marginTop: "5px", color: "#666" }}>
-                Symptom-Score: {symptoms[selectedDate]}/10
-              </div>
-            )}
-          </div>
-        )}
+        <div style={{ margin: "10px 0", color: "#0b9444" }}>
+          Diese Woche geschafft: {goals.filter((g) => g.done).length} Ziele
+        </div>
         <label>
           Wie stark waren deine Symptome heute? (0=gar nicht, 10=sehr stark)
         </label>
@@ -140,26 +109,10 @@ export default function DeinWeg({
         {emojiList.map((em) => (
           <span
             key={em.emoji}
-            className={`emoji-selector ${emoji === em.emoji ? "active" : ""} ${
-              justSelectedEmoji === em.emoji ? "just-selected" : ""
-            }`}
-            onClick={() => {
-              setEmoji(em.emoji);
-              setJustSelectedEmoji(em.emoji);
-              // Remove animation class after animation completes
-              setTimeout(() => setJustSelectedEmoji(""), 300);
-            }}
+            className={emoji === em.emoji ? "active" : ""}
+            onClick={() => setEmoji(em.emoji)}
             title={em.label}
             aria-label={em.label}
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
-                setEmoji(em.emoji);
-                setJustSelectedEmoji(em.emoji);
-                setTimeout(() => setJustSelectedEmoji(""), 300);
-              }
-            }}
           >
             {em.emoji}
           </span>
@@ -211,7 +164,7 @@ export default function DeinWeg({
             <button
               key={i}
               className="template-btn"
-              onClick={() => setAchievementInput(value)}
+              onClick={() => setErfolgInput(v)}
             >
               {value}
             </button>

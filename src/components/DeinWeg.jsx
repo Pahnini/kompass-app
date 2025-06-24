@@ -139,7 +139,7 @@ export default function DeinWeg({
             }}
           >
             <h4 style={{ margin: "0 0 8px 0", color: "#2c5aa0" }}>
-              Gespeicherter Eintrag für {selectedDate}:
+              Gespeicherter Eintrag für {formatDateGerman(selectedDate)}:
             </h4>
             {currentNote.emoji && (
               <div style={{ fontSize: "24px", marginBottom: "5px" }}>

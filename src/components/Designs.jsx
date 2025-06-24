@@ -1,3 +1,4 @@
+import BackButton from "./BackButton";
 
 export default function Designs({
   theme,
@@ -10,11 +11,8 @@ export default function Designs({
 }) {
   return (
     <div className="card">
-      <button className="back-btn-icon" onClick={onBack} aria-label="Zurück">
-  ⬅️ Zurück
-</button>
+      <BackButton onClick={onBack} />
       <h2>Designs</h2>
-
       <div className="section">
         <h3>Farbschema</h3>
         <div className="theme-options">

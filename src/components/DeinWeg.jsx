@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
+import BackButton from "./BackButton";
+import DeleteButton from "./DeleteButton";
 
 export default function DeinWeg({
   goals,
@@ -38,7 +40,10 @@ export default function DeinWeg({
   const addAchievement = () => {
     if (achievementInput.trim())
       setAchievements([
-        { text: achievementInput, date: new Date().toISOString().split("T")[0] },
+        {
+          text: achievementInput,
+          date: new Date().toISOString().split("T")[0],
+        },
         ...achievements,
       ]);
     setAchievementInput("");
@@ -50,19 +55,24 @@ export default function DeinWeg({
     setNoteText(note.text);
     setSymptomScore(symptoms[selectedDate] || 0);
   }, [selectedDate, calendarNotes, symptoms]);
-  
+
   const saveNote = () => {
     // Validation: Check if there's any meaningful content
     if (!emoji && !noteText.trim() && symptomScore === 0) {
-      showErrorToast("Bitte füge mindestens ein Emoji, eine Notiz oder einen Symptom-Score hinzu");
+      showErrorToast(
+        "Bitte füge mindestens ein Emoji, eine Notiz oder einen Symptom-Score hinzu"
+      );
       return;
     }
 
-    const updatedCalendarNotes = { ...calendarNotes, [selectedDate]: { emoji, text: noteText } };
+    const updatedCalendarNotes = {
+      ...calendarNotes,
+      [selectedDate]: { emoji, text: noteText },
+    };
     setCalendarNotes(updatedCalendarNotes);
     const updatedSymptoms = { ...symptoms, [selectedDate]: symptomScore };
     setSymptoms(updatedSymptoms);
-    
+
     showSuccessToast("Tagebucheintrag gespeichert! 📝");
   };
 
@@ -72,9 +82,7 @@ export default function DeinWeg({
 
   return (
     <div className="card">
-     <button className="back-btn-icon" onClick={onBack} aria-label="Zurück">
-  ⬅️ Zurück
-</button>
+      <BackButton onClick={onBack} />
       <h2>Mein Kompass</h2>
       {showReminder && (
         <div className="reminder">
@@ -95,16 +103,17 @@ export default function DeinWeg({
             onChange={(e) => setSelectedDate(e.target.value)}
           />
         </label>
-        
         {/* Display existing note if available */}
         {hasCurrentNote && (
-          <div style={{ 
-            background: "#f0f8ff", 
-            padding: "10px", 
-            borderRadius: "8px", 
-            margin: "10px 0",
-            border: "1px solid #d0e7ff"
-          }}>
+          <div
+            style={{
+              background: "#f0f8ff",
+              padding: "10px",
+              borderRadius: "8px",
+              margin: "10px 0",
+              border: "1px solid #d0e7ff",
+            }}
+          >
             <h4 style={{ margin: "0 0 8px 0", color: "#2c5aa0" }}>
               Gespeicherter Eintrag für {selectedDate}:
             </h4>
@@ -125,10 +134,6 @@ export default function DeinWeg({
             )}
           </div>
         )}
-
-        <div style={{ margin: "10px 0", color: "#0b9444" }}>
-          Diese Woche geschafft: {goals.filter((g) => g.done).length} Ziele
-        </div>
         <label>
           Wie stark waren deine Symptome heute? (0=gar nicht, 10=sehr stark)
         </label>
@@ -149,7 +154,9 @@ export default function DeinWeg({
         {emojiList.map((em) => (
           <span
             key={em.emoji}
-            className={`emoji-selector ${emoji === em.emoji ? "active" : ""} ${justSelectedEmoji === em.emoji ? "just-selected" : ""}`}
+            className={`emoji-selector ${emoji === em.emoji ? "active" : ""} ${
+              justSelectedEmoji === em.emoji ? "just-selected" : ""
+            }`}
             onClick={() => {
               setEmoji(em.emoji);
               setJustSelectedEmoji(em.emoji);
@@ -160,7 +167,7 @@ export default function DeinWeg({
             aria-label={em.label}
             tabIndex={0}
             onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
+              if (e.key === "Enter" || e.key === " ") {
                 e.preventDefault();
                 setEmoji(em.emoji);
                 setJustSelectedEmoji(em.emoji);
@@ -202,13 +209,10 @@ export default function DeinWeg({
               />
               <span className="text-content">{g.text}</span>
               <div className="actions">
-                <button
-                  className="delete-btn"
-                  onClick={() => setGoals(goals.filter((_, idx) => idx !== i))}
-                  aria-label="Ziel entfernen"
-                >
-                  ✖
-                </button>
+                <DeleteButton
+                  onDelete={() => setGoals(goals.filter((_, idx) => idx !== i))}
+                  ariaLabel="Ziel entfernen"
+                />
               </div>
             </li>
           ))}
@@ -219,13 +223,13 @@ export default function DeinWeg({
           Erfolge <span style={{ fontSize: "80%" }}>(teilen möglich)</span>
         </h3>
         <div className="templates">
-          {templates.map((v, i) => (
+          {templates.map((value, i) => (
             <button
               key={i}
               className="template-btn"
-              onClick={() => setAchievementInput(v)}
+              onClick={() => setAchievementInput(value)}
             >
-              {v}
+              {value}
             </button>
           ))}
         </div>
@@ -244,18 +248,18 @@ export default function DeinWeg({
                 {a.date}: {a.text}
               </span>
               <div className="actions">
-                <button className="share-btn" onClick={() => shareAchievement(a)}>
+                <button
+                  className="share-btn"
+                  onClick={() => shareAchievement(a)}
+                >
                   Teilen
                 </button>
-                <button
-                  className="delete-btn"
-                  onClick={() =>
+                <DeleteButton
+                  onDelete={() =>
                     setAchievements(achievements.filter((_, idx) => idx !== i))
                   }
-                  aria-label="Erfolg entfernen"
-                >
-                  ✖
-                </button>
+                  ariaLabel="Erfolg entfernen"
+                />
               </div>
             </li>
           ))}

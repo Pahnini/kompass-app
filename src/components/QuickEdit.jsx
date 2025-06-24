@@ -11,14 +11,16 @@ export default function QuickEdit({ quickItems, setQuickItems, allItems }) {
 
   return (
     <div className="card">
-      <BackButton />
+      <button className="back-btn-icon" onClick={onBack} aria-label="Zurück">
+        ⬅️ Zurück
+      </button>
+      
       <div className="section">
         <h2>Schnellzugriff bearbeiten</h2>
         <p style={{ color: "#d0d0d0", marginBottom: "20px" }}>
-          Wähle die Funktionen aus, die auf der Startseite angezeigt werden
-          sollen:
+          Wähle die Funktionen aus, die auf der Startseite angezeigt werden sollen:
         </p>
-
+        
         <ul>
           {allItems
             .filter((i) => i.key !== "home" && i.key !== "quickedit")
@@ -38,6 +40,12 @@ export default function QuickEdit({ quickItems, setQuickItems, allItems }) {
               </li>
             ))}
         </ul>
+        
+        <div style={{ marginTop: "24px", textAlign: "center" }}>
+          <button onClick={onBack}>
+            ✓ Fertig
+          </button>
+        </div>
       </div>
     </div>
   );

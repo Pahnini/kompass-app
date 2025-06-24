@@ -44,16 +44,21 @@ export default function Skills({
 
       <h2>Skills & Achtsamkeit</h2>
       <ul>
-        {skillsList.map((skill, i) => (
-          <li key={i} className={done[i] ? "done" : ""}>
+        {skillsList.map((s, i) => (
+          <li
+            key={i}
+            className={done[i] ? "done" : ""}
+          >
             <input
               type="checkbox"
               checked={done[i] || false}
               onChange={() => setDone((prev) => ({ ...prev, [i]: !prev[i] }))}
             />
-            <span className="text-content">{skill}</span>
+            <span className="text-content">{s}</span>
             <div className="actions">
-              <ShareButton onClick={() => shareSkill(skill)} />
+              <button className="share-btn" onClick={() => shareSkill(s)}>
+                Teilen
+              </button>
             </div>
           </li>
         ))}
@@ -72,22 +77,20 @@ export default function Skills({
           {wordFiles.map((f, i) => (
             <li key={i}>
               <span className="text-content">
-                <a
-                  href={f.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{ color: "#5dade2", textDecoration: "none" }}
-                >
+                <a href={f.url} target="_blank" rel="noopener noreferrer" style={{ color: "#5dade2", textDecoration: "none" }}>
                   📄 {f.name}
                 </a>
               </span>
               <div className="actions">
-                <DeleteButton
-                  onDelete={() =>
-                    setWordFiles(wordFiles.filter((_, idx) => idx !== i))
-                  }
-                  ariaLabel="Datei löschen"
-                />
+                <button
+                  className="delete-btn"
+                  aria-label="Datei löschen"
+                  onClick={() => {
+                    setWordFiles(wordFiles.filter((_, idx) => idx !== i));
+                  }}
+                >
+                  🗑️
+                </button>
               </div>
             </li>
           ))}

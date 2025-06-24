@@ -1,13 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-export default function Sidebar({ 
-   items,
-  current,
-  setCurrent,
-  isOpen,
-  setIsOpen,
-}) {
+export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen, favorites = [] }) {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 700);
   const location = useLocation();
 
@@ -17,11 +11,12 @@ export default function Sidebar({
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  const toggleSidebar = (e) => {
-    e.stopPropagation();
-    setIsOpen(!isOpen);
-  };
+  // Filter items to show only favorites, but always show 'home' and 'quickedit'
+  const filteredItems = items.filter(item => 
+    favorites.includes(item.key) || item.key === 'home' || item.key === 'quickedit'
+  );
 
+  const toggleSidebar = () => setIsOpen(!isOpen);
   const handleClick = (key) => {
     setCurrent(key);
       if (!isDesktop) {
@@ -46,7 +41,7 @@ export default function Sidebar({
 
       <aside className={`sidebar ${isOpen || isDesktop ? "open" : ""}`}>
         {filteredItems.map((item) => (
-          <Link
+          <button
             key={item.key}
             to={getPath(item.key)}
             className={`sidebar-item ${

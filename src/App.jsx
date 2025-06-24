@@ -23,8 +23,15 @@ import { shareAchievement, shareSkill } from "./utils/shareUtils";
 
 export default function App() {
   // Use theme context
-  const { theme, setTheme, background, setBackground, availableThemes, availableBackgrounds } = useTheme();
-  
+  const {
+    theme,
+    setTheme,
+    background,
+    setBackground,
+    availableThemes,
+    availableBackgrounds,
+  } = useTheme();
+
   // Use user data context
   const {
     username,
@@ -41,9 +48,9 @@ export default function App() {
     setFavorites,
     wordFiles,
     setWordFiles,
-    hasGoalsReminder
+    hasGoalsReminder,
   } = useUserData();
-  
+
   // Use UI context
   const {
     showWelcome,
@@ -58,7 +65,7 @@ export default function App() {
     setOnboarding,
     quickEdit,
     setQuickEdit,
-    handleSidebarNav
+    handleSidebarNav,
   } = useUI();
 
   const appViews = {
@@ -143,7 +150,7 @@ export default function App() {
       />
       <main
         className="main-area"
-        style={{  
+        style={{
           background: background.url
             ? `url(${background.url}) center/cover`
             : theme.bg,
@@ -152,7 +159,12 @@ export default function App() {
       >
         {quickEdit ? appViews.quickedit : appViews[currentPage]}
       </main>
-      {showDS && <DatenschutzModal onClose={() => setShowDS(false)} />}
+      {showDS && (
+        <DatenschutzModal
+          onClose={() => setShowDS(false)}
+          dsHinweis="Diese App speichert deine Daten lokal in deinem Browser. Es werden keine Daten an externe Server übertragen. Durch die Nutzung stimmst du der lokalen Speicherung zu."
+        />
+      )}
       {onboarding && <OnboardingModal onClose={() => setOnboarding(false)} />}
     </div>
   );

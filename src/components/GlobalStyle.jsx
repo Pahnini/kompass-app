@@ -801,6 +801,78 @@ export default function GlobalStyle() {
         }
       }
 
+      /* DatenschutzModal styling */
+      .ds-modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 1000;
+        padding: 20px;
+        box-sizing: border-box;
+      }
+
+      .ds-box {
+        background: #3b5b5b;
+        border-radius: 16px;
+        padding: 24px;
+        max-width: 450px;
+        max-height: 70vh;
+        width: 100%;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        color: #ffffff;
+        text-align: center;
+        animation: modalSlideIn 0.3s ease-out;
+        overflow-y: auto;
+      }
+
+      @keyframes modalSlideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-20px) scale(0.95);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0) scale(1);
+        }
+      }
+
+      .ds-box p {
+        margin: 0 0 20px 0;
+        line-height: 1.5;
+        color: #d0d0d0;
+        font-size: 16px;
+      }
+
+      .ds-box button {
+        background: #abebc6;
+        color: #2f4f4f;
+        border: none;
+        border-radius: 12px;
+        padding: 12px 24px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      .ds-box button:hover {
+        background: #9de4b8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .ds-box button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
       /* Neues Desktop-Layout */
       @media (min-width: 700px) {
         .main-area {

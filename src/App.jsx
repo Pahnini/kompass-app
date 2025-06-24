@@ -48,8 +48,8 @@ export default function App() {
   const {
     showWelcome,
     setShowWelcome,
-    current,
-    setCurrent,
+    currentPage,
+    setCurrentPage,
     isSidebarOpen,
     setIsSidebarOpen,
     showDS,
@@ -69,7 +69,7 @@ export default function App() {
         quickItems={favorites}
         setQuickEdit={setQuickEdit}
         allItems={sidebarItems}
-        setCurrent={setCurrent}
+        setCurrentPage={setCurrentPage}
       />
     ),
     deinweg: (
@@ -86,7 +86,7 @@ export default function App() {
         showReminder={hasGoalsReminder}
         emojiList={emojiList}
         templates={templates}
-        onBack={() => setCurrent("home")}
+        onBack={() => setCurrentPage("home")}
       />
     ),
     skills: (
@@ -95,7 +95,7 @@ export default function App() {
         wordFiles={wordFiles}
         setWordFiles={setWordFiles}
         skillsList={skillsList}
-        onBack={() => setCurrent("home")}
+        onBack={() => setCurrentPage("home")}
       />
     ),
     designs: (
@@ -106,23 +106,23 @@ export default function App() {
         setBackground={setBackground}
         themes={availableThemes}
         backgrounds={availableBackgrounds}
-        onBack={() => setCurrent("home")}
+        onBack={() => setCurrentPage("home")}
       />
     ),
     notfall: (
       <Notfall
         helpResources={helpResources}
-        onBack={() => setCurrent("home")}
+        onBack={() => setCurrentPage("home")}
       />
     ),
-    guide: <Guide onBack={() => setCurrent("home")} />,
-    chat: <Chatbot onBack={() => setCurrent("home")} />,
+    guide: <Guide onBack={() => setCurrentPage("home")} />,
+    chat: <Chatbot onBack={() => setCurrentPage("home")} />,
     quickedit: (
       <QuickEdit
         quickItems={favorites}
         setQuickItems={setFavorites}
         allItems={sidebarItems}
-        onBack={() => setCurrent("home")}
+        onBack={() => setCurrentPage("home")}
       />
     ),
   };
@@ -135,7 +135,7 @@ export default function App() {
       <GlobalStyle />
       <Sidebar
         items={sidebarItems}
-        current={current}
+        current={currentPage}
         setCurrent={handleSidebarNav}
         isOpen={isSidebarOpen}
         setIsOpen={setIsSidebarOpen}
@@ -150,7 +150,7 @@ export default function App() {
           minHeight: "100vh",
         }}
       >
-        {quickEdit ? appViews.quickedit : appViews[current]}
+        {quickEdit ? appViews.quickedit : appViews[currentPage]}
       </main>
       {showDS && <DatenschutzModal onClose={() => setShowDS(false)} />}
       {onboarding && <OnboardingModal onClose={() => setOnboarding(false)} />}

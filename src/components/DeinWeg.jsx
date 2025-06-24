@@ -76,6 +76,12 @@ export default function DeinWeg({
     showSuccessToast("Tagebucheintrag gespeichert! 📝");
   };
 
+  // Helper function to format date in German format (DD.MM.YYYY)
+  const formatDateGerman = (dateString) => {
+    const [year, month, day] = dateString.split("-");
+    return `${day}.${month}.${year}`;
+  };
+
   // Get current note for display
   const currentNote = calendarNotes[selectedDate];
   const hasCurrentNote = currentNote && (currentNote.emoji || currentNote.text);
@@ -115,7 +121,7 @@ export default function DeinWeg({
             }}
           >
             <h4 style={{ margin: "0 0 8px 0", color: "#2c5aa0" }}>
-              Gespeicherter Eintrag für {selectedDate}:
+              Gespeicherter Eintrag für {formatDateGerman(selectedDate)}:
             </h4>
             {currentNote.emoji && (
               <div style={{ fontSize: "24px", marginBottom: "5px" }}>
@@ -245,7 +251,7 @@ export default function DeinWeg({
           {achievements.map((a, i) => (
             <li key={i}>
               <span className="text-content">
-                {a.date}: {a.text}
+                {formatDateGerman(a.date)}: {a.text}
               </span>
               <div className="actions">
                 <button

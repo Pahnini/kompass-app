@@ -4,7 +4,7 @@ export default function DeleteButton({ onDelete, ariaLabel = "Löschen" }) {
   }
 
   return (
-    <button className="delete-btn" aria-label={ariaLabel} onClick={onDelete}>
+    <button onClick={onDelete} className="delete-btn" aria-label={ariaLabel}>
       ✖
     </button>
   );

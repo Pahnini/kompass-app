@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import BackButton from "./BackButton";
 import DeleteButton from "./DeleteButton";
+import ShareButton from "./ShareButton";
 
 export default function DeinWeg({
   goals,
@@ -246,18 +247,13 @@ export default function DeinWeg({
           <button onClick={addAchievement}>+</button>
         </div>
         <ul>
-          {achievements.map((a, i) => (
+          {achievements.map((achievement, i) => (
             <li key={i}>
               <span className="text-content">
-                {formatDateGerman(a.date)}: {a.text}
+                {formatDateGerman(achievement.date)}: {achievement.text}
               </span>
               <div className="actions">
-                <button
-                  className="share-btn"
-                  onClick={() => shareAchievement(a)}
-                >
-                  Teilen
-                </button>
+                <ShareButton onClick={() => shareAchievement(achievement)} />
                 <DeleteButton
                   onDelete={() =>
                     setAchievements(achievements.filter((_, idx) => idx !== i))

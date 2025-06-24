@@ -103,7 +103,7 @@ export default function GlobalStyle() {
         transform: translateX(-100%);
         opacity: 0;
         visibility: hidden;
-        transition: transform 0.3s ease, opacity 0.3s ease, visibility 0.3s ease;
+        transition: transform 0.5s ease, opacity 0.5s ease, visibility 0.5s ease;
         display: flex;
         flex-direction: column;
         position: fixed;
@@ -420,6 +420,7 @@ export default function GlobalStyle() {
       li .text-content {
         flex: 1;
         word-break: break-word;
+        user-select: none;
       }
 
       li .actions {
@@ -757,6 +758,25 @@ export default function GlobalStyle() {
       }
 
       .card .section ul li .text-content {
+        display: flex;
+        align-items: center;
+        flex: 1;
+        margin: 0;
+      }
+
+      /* Skills page specific styling */
+      .card > ul li {
+        align-items: center;
+        padding: 12px 16px;
+        gap: 12px;
+      }
+
+      .card > ul li input[type="checkbox"] {
+        margin: 0;
+        flex-shrink: 0;
+      }
+
+      .card > ul li .text-content {
         display: flex;
         align-items: center;
         flex: 1;

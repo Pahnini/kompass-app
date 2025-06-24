@@ -2,7 +2,10 @@ import { useEffect, useState } from "react";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import BackButton from "./BackButton";
 import DeleteButton from "./DeleteButton";
+<<<<<<< HEAD
 import ShareButton from "./ShareButton";
+=======
+>>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
 
 export default function DeinWeg({
   goals,
@@ -41,7 +44,14 @@ export default function DeinWeg({
   const addAchievement = () => {
     if (achievementInput.trim())
       setAchievements([
+<<<<<<< HEAD
         { text: erfolgInput, date: new Date().toISOString().split("T")[0] },
+=======
+        {
+          text: achievementInput,
+          date: new Date().toISOString().split("T")[0],
+        },
+>>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
         ...achievements,
       ]);
     setAchievementInput("");
@@ -53,6 +63,7 @@ export default function DeinWeg({
     setNoteText(note.text);
     setSymptomScore(symptoms[selectedDate] || 0);
   }, [selectedDate, calendarNotes, symptoms]);
+<<<<<<< HEAD
   const saveNote = () => {
     setSaveMsg("Gespeichert!");
     setTimeout(() => setSaveMsg(""), 1200);
@@ -62,10 +73,35 @@ export default function DeinWeg({
     const us = { ...symptoms, [selectedDate]: symptomScore };
     setSymptoms(us);
     localStorage.setItem("kompass_symptome", JSON.stringify(us));
+=======
+
+  const saveNote = () => {
+    // Validation: Check if there's any meaningful content
+    if (!emoji && !noteText.trim() && symptomScore === 0) {
+      showErrorToast(
+        "Bitte füge mindestens ein Emoji, eine Notiz oder einen Symptom-Score hinzu"
+      );
+      return;
+    }
+
+    const updatedCalendarNotes = {
+      ...calendarNotes,
+      [selectedDate]: { emoji, text: noteText },
+    };
+    setCalendarNotes(updatedCalendarNotes);
+    const updatedSymptoms = { ...symptoms, [selectedDate]: symptomScore };
+    setSymptoms(updatedSymptoms);
+
+    showSuccessToast("Tagebucheintrag gespeichert! 📝");
+>>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
   };
   return (
     <div className="card">
+<<<<<<< HEAD
       <BackButton />
+=======
+      <BackButton onClick={onBack} />
+>>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
       <h2>Mein Kompass</h2>
       {showReminder && (
         <div className="reminder">
@@ -86,9 +122,43 @@ export default function DeinWeg({
             onChange={(e) => setSelectedDate(e.target.value)}
           />
         </label>
+<<<<<<< HEAD
         <div style={{ margin: "10px 0", color: "#0b9444" }}>
           Diese Woche geschafft: {goals.filter((g) => g.done).length} Ziele
         </div>
+=======
+        {/* Display existing note if available */}
+        {hasCurrentNote && (
+          <div
+            style={{
+              background: "#f0f8ff",
+              padding: "10px",
+              borderRadius: "8px",
+              margin: "10px 0",
+              border: "1px solid #d0e7ff",
+            }}
+          >
+            <h4 style={{ margin: "0 0 8px 0", color: "#2c5aa0" }}>
+              Gespeicherter Eintrag für {selectedDate}:
+            </h4>
+            {currentNote.emoji && (
+              <div style={{ fontSize: "24px", marginBottom: "5px" }}>
+                {currentNote.emoji}
+              </div>
+            )}
+            {currentNote.text && (
+              <div style={{ fontStyle: "italic", color: "#555" }}>
+                "{currentNote.text}"
+              </div>
+            )}
+            {symptoms[selectedDate] !== undefined && (
+              <div style={{ marginTop: "5px", color: "#666" }}>
+                Symptom-Score: {symptoms[selectedDate]}/10
+              </div>
+            )}
+          </div>
+        )}
+>>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
         <label>
           Wie stark waren deine Symptome heute? (0=gar nicht, 10=sehr stark)
         </label>
@@ -109,10 +179,33 @@ export default function DeinWeg({
         {emojiList.map((em) => (
           <span
             key={em.emoji}
+<<<<<<< HEAD
             className={emoji === em.emoji ? "active" : ""}
             onClick={() => setEmoji(em.emoji)}
             title={em.label}
             aria-label={em.label}
+=======
+            className={`emoji-selector ${emoji === em.emoji ? "active" : ""} ${
+              justSelectedEmoji === em.emoji ? "just-selected" : ""
+            }`}
+            onClick={() => {
+              setEmoji(em.emoji);
+              setJustSelectedEmoji(em.emoji);
+              // Remove animation class after animation completes
+              setTimeout(() => setJustSelectedEmoji(""), 300);
+            }}
+            title={em.label}
+            aria-label={em.label}
+            tabIndex={0}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === " ") {
+                e.preventDefault();
+                setEmoji(em.emoji);
+                setJustSelectedEmoji(em.emoji);
+                setTimeout(() => setJustSelectedEmoji(""), 300);
+              }
+            }}
+>>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
           >
             {em.emoji}
           </span>
@@ -160,11 +253,19 @@ export default function DeinWeg({
       <div className="section">
         <h3>Erfolge</h3>
         <div className="templates">
+<<<<<<< HEAD
           {vorlagen.map((v, i) => (
             <button
               key={i}
               className="template-btn"
               onClick={() => setErfolgInput(v)}
+=======
+          {templates.map((value, i) => (
+            <button
+              key={i}
+              className="template-btn"
+              onClick={() => setAchievementInput(value)}
+>>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
             >
               {value}
             </button>
@@ -185,7 +286,16 @@ export default function DeinWeg({
                 {formatDateGerman(achievement.date)}: {achievement.text}
               </span>
               <div className="actions">
+<<<<<<< HEAD
                 <ShareButton onClick={() => shareAchievement(achievement)} />
+=======
+                <button
+                  className="share-btn"
+                  onClick={() => shareAchievement(a)}
+                >
+                  Teilen
+                </button>
+>>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
                 <DeleteButton
                   onDelete={() =>
                     setAchievements(achievements.filter((_, idx) => idx !== i))

@@ -2,8 +2,11 @@ import { useEffect, useState } from "react";
 import { showSuccessToast } from "../utils/toastUtils";
 import BackButton from "./BackButton";
 import DeleteButton from "./DeleteButton";
+<<<<<<< HEAD
 import Loading from "./Loading";
 import ShareButton from "./ShareButton";
+=======
+>>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
 
 export default function Skills({
   shareSkill,
@@ -40,15 +43,16 @@ export default function Skills({
 
   return (
     <div className="card">
+<<<<<<< HEAD
       <BackButton />
+=======
+      <BackButton onClick={onBack} />
+>>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
 
       <h2>Skills & Achtsamkeit</h2>
       <ul>
         {skillsList.map((s, i) => (
-          <li
-            key={i}
-            className={done[i] ? "done" : ""}
-          >
+          <li key={i} className={done[i] ? "done" : ""}>
             <input
               type="checkbox"
               checked={done[i] || false}
@@ -77,20 +81,22 @@ export default function Skills({
           {wordFiles.map((f, i) => (
             <li key={i}>
               <span className="text-content">
-                <a href={f.url} target="_blank" rel="noopener noreferrer" style={{ color: "#5dade2", textDecoration: "none" }}>
+                <a
+                  href={f.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#5dade2", textDecoration: "none" }}
+                >
                   📄 {f.name}
                 </a>
               </span>
               <div className="actions">
-                <button
-                  className="delete-btn"
-                  aria-label="Datei löschen"
-                  onClick={() => {
-                    setWordFiles(wordFiles.filter((_, idx) => idx !== i));
-                  }}
-                >
-                  🗑️
-                </button>
+                <DeleteButton
+                  onDelete={() =>
+                    setWordFiles(wordFiles.filter((_, idx) => idx !== i))
+                  }
+                  ariaLabel="Datei löschen"
+                />
               </div>
             </li>
           ))}

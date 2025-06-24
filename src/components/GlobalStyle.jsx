@@ -927,6 +927,41 @@ export default function GlobalStyle() {
         }
       }
 
+      /* BackButton component styling */
+      .back-button {
+        background: #abebc6;
+        border: none;
+        border-radius: 16px;
+        padding: 12px 20px;
+        font-size: 16px;
+        font-weight: 500;
+        color: #2f4f4f;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 16px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        min-height: auto;
+      }
+
+      .back-button:hover {
+        background: #9de4b8;
+        transform: translateY(-1px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+      }
+
+      .back-button:active {
+        transform: translateY(0);
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+      }
+
+      .back-button:focus-visible {
+        outline: 2px solid #5dade2;
+        outline-offset: 2px;
+      }
+
       /* Emoji Selection Styles */
       .emoji-row {
         display: flex;
@@ -1121,8 +1156,8 @@ export default function GlobalStyle() {
 
       /* Action buttons in lists */
       .share-btn {
-        background: #0b9444;
-        color: white;
+        background: #abebc6;
+        color: #5dade2;
         border: none;
         border-radius: 4px;
         padding: 4px 8px;
@@ -1133,6 +1168,7 @@ export default function GlobalStyle() {
 
       .share-btn:hover {
         background: #097c38;
+        color: #ffffff;
       }
 
       .delete-btn {

@@ -14,7 +14,7 @@ export function UIProvider({ children }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showDS, setShowDS] = useState(() => !storageService.getDsAccepted());
   const [onboarding, setOnboarding] = useState(() => !storageService.getOnboardingCompleted());
-  const [current, setCurrent] = useState("home");
+  const [currentPage, setCurrentPage] = useState("home");
   const [showGuide, setShowGuide] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [quickEdit, setQuickEdit] = useState(false);
@@ -22,7 +22,7 @@ export function UIProvider({ children }) {
 
   // Handle sidebar navigation
   function handleSidebarNav(key) {
-    setCurrent(key);
+    setCurrentPage(key);
     setIsSidebarOpen(false);
     setShowGuide(key === "guide");
     setShowChat(key === "chat");
@@ -62,8 +62,8 @@ export function UIProvider({ children }) {
     setShowDS,
     onboarding,
     setOnboarding,
-    current,
-    setCurrent,
+    currentPage,
+    setCurrentPage,
     showGuide,
     setShowGuide,
     showChat,

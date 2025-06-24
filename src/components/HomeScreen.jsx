@@ -7,7 +7,7 @@ export default function HomeScreen({
   quickItems,
   setQuickEdit, 
   allItems, 
-  setCurrent 
+  setCurrentPage 
 }) {
   // Filter allItems to only show selected favorites
   const filteredItems = allItems.filter(item => 
@@ -69,7 +69,7 @@ export default function HomeScreen({
             <div
               key={i}
               className="quick-item"
-              onClick={() => setCurrent(item.key)}
+              onClick={() => setCurrentPage(item.key)}
             >
               <div className="icon">{item.icon}</div>
               <div className="label">{item.label}</div>

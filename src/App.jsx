@@ -3,10 +3,10 @@ import { Route, Routes } from "react-router-dom";
 import DatenschutzModal from "./components/DatenschutzModal";
 import GlobalStyle from "./components/GlobalStyle";
 import HomeScreen from "./components/HomeScreen";
-import Loading from "./components/Loading";
 import NotFound from "./components/NotFound";
 import OnboardingModal from "./components/OnboardingModal";
 import Sidebar from "./components/Sidebar";
+import SmartLoading from "./components/SmartLoading";
 import WelcomeScreen from "./components/WelcomeScreen";
 import { emojiList } from "./data/emojis";
 import { helpResources } from "./data/helpResources";
@@ -94,7 +94,7 @@ export default function App() {
           minHeight: "100vh",
         }}
       >
-        <Suspense fallback={<Loading message="Seite wird geladen..." />}>
+        <Suspense fallback={<SmartLoading message="Seite wird geladen..." />}>
           <Routes>
             <Route
               path="/"

@@ -2,10 +2,7 @@ import { useEffect, useState } from "react";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import BackButton from "./BackButton";
 import DeleteButton from "./DeleteButton";
-<<<<<<< HEAD
 import ShareButton from "./ShareButton";
-=======
->>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
 
 export default function DeinWeg({
   goals,
@@ -14,13 +11,12 @@ export default function DeinWeg({
   setAchievements,
   calendarNotes,
   setCalendarNotes,
-  symptome,
-  setSymptome,
-  shareErfolg,
+  symptoms,
+  setSymptoms,
+  shareAchievement,
   showReminder,
   emojiList,
-  vorlagen,
-  onBack,
+  templates,
 }) {
   const [goalInput, setGoalInput] = useState("");
   const [achievementInput, setAchievementInput] = useState("");
@@ -44,14 +40,10 @@ export default function DeinWeg({
   const addAchievement = () => {
     if (achievementInput.trim())
       setAchievements([
-<<<<<<< HEAD
-        { text: erfolgInput, date: new Date().toISOString().split("T")[0] },
-=======
         {
           text: achievementInput,
           date: new Date().toISOString().split("T")[0],
         },
->>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
         ...achievements,
       ]);
     setAchievementInput("");
@@ -63,17 +55,6 @@ export default function DeinWeg({
     setNoteText(note.text);
     setSymptomScore(symptoms[selectedDate] || 0);
   }, [selectedDate, calendarNotes, symptoms]);
-<<<<<<< HEAD
-  const saveNote = () => {
-    setSaveMsg("Gespeichert!");
-    setTimeout(() => setSaveMsg(""), 1200);
-    const u = { ...calendarNotes, [selectedDate]: { emoji, text: noteText } };
-    setCalendarNotes(u);
-    localStorage.setItem("kompass_calendar_notes", JSON.stringify(u));
-    const us = { ...symptoms, [selectedDate]: symptomScore };
-    setSymptoms(us);
-    localStorage.setItem("kompass_symptome", JSON.stringify(us));
-=======
 
   const saveNote = () => {
     // Validation: Check if there's any meaningful content
@@ -93,15 +74,21 @@ export default function DeinWeg({
     setSymptoms(updatedSymptoms);
 
     showSuccessToast("Tagebucheintrag gespeichert! 📝");
->>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
   };
+
+  // Helper function to format date in German format (DD.MM.YYYY)
+  const formatDateGerman = (dateString) => {
+    const [year, month, day] = dateString.split("-");
+    return `${day}.${month}.${year}`;
+  };
+
+  // Get current note for display
+  const currentNote = calendarNotes[selectedDate];
+  const hasCurrentNote = currentNote && (currentNote.emoji || currentNote.text);
+
   return (
     <div className="card">
-<<<<<<< HEAD
       <BackButton />
-=======
-      <BackButton onClick={onBack} />
->>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
       <h2>Mein Kompass</h2>
       {showReminder && (
         <div className="reminder">
@@ -122,11 +109,6 @@ export default function DeinWeg({
             onChange={(e) => setSelectedDate(e.target.value)}
           />
         </label>
-<<<<<<< HEAD
-        <div style={{ margin: "10px 0", color: "#0b9444" }}>
-          Diese Woche geschafft: {goals.filter((g) => g.done).length} Ziele
-        </div>
-=======
         {/* Display existing note if available */}
         {hasCurrentNote && (
           <div
@@ -158,7 +140,6 @@ export default function DeinWeg({
             )}
           </div>
         )}
->>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
         <label>
           Wie stark waren deine Symptome heute? (0=gar nicht, 10=sehr stark)
         </label>
@@ -179,12 +160,6 @@ export default function DeinWeg({
         {emojiList.map((em) => (
           <span
             key={em.emoji}
-<<<<<<< HEAD
-            className={emoji === em.emoji ? "active" : ""}
-            onClick={() => setEmoji(em.emoji)}
-            title={em.label}
-            aria-label={em.label}
-=======
             className={`emoji-selector ${emoji === em.emoji ? "active" : ""} ${
               justSelectedEmoji === em.emoji ? "just-selected" : ""
             }`}
@@ -205,7 +180,6 @@ export default function DeinWeg({
                 setTimeout(() => setJustSelectedEmoji(""), 300);
               }
             }}
->>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
           >
             {em.emoji}
           </span>
@@ -253,19 +227,11 @@ export default function DeinWeg({
       <div className="section">
         <h3>Erfolge</h3>
         <div className="templates">
-<<<<<<< HEAD
-          {vorlagen.map((v, i) => (
-            <button
-              key={i}
-              className="template-btn"
-              onClick={() => setErfolgInput(v)}
-=======
           {templates.map((value, i) => (
             <button
               key={i}
               className="template-btn"
               onClick={() => setAchievementInput(value)}
->>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
             >
               {value}
             </button>
@@ -286,16 +252,7 @@ export default function DeinWeg({
                 {formatDateGerman(achievement.date)}: {achievement.text}
               </span>
               <div className="actions">
-<<<<<<< HEAD
                 <ShareButton onClick={() => shareAchievement(achievement)} />
-=======
-                <button
-                  className="share-btn"
-                  onClick={() => shareAchievement(a)}
-                >
-                  Teilen
-                </button>
->>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
                 <DeleteButton
                   onDelete={() =>
                     setAchievements(achievements.filter((_, idx) => idx !== i))

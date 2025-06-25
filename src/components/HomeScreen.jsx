@@ -22,12 +22,7 @@ export default function HomeScreen({
       <div className="welcome-section">
         <div style={{ fontSize: "48px", marginBottom: "16px" }}>
           <Compass size={64} color="#5dade2" />
-    <div className="card">
-      <div className="welcome-section">
-        <div style={{ fontSize: "48px", marginBottom: "16px" }}>
-          <Compass size={64} color="#5dade2" />
         </div>
-        <h1>Willkommen beim Kompass{username ? `, ${username}` : ""}!</h1>
         <h1>Willkommen beim Kompass{username ? `, ${username}` : ""}!</h1>
         <p>Deine App für den Alltag nach der Klinik.</p>
         <p>Skills, Pläne, Chatbot & Hilfe bei Krisen – immer für dich da.</p>

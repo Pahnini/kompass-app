@@ -57,7 +57,7 @@ export const removeItem = (key) => {
 
 // Specific getter and setter functions for app data
 
-export const getFavorites = () => getItem(STORAGE_KEYS.FAVORITES, ["skills", "deinweg", "notfall", "guide"]);
+export const getFavorites = () => getItem(STORAGE_KEYS.FAVORITES, []);
 export const setFavorites = (favorites) => setItem(STORAGE_KEYS.FAVORITES, favorites);
 
 export const getUsername = () => getItem(STORAGE_KEYS.USERNAME, "");

@@ -14,7 +14,7 @@ export function UserDataProvider({ children }) {
   const [goals, setGoalsState] = useState(() => storageService.getGoals());
   const [achievements, setAchievementsState] = useState(() => storageService.getAchievements());
   const [calendarNotes, setCalendarNotesState] = useState(() => storageService.getCalendarNotes());
-  const [symptoms, setSymptomsState] = useState(() => storageService.getSymptome());
+  const [symptome, setSymptomeState] = useState(() => storageService.getSymptome());
   const [favorites, setFavoritesState] = useState(() => storageService.getFavorites());
   const [wordFiles, setWordFiles] = useState([]);
 
@@ -39,9 +39,9 @@ export function UserDataProvider({ children }) {
     storageService.setCalendarNotes(newNotes);
   };
 
-  const setSymptoms = (newSymptoms) => {
-    setSymptomsState(newSymptoms);
-    storageService.setSymptome(newSymptoms);
+  const setSymptome = (newSymptome) => {
+    setSymptomeState(newSymptome);
+    storageService.setSymptome(newSymptome);
   };
 
   const setFavorites = (newFavorites) => {
@@ -59,8 +59,8 @@ export function UserDataProvider({ children }) {
     setAchievements,
     calendarNotes,
     setCalendarNotes,
-    symptoms,
-    setSymptoms,
+    symptome,
+    setSymptome,
     favorites,
     setFavorites,
     wordFiles,

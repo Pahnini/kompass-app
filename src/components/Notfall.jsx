@@ -1,29 +1,39 @@
 import BackButton from "./BackButton";
-export default function Notfall({ hilfeWebsites, onBack }) {
+
+export default function Notfall({ helpResources }) {
   return (
     <div className="card notfall-card">
-        <button className="back-btn-icon" onClick={onBack} aria-label="Zurück">
-  ⬅️ Zurück
-</button>
+      <BackButton />
       <h2>Notfall / Hilfe</h2>
       <div className="contact-list">
-        <a href="tel:116111">📞 116111 Jugendtelefon</a>
-        <a href="tel:08001110111">📞 0800 111 0 111 Telefonseelsorge</a>
-        <a href="tel:112">🚑 112 Notruf</a>
+        <a href="tel:116111" style={{ color: "#abebc6" }}>
+          📞 116111 Jugendtelefon
+        </a>
+        <a href="tel:08001110111" style={{ color: "#abebc6" }}>
+          📞 0800 111 0 111 Telefonseelsorge
+        </a>
+        <a href="tel:112" style={{ color: "#abebc6" }}>
+          🚑 112 Notruf
+        </a>
       </div>
       <div
         style={{
           margin: "18px 0 10px 0",
           fontWeight: "bold",
-          color: "#0b9444",
+          color: "#fff",
         }}
       >
         Websites & Hilfe:
       </div>
       <ul>
-        {hilfeWebsites.map((h) => (
+        {helpResources.map((h) => (
           <li key={h.url}>
-            <a href={h.url} target="_blank" rel="noopener noreferrer">
+            <a
+              href={h.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              style={{ color: "#abebc6" }}
+            >
               {h.name}
             </a>
           </li>

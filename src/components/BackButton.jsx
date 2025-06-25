@@ -1,10 +1,11 @@
 import { ArrowLeft } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-import React from "react";
+export default function BackButton() {
+  const navigate = useNavigate();
 
-export default function BackButton({ onClick }) {
   return (
-    <button onClick={onClick} className="back-button flex items-center gap-2 text-base text-white hover:text-teal-300" >
+    <button onClick={() => navigate("/")} className="back-button">
       <ArrowLeft size={20} />
       Zurück
     </button>

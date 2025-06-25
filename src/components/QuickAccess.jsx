@@ -1,6 +1,5 @@
-import React from "react";
 
-export default function QuickAccess({ items, quickItems, setCurrent }) {
+export default function QuickAccess({ items, quickItems, setCurrentPage }) {
   return (
     <div className="quickaccess">
       {/* Dynamische Quick-Items */}
@@ -11,7 +10,7 @@ export default function QuickAccess({ items, quickItems, setCurrent }) {
           <button
             key={key}
             className="quick-btn"
-            onClick={() => setCurrent(item.key)}
+            onClick={() => setCurrentPage(item.key)}
             aria-label={item.label}
           >
             <span className="icon-gradient">{item.icon}</span>
@@ -21,11 +20,11 @@ export default function QuickAccess({ items, quickItems, setCurrent }) {
       })}
 
       {/* Feste zusätzliche Buttons */}
-      <button className="quick-btn" onClick={() => setCurrent("notfall")}>
+      <button className="quick-btn" onClick={() => setCurrentPage("notfall")}>
         <span className="icon-gradient">🚨</span>
         <span>Notfall</span>
       </button>
-      <button className="quick-btn" onClick={() => setCurrent("guide")}>
+      <button className="quick-btn" onClick={() => setCurrentPage("guide")}>
         <span className="icon-gradient">ℹ️</span>
         <span>Therapeut:in finden</span>
       </button>

@@ -1,44 +1,53 @@
-import { BookOpen, Search, Phone, UserPlus, AlertCircle } from "lucide-react"; // optional
 import BackButton from "./BackButton";
-export default function Guide({ onBack }) {
+
+export default function Guide() {
   return (
-    <div className="card info-card">
-      <button className="back-btn-icon" onClick={onBack} aria-label="Zurück">
-  ⬅️ Zurück
-</button>
+    <div className="card">
+      <BackButton />
       <h2>
         Psychotherapeut:in finden{" "}
         <span role="img" aria-label="Kompass">
           🧭
         </span>
       </h2>
-      <ol>
+      <ul>
         <li>
-          <span style={{ color: "#12b985", marginRight: 4 }}>🔍</span>
-          <b>Online-Suche:</b> Portale wie{" "}
-          <a
-            href="https://www.therapie.de/psychotherapie/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            therapie.de
-          </a>{" "}
-          oder{" "}
-          <a
-            href="https://www.kbv.de/html/arztsuche.php"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            KBV-Arztsuche
-          </a>
-          .
+          <span style={{ marginRight: 4 }}>🔍</span>
+          <div>
+            <b>Online-Suche:</b> Nutze diese Portale:
+            <div
+              style={{
+                marginTop: 8,
+                display: "flex",
+                flexDirection: "column",
+                gap: "6px",
+              }}
+            >
+              <a
+                href="https://www.therapie.de/psychotherapie/"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#abebc6", display: "block" }}
+              >
+                → therapie.de
+              </a>
+              <a
+                href="https://www.kbv.de/html/arztsuche.php"
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: "#abebc6", display: "block" }}
+              >
+                → KBV-Arztsuche
+              </a>
+            </div>
+          </div>
         </li>
         <li>
-          <span style={{ color: "#0b9444", marginRight: 4 }}>📞</span>
+          <span style={{ marginRight: 4 }}>📞</span>
           Bei deiner Krankenkasse nachfragen (Hotline, Listen, Beratung).
         </li>
         <li>
-          <span style={{ color: "#f90", marginRight: 4 }}>👩‍⚕️</span>
+          <span style={{ marginRight: 4 }}>👩‍⚕️</span>
           Direkt Praxen anrufen und nach freien Plätzen & Wartelisten fragen.
         </li>
         <li>
@@ -46,10 +55,10 @@ export default function Guide({ onBack }) {
           Sozialdienst der Klinik um Empfehlungen bitten.
         </li>
         <li>
-          <span style={{ color: "#e3342f", marginRight: 4 }}>🚨</span>
+          <span style={{ marginRight: 4 }}>🚨</span>
           Notfall-Angebote nutzen, wenn schnelle Hilfe nötig ist!
         </li>
-      </ol>
+      </ul>
       <p style={{ marginTop: 18, color: "#888" }}>
         Sprich immer mit Vertrauenspersonen – und nutze im Zweifel die
         Notfallnummern im Menü{" "}

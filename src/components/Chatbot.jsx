@@ -1,11 +1,9 @@
-import React from "react";
+import BackButton from "./BackButton";
 
-export default function Chatbot({ onBack }) {
+export default function Chatbot() {
   return (
     <div className="card info-card">
-    <button className="back-btn-icon" onClick={onBack} aria-label="Zurück">
-  ⬅️ Zurück
-</button>
+      <BackButton />
       <h2>Chatbot (Demo)</h2>
       <p>
         Hier könntest du in einer echten App anonym schreiben oder Skills/Tipps

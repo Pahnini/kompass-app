@@ -1,30 +1,79 @@
-import React from "react";
 import { Compass } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export default function HomeScreen({ setCurrent }) {
+export default function HomeScreen({
+  username,
+  setUsername,
+  quickItems,
+  allItems,
+}) {
+  const navigate = useNavigate();
+
+  // Filter allItems to only show selected favorites
+  const filteredItems = allItems.filter(
+    (item) => quickItems.includes(item.key) || item.key === "home"
+  );
+
+  // Convert item key to path
+  const getPath = (key) => (key === "home" ? "/" : `/${key}`);
+
   return (
-    <div className="home-screen">
-      <div className="hero-bg" />
-      <div className="homecard">
-        <div className="icon-circle">
-          <Compass size={64} />
+    <div className="card">
+      <div className="welcome-section">
+        <div style={{ fontSize: "48px", marginBottom: "16px" }}>
+          <Compass size={64} color="#5dade2" />
         </div>
-        <h1>Willkommen beim Kompass</h1>
+        <h1>Willkommen beim Kompass{username ? `, ${username}` : ""}!</h1>
         <p>Deine App für den Alltag nach der Klinik.</p>
         <p>Skills, Pläne, Chatbot & Hilfe bei Krisen – immer für dich da.</p>
-        <div className="quickaccess">
-          <button className="quick-btn" onClick={() => setCurrent("skills")}>
-            Skills
-          </button>
-          <button className="quick-btn" onClick={() => setCurrent("deinweg")}>
-            Mein Kompass
-          </button>
-          <button className="quick-btn" onClick={() => setCurrent("notfall")}>
-            Notfall
-          </button>
-          <button className="quick-btn" onClick={() => setCurrent("guide")}>
-            Therapeut:in finden
-          </button>
+
+        {!username && (
+          <div className="form-row" style={{ marginTop: "20px" }}>
+            <input
+              type="text"
+              placeholder="Wie soll ich dich nennen?"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && e.target.value.trim()) {
+                  setUsername(e.target.value.trim());
+                }
+              }}
+            />
+            <button
+              onClick={(e) => {
+                const input = e.target.previousElementSibling;
+                if (input.value.trim()) {
+                  setUsername(input.value.trim());
+                }
+              }}
+            >
+              ✓
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="section">
+        <button
+          className="edit-quick-items"
+          onClick={() => navigate("/quickedit")}
+        >
+          ⚙️ Schnellzugriff bearbeiten
+        </button>
+      </div>
+
+      <div className="section">
+        <h3>Alle Bereiche</h3>
+        <div className="quick-items-grid">
+          {filteredItems.map((item, i) => (
+            <div
+              key={i}
+              className="quick-item"
+              onClick={() => navigate(getPath(item.key))}
+            >
+              <div className="icon">{item.icon}</div>
+              <div className="label">{item.label}</div>
+            </div>
+          ))}
         </div>
       </div>
     </div>

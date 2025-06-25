@@ -1,46 +1,63 @@
-import React, { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { showSuccessToast } from "../utils/toastUtils";
 import BackButton from "./BackButton";
+import DeleteButton from "./DeleteButton";
+import Loading from "./Loading";
+import ShareButton from "./ShareButton";
+
 export default function Skills({
   shareSkill,
   wordFiles,
   setWordFiles,
   skillsList,
-  onBack,
 }) {
   const [done, setDone] = useState(
     () => JSON.parse(localStorage.getItem("kompass_skills_done")) || {}
   );
+  const [isUploading, setIsUploading] = useState(false);
+
   useEffect(() => {
     localStorage.setItem("kompass_skills_done", JSON.stringify(done));
   }, [done]);
-  const [uploadMsg, setUploadMsg] = useState("");
+
   function handleFile(e) {
     const file = e.target.files[0];
     if (!file) return;
+
+    setIsUploading(true);
+    if (!file.name.match(/\.(doc|docx)$/)) {
+      showSuccessToast("Bitte eine Word-Datei hochladen! 📄");
+      setIsUploading(false);
+      return;
+    }
     setWordFiles([
       ...wordFiles,
       { name: file.name, url: URL.createObjectURL(file) },
     ]);
-    setUploadMsg("Datei erfolgreich hochgeladen!");
-    setTimeout(() => setUploadMsg(""), 1800);
+    setIsUploading(false);
+    showSuccessToast("Datei erfolgreich hochgeladen! 📄");
   }
+  if (isUploading) {
+    return <Loading message="Datei wird hochgeladen..." />;
+  }
+
   return (
     <div className="card">
-      <button className="back-btn-icon" onClick={onBack} aria-label="Zurück">
-  ⬅️ Zurück
-</button>
+      <BackButton />
+
       <h2>Skills & Achtsamkeit</h2>
       <ul>
-        {skillsList.map((s, i) => (
-          <li
-            key={i}
-            className={done[i] ? "done" : ""}
-            onClick={() => setDone((prev) => ({ ...prev, [i]: !prev[i] }))}
-          >
-            {s}{" "}
-            <button className="share-btn" onClick={() => shareSkill(s)}>
-              Teilen
-            </button>
+        {skillsList.map((skill, i) => (
+          <li key={i} className={done[i] ? "done" : ""}>
+            <input
+              type="checkbox"
+              checked={done[i] || false}
+              onChange={() => setDone((prev) => ({ ...prev, [i]: !prev[i] }))}
+            />
+            <span className="text-content">{skill}</span>
+            <div className="actions">
+              <ShareButton onClick={() => shareSkill(skill)} />
+            </div>
           </li>
         ))}
       </ul>
@@ -56,33 +73,25 @@ export default function Skills({
         </label>
         <ul>
           {wordFiles.map((f, i) => (
-            <li key={i} style={{ display: "flex", alignItems: "center" }}>
-              <a href={f.url} target="_blank" rel="noopener noreferrer">
-                {f.name}
-              </a>
-              <button
-                style={{
-                  background: "#ffeded",
-                  color: "#c22",
-                  marginLeft: 6,
-                  border: "none",
-                  borderRadius: "50%",
-                  width: 28,
-                  height: 28,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  fontSize: 17,
-                  cursor: "pointer",
-                }}
-                aria-label="Datei löschen"
-                onClick={() => {
-                  setWordFiles(wordFiles.filter((_, idx) => idx !== i));
-                  // Hier kann ein Feedback (Toast) angezeigt werden, siehe unten
-                }}
-              >
-                🗑️
-              </button>
+            <li key={i}>
+              <span className="text-content">
+                <a
+                  href={f.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: "#5dade2", textDecoration: "none" }}
+                >
+                  📄 {f.name}
+                </a>
+              </span>
+              <div className="actions">
+                <DeleteButton
+                  onDelete={() =>
+                    setWordFiles(wordFiles.filter((_, idx) => idx !== i))
+                  }
+                  ariaLabel="Datei löschen"
+                />
+              </div>
             </li>
           ))}
         </ul>

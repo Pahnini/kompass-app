@@ -1,9 +1,9 @@
 import BackButton from "./BackButton";
 
-export default function Guide({ onBack }) {
+export default function Guide() {
   return (
     <div className="card">
-      <BackButton onClick={onBack} />
+      <BackButton />
       <h2>
         Psychotherapeut:in finden{" "}
         <span role="img" aria-label="Kompass">

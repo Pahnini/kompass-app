@@ -1,11 +1,6 @@
 import BackButton from "./BackButton";
 
-export default function QuickEdit({
-  quickItems,
-  setQuickItems,
-  allItems,
-  onBack,
-}) {
+export default function QuickEdit({ quickItems, setQuickItems, allItems }) {
   function toggleQuick(key) {
     setQuickItems(
       quickItems.includes(key)
@@ -16,7 +11,7 @@ export default function QuickEdit({
 
   return (
     <div className="card">
-      <BackButton onClick={onBack} />
+      <BackButton />
       <div className="section">
         <h2>Schnellzugriff bearbeiten</h2>
         <p style={{ color: "#d0d0d0", marginBottom: "20px" }}>

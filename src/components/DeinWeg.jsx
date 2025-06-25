@@ -17,7 +17,6 @@ export default function DeinWeg({
   showReminder,
   emojiList,
   templates,
-  onBack,
 }) {
   const [goalInput, setGoalInput] = useState("");
   const [achievementInput, setAchievementInput] = useState("");
@@ -89,7 +88,7 @@ export default function DeinWeg({
 
   return (
     <div className="card">
-      <BackButton onClick={onBack} />
+      <BackButton />
       <h2>Mein Kompass</h2>
       {showReminder && (
         <div className="reminder">

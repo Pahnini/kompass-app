@@ -1,17 +1,22 @@
 import { Compass } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-export default function HomeScreen({ 
-  username, 
-  setUsername, 
+export default function HomeScreen({
+  username,
+  setUsername,
   quickItems,
-  setQuickEdit, 
-  allItems, 
-  setCurrentPage 
+  allItems,
 }) {
+  const navigate = useNavigate();
+
   // Filter allItems to only show selected favorites
-  const filteredItems = allItems.filter(item => 
-    quickItems.includes(item.key) || item.key === 'home'
+  const filteredItems = allItems.filter(
+    (item) => quickItems.includes(item.key) || item.key === "home"
   );
+
+  // Convert item key to path
+  const getPath = (key) => (key === "home" ? "/" : `/${key}`);
+
   return (
     <div className="card">
       <div className="welcome-section">
@@ -21,19 +26,19 @@ export default function HomeScreen({
         <h1>Willkommen beim Kompass{username ? `, ${username}` : ""}!</h1>
         <p>Deine App für den Alltag nach der Klinik.</p>
         <p>Skills, Pläne, Chatbot & Hilfe bei Krisen – immer für dich da.</p>
-        
+
         {!username && (
           <div className="form-row" style={{ marginTop: "20px" }}>
             <input
               type="text"
               placeholder="Wie soll ich dich nennen?"
               onKeyDown={(e) => {
-                if (e.key === 'Enter' && e.target.value.trim()) {
+                if (e.key === "Enter" && e.target.value.trim()) {
                   setUsername(e.target.value.trim());
                 }
               }}
             />
-            <button 
+            <button
               onClick={(e) => {
                 const input = e.target.previousElementSibling;
                 if (input.value.trim()) {
@@ -47,10 +52,10 @@ export default function HomeScreen({
         )}
       </div>
 
-      <div className="section">     
-        <button 
+      <div className="section">
+        <button
           className="edit-quick-items"
-          onClick={() => setQuickEdit(true)}
+          onClick={() => navigate("/quickedit")}
         >
           ⚙️ Schnellzugriff bearbeiten
         </button>
@@ -63,7 +68,7 @@ export default function HomeScreen({
             <div
               key={i}
               className="quick-item"
-              onClick={() => setCurrentPage(item.key)}
+              onClick={() => navigate(getPath(item.key))}
             >
               <div className="icon">{item.icon}</div>
               <div className="label">{item.label}</div>

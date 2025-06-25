@@ -111,6 +111,7 @@ export default function GlobalStyle() {
         left: 0;
         width: 240px;
         height: 100vh;
+        overflow: hidden;
       }
 
       .sidebar.open {
@@ -119,33 +120,41 @@ export default function GlobalStyle() {
         visibility: visible;
       }
 
-      .sidebar button {
+      .sidebar button,
+      .sidebar a {
         background: transparent;
         border: none;
         color: inherit;
         font-size: 16px;
         text-align: left;
+        text-decoration: none;
         padding: 12px 20px;
-        width: 100%;
+        width: calc(100% - 0px);
         cursor: pointer;
         transition: background 0.2s;
         display: flex;
         align-items: center;
         gap: 10px;
+        box-sizing: border-box;
+        margin: 0;
       }
 
-      .sidebar button .icon {
+      .sidebar button .icon,
+      .sidebar a .icon {
         display: flex;
         align-items: center;
       }
 
-      .sidebar button .label {
+      .sidebar button .label,
+      .sidebar a .label {
         flex: 1;
         text-align: left;
       }
 
       .sidebar button:hover,
-      .sidebar button.active {
+      .sidebar button.active,
+      .sidebar a:hover,
+      .sidebar a.active {
         background: rgba(255, 255, 255, 0.1);
       }
 

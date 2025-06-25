@@ -7,11 +7,10 @@ export default function Designs({
   setBackground,
   themes,
   backgrounds,
-  onBack,
 }) {
   return (
     <div className="card">
-      <BackButton onClick={onBack} />
+      <BackButton />
       <h2>Designs</h2>
       <div className="section">
         <h3>Farbschema</h3>

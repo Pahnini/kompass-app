@@ -9,7 +9,6 @@ export default function Skills({
   wordFiles,
   setWordFiles,
   skillsList,
-  onBack,
 }) {
   const [done, setDone] = useState(
     () => JSON.parse(localStorage.getItem("kompass_skills_done")) || {}
@@ -29,7 +28,7 @@ export default function Skills({
   }
   return (
     <div className="card">
-      <BackButton onClick={onBack} />
+      <BackButton />
 
       <h2>Skills & Achtsamkeit</h2>
       <ul>

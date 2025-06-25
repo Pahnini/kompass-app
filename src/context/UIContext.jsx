@@ -9,25 +9,14 @@ const UIContext = createContext();
  * Manages UI-related state like modals, sidebar, etc.
  */
 export function UIProvider({ children }) {
-  // UI state
-  const [showWelcome, setShowWelcome] = useState(true);
+  // UI state - WelcomeScreen should only show on first visit to root path
+  const [showWelcome, setShowWelcome] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [showDS, setShowDS] = useState(() => !storageService.getDsAccepted());
-  const [onboarding, setOnboarding] = useState(() => !storageService.getOnboardingCompleted());
-  const [currentPage, setCurrentPage] = useState("home");
-  const [showGuide, setShowGuide] = useState(false);
-  const [showChat, setShowChat] = useState(false);
-  const [quickEdit, setQuickEdit] = useState(false);
+  const [onboarding, setOnboarding] = useState(
+    () => !storageService.getOnboardingCompleted()
+  );
   const [toast, setToast] = useState("");
-
-  // Handle sidebar navigation
-  function handleSidebarNav(key) {
-    setCurrentPage(key);
-    setIsSidebarOpen(false);
-    setShowGuide(key === "guide");
-    setShowChat(key === "chat");
-    setQuickEdit(key === "quickedit");
-  }
 
   // Show toast message
   function showToast(msg) {
@@ -36,11 +25,11 @@ export function UIProvider({ children }) {
   }
 
   // Update localStorage when modals are closed
-  useEffect(() => { 
+  useEffect(() => {
     if (!showDS) storageService.setDsAccepted();
   }, [showDS]);
 
-  useEffect(() => { 
+  useEffect(() => {
     if (!onboarding) storageService.setOnboardingCompleted();
   }, [onboarding]);
 
@@ -62,17 +51,8 @@ export function UIProvider({ children }) {
     setShowDS,
     onboarding,
     setOnboarding,
-    currentPage,
-    setCurrentPage,
-    showGuide,
-    setShowGuide,
-    showChat,
-    setShowChat,
-    quickEdit,
-    setQuickEdit,
     toast,
     showToast,
-    handleSidebarNav
   };
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;

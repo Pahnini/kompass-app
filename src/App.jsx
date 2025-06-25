@@ -1,19 +1,12 @@
+import { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
-import Chatbot from "./components/Chatbot";
 import DatenschutzModal from "./components/DatenschutzModal";
-import DeinWeg from "./components/DeinWeg";
-import Designs from "./components/Designs";
 import GlobalStyle from "./components/GlobalStyle";
-import Guide from "./components/Guide";
 import HomeScreen from "./components/HomeScreen";
+import Loading from "./components/Loading";
 import NotFound from "./components/NotFound";
-import Notfall from "./components/Notfall";
 import OnboardingModal from "./components/OnboardingModal";
-import QuickEdit from "./components/QuickEdit";
 import Sidebar from "./components/Sidebar";
-import Skills from "./components/Skills";
-import Sidebar from "./components/Sidebar";
-import Skills from "./components/Skills";
 import WelcomeScreen from "./components/WelcomeScreen";
 import { emojiList } from "./data/emojis";
 import { helpResources } from "./data/helpResources";
@@ -25,6 +18,15 @@ import { useTheme } from "./hooks/useTheme";
 import { useUI } from "./hooks/useUI";
 import { useUserData } from "./hooks/useUserData";
 import { shareAchievement, shareSkill } from "./utils/shareUtils";
+
+// Lazy load components for better performance
+const Chatbot = lazy(() => import("./components/Chatbot"));
+const DeinWeg = lazy(() => import("./components/DeinWeg"));
+const Designs = lazy(() => import("./components/Designs"));
+const Guide = lazy(() => import("./components/Guide"));
+const Notfall = lazy(() => import("./components/Notfall"));
+const QuickEdit = lazy(() => import("./components/QuickEdit"));
+const Skills = lazy(() => import("./components/Skills"));
 
 export default function App() {
   // Set page title based on current route
@@ -92,79 +94,81 @@ export default function App() {
           minHeight: "100vh",
         }}
       >
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <HomeScreen
-                username={username}
-                setUsername={setUsername}
-                quickItems={favorites}
-                allItems={sidebarItems}
-              />
-            }
-          />
-          <Route
-            path="/deinweg"
-            element={
-              <DeinWeg
-                goals={goals}
-                setGoals={setGoals}
-                achievements={achievements}
-                setAchievements={setAchievements}
-                calendarNotes={calendarNotes}
-                setCalendarNotes={setCalendarNotes}
-                symptoms={symptoms}
-                setSymptoms={setSymptoms}
-                shareAchievement={shareAchievement}
-                showReminder={hasGoalsReminder}
-                emojiList={emojiList}
-                templates={templates}
-              />
-            }
-          />
-          <Route
-            path="/skills"
-            element={
-              <Skills
-                shareSkill={shareSkill}
-                wordFiles={wordFiles}
-                setWordFiles={setWordFiles}
-                skillsList={skillsList}
-              />
-            }
-          />
-          <Route
-            path="/designs"
-            element={
-              <Designs
-                theme={theme}
-                setTheme={setTheme}
-                background={background}
-                setBackground={setBackground}
-                themes={availableThemes}
-                backgrounds={availableBackgrounds}
-              />
-            }
-          />
-          <Route
-            path="/notfall"
-            element={<Notfall helpResources={helpResources} />}
-          />
-          <Route path="/guide" element={<Guide />} />
-          <Route path="/chat" element={<Chatbot />} />
-          <Route
-            path="/quickedit"
-            element={
-              <QuickEdit
-                quickItems={favorites}
-                setQuickItems={setFavorites}
-                allItems={sidebarItems}
-              />
-            }
-          />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Suspense fallback={<Loading message="Seite wird geladen..." />}>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <HomeScreen
+                  username={username}
+                  setUsername={setUsername}
+                  quickItems={favorites}
+                  allItems={sidebarItems}
+                />
+              }
+            />
+            <Route
+              path="/deinweg"
+              element={
+                <DeinWeg
+                  goals={goals}
+                  setGoals={setGoals}
+                  achievements={achievements}
+                  setAchievements={setAchievements}
+                  calendarNotes={calendarNotes}
+                  setCalendarNotes={setCalendarNotes}
+                  symptoms={symptoms}
+                  setSymptoms={setSymptoms}
+                  shareAchievement={shareAchievement}
+                  showReminder={hasGoalsReminder}
+                  emojiList={emojiList}
+                  templates={templates}
+                />
+              }
+            />
+            <Route
+              path="/skills"
+              element={
+                <Skills
+                  shareSkill={shareSkill}
+                  wordFiles={wordFiles}
+                  setWordFiles={setWordFiles}
+                  skillsList={skillsList}
+                />
+              }
+            />
+            <Route
+              path="/designs"
+              element={
+                <Designs
+                  theme={theme}
+                  setTheme={setTheme}
+                  background={background}
+                  setBackground={setBackground}
+                  themes={availableThemes}
+                  backgrounds={availableBackgrounds}
+                />
+              }
+            />
+            <Route
+              path="/notfall"
+              element={<Notfall helpResources={helpResources} />}
+            />
+            <Route path="/guide" element={<Guide />} />
+            <Route path="/chat" element={<Chatbot />} />
+            <Route
+              path="/quickedit"
+              element={
+                <QuickEdit
+                  quickItems={favorites}
+                  setQuickItems={setFavorites}
+                  allItems={sidebarItems}
+                />
+              }
+            />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Suspense>
       </main>
       {onboarding && <OnboardingModal onClose={() => setOnboarding(false)} />}
       {!onboarding && showDS && (

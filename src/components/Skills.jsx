@@ -2,11 +2,8 @@ import { useEffect, useState } from "react";
 import { showSuccessToast } from "../utils/toastUtils";
 import BackButton from "./BackButton";
 import DeleteButton from "./DeleteButton";
-<<<<<<< HEAD
 import Loading from "./Loading";
 import ShareButton from "./ShareButton";
-=======
->>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
 
 export default function Skills({
   shareSkill,
@@ -37,17 +34,16 @@ export default function Skills({
       ...wordFiles,
       { name: file.name, url: URL.createObjectURL(file) },
     ]);
-    setUploadMsg("Datei erfolgreich hochgeladen!");
-    setTimeout(() => setUploadMsg(""), 1800);
+    setIsUploading(false);
+    showSuccessToast("Datei erfolgreich hochgeladen! 📄");
+  }
+  if (isUploading) {
+    return <Loading message="Datei wird hochgeladen..." />;
   }
 
   return (
     <div className="card">
-<<<<<<< HEAD
       <BackButton />
-=======
-      <BackButton onClick={onBack} />
->>>>>>> 40c7e75 (Refactor components: replace back button implementation in DeinWeg, Guide, and Skills with BackButton component; add DeleteButton component for improved delete functionality and UI consistency.)
 
       <h2>Skills & Achtsamkeit</h2>
       <ul>

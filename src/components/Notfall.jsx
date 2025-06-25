@@ -3,9 +3,7 @@ import BackButton from "./BackButton";
 export default function Notfall({ helpResources }) {
   return (
     <div className="card notfall-card">
-        <button className="back-btn-icon" onClick={onBack} aria-label="Zurück">
-  ⬅️ Zurück
-</button>
+      <BackButton />
       <h2>Notfall / Hilfe</h2>
       <div className="contact-list">
         <a href="tel:116111" style={{ color: "#abebc6" }}>

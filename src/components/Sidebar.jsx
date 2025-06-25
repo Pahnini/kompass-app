@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 
-export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen, favorites = [] }) {
+export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }) {
   const [isDesktop, setIsDesktop] = useState(window.innerWidth > 700);
   const location = useLocation();
 
@@ -12,8 +12,11 @@ export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen,
   }, []);
 
   // Filter items to show only favorites, but always show 'home' and 'quickedit'
-  const filteredItems = items.filter(item => 
-    favorites.includes(item.key) || item.key === 'home' || item.key === 'quickedit'
+  const filteredItems = items.filter(
+    (item) =>
+      favorites.includes(item.key) ||
+      item.key === "home" ||
+      item.key === "quickedit"
   );
 
   const toggleSidebar = () => setIsOpen(!isOpen);
@@ -41,7 +44,7 @@ export default function Sidebar({ items, current, setCurrent, isOpen, setIsOpen,
 
       <aside className={`sidebar ${isOpen || isDesktop ? "open" : ""}`}>
         {filteredItems.map((item) => (
-          <button
+          <Link
             key={item.key}
             to={getPath(item.key)}
             className={`sidebar-item ${

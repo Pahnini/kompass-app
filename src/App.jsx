@@ -1,3 +1,4 @@
+import { Route, Routes } from "react-router-dom";
 import Chatbot from "./components/Chatbot";
 import DatenschutzModal from "./components/DatenschutzModal";
 import DeinWeg from "./components/DeinWeg";
@@ -57,87 +58,13 @@ export default function App() {
   const {
     showWelcome,
     setShowWelcome,
-    currentPage,
-    setCurrentPage,
     isSidebarOpen,
     setIsSidebarOpen,
     showDS,
     setShowDS,
     onboarding,
     setOnboarding,
-    quickEdit,
-    setQuickEdit,
-    handleSidebarNav,
   } = useUI();
-
-  const appViews = {
-    home: (
-      <HomeScreen
-        username={username}
-        setUsername={setUsername}
-        quickItems={favorites}
-        setQuickEdit={setQuickEdit}
-        allItems={sidebarItems}
-        setCurrentPage={setCurrentPage}
-      />
-    ),
-    deinweg: (
-      <DeinWeg
-        goals={goals}
-        setGoals={setGoals}
-        achievements={achievements}
-        setAchievements={setAchievements}
-        calendarNotes={calendarNotes}
-        setCalendarNotes={setCalendarNotes}
-        symptoms={symptoms}
-        setSymptoms={setSymptoms}
-        shareAchievement={shareAchievement}
-        showReminder={hasGoalsReminder}
-        emojiList={emojiList}
-        templates={templates}
-        onBack={() => setCurrentPage("home")}
-      />
-    ),
-    skills: (
-      <Skills
-        shareSkill={shareSkill}
-        wordFiles={wordFiles}
-        setWordFiles={setWordFiles}
-        skillsList={skillsList}
-        onBack={() => setCurrentPage("home")}
-      />
-    ),
-    designs: (
-      <Designs
-        theme={theme}
-        setTheme={setTheme}
-        background={background}
-        setBackground={setBackground}
-        themes={availableThemes}
-        backgrounds={availableBackgrounds}
-        onBack={() => setCurrentPage("home")}
-      />
-    ),
-    notfall: (
-      <Notfall
-        helpResources={helpResources}
-        onBack={() => setCurrentPage("home")}
-      />
-    ),
-    guide: <Guide onBack={() => setCurrentPage("home")} />,
-    chat: <Chatbot onBack={() => setCurrentPage("home")} />,
-    quickedit: (
-      <QuickEdit
-        quickItems={favorites}
-        setQuickItems={setFavorites}
-        allItems={sidebarItems}
-        onBack={() => {
-          setCurrentPage("home");
-          setQuickEdit(false);
-        }}
-      />
-    ),
-  };
 
   if (showWelcome)
     return <WelcomeScreen onContinue={() => setShowWelcome(false)} />;
@@ -147,8 +74,6 @@ export default function App() {
       <GlobalStyle />
       <Sidebar
         items={sidebarItems}
-        current={currentPage}
-        setCurrent={handleSidebarNav}
         isOpen={isSidebarOpen}
         setIsOpen={setIsSidebarOpen}
         favorites={favorites}
@@ -162,7 +87,78 @@ export default function App() {
           minHeight: "100vh",
         }}
       >
-        {quickEdit ? appViews.quickedit : appViews[currentPage]}
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <HomeScreen
+                username={username}
+                setUsername={setUsername}
+                quickItems={favorites}
+                allItems={sidebarItems}
+              />
+            }
+          />
+          <Route
+            path="/deinweg"
+            element={
+              <DeinWeg
+                goals={goals}
+                setGoals={setGoals}
+                achievements={achievements}
+                setAchievements={setAchievements}
+                calendarNotes={calendarNotes}
+                setCalendarNotes={setCalendarNotes}
+                symptoms={symptoms}
+                setSymptoms={setSymptoms}
+                shareAchievement={shareAchievement}
+                showReminder={hasGoalsReminder}
+                emojiList={emojiList}
+                templates={templates}
+              />
+            }
+          />
+          <Route
+            path="/skills"
+            element={
+              <Skills
+                shareSkill={shareSkill}
+                wordFiles={wordFiles}
+                setWordFiles={setWordFiles}
+                skillsList={skillsList}
+              />
+            }
+          />
+          <Route
+            path="/designs"
+            element={
+              <Designs
+                theme={theme}
+                setTheme={setTheme}
+                background={background}
+                setBackground={setBackground}
+                themes={availableThemes}
+                backgrounds={availableBackgrounds}
+              />
+            }
+          />
+          <Route
+            path="/notfall"
+            element={<Notfall helpResources={helpResources} />}
+          />
+          <Route path="/guide" element={<Guide />} />
+          <Route path="/chat" element={<Chatbot />} />
+          <Route
+            path="/quickedit"
+            element={
+              <QuickEdit
+                quickItems={favorites}
+                setQuickItems={setFavorites}
+                allItems={sidebarItems}
+              />
+            }
+          />
+        </Routes>
       </main>
       {onboarding && <OnboardingModal onClose={() => setOnboarding(false)} />}
       {!onboarding && showDS && (

@@ -8,12 +8,14 @@ import { UserDataProvider } from "./context/UserDataContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <ThemeProvider>
-      <UserDataProvider>
-        <UIProvider>
-          <App />
-        </UIProvider>
-      </UserDataProvider>
-    </ThemeProvider>
+    <BrowserRouter>
+      <ThemeProvider>
+        <UserDataProvider>
+          <UIProvider>
+            <App />
+          </UIProvider>
+        </UserDataProvider>
+      </ThemeProvider>
+    </BrowserRouter>
   </React.StrictMode>
 );

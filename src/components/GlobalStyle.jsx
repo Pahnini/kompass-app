@@ -910,6 +910,22 @@ export default function GlobalStyle() {
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
       }
 
+      /* Loading Spinner Animation */
+      .loading-spinner {
+        fontSize: 48px;
+        marginBottom: 20px;
+        animation: spin 2s linear infinite;
+      }
+
+      @keyframes spin {
+        from {
+          transform: rotate(0deg);
+        }
+        to {
+          transform: rotate(360deg);
+        }
+      }
+
       /* Neues Desktop-Layout */
       @media (min-width: 700px) {
         .main-area {

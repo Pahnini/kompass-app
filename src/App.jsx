@@ -6,6 +6,7 @@ import Designs from "./components/Designs";
 import GlobalStyle from "./components/GlobalStyle";
 import Guide from "./components/Guide";
 import HomeScreen from "./components/HomeScreen";
+import NotFound from "./components/NotFound";
 import Notfall from "./components/Notfall";
 import OnboardingModal from "./components/OnboardingModal";
 import QuickEdit from "./components/QuickEdit";
@@ -17,12 +18,16 @@ import { helpResources } from "./data/helpResources";
 import { sidebarItems } from "./data/navigation.jsx";
 import { skillsList } from "./data/skills";
 import { templates } from "./data/templates";
+import { usePageTitle } from "./hooks/usePageTitle";
 import { useTheme } from "./hooks/useTheme";
 import { useUI } from "./hooks/useUI";
 import { useUserData } from "./hooks/useUserData";
 import { shareAchievement, shareSkill } from "./utils/shareUtils";
 
 export default function App() {
+  // Set page title based on current route
+  usePageTitle();
+
   // Use theme context
   const {
     theme,
@@ -156,6 +161,7 @@ export default function App() {
               />
             }
           />
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
       {onboarding && <OnboardingModal onClose={() => setOnboarding(false)} />}

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { showSuccessToast } from "../utils/toastUtils";
 import BackButton from "./BackButton";
 import DeleteButton from "./DeleteButton";
+import Loading from "./Loading";
 import ShareButton from "./ShareButton";
 
 export default function Skills({
@@ -13,6 +14,8 @@ export default function Skills({
   const [done, setDone] = useState(
     () => JSON.parse(localStorage.getItem("kompass_skills_done")) || {}
   );
+  const [isUploading, setIsUploading] = useState(false);
+
   useEffect(() => {
     localStorage.setItem("kompass_skills_done", JSON.stringify(done));
   }, [done]);
@@ -20,12 +23,24 @@ export default function Skills({
   function handleFile(e) {
     const file = e.target.files[0];
     if (!file) return;
+
+    setIsUploading(true);
+    if (!file.name.match(/\.(doc|docx)$/)) {
+      showSuccessToast("Bitte eine Word-Datei hochladen! 📄");
+      setIsUploading(false);
+      return;
+    }
     setWordFiles([
       ...wordFiles,
       { name: file.name, url: URL.createObjectURL(file) },
     ]);
+    setIsUploading(false);
     showSuccessToast("Datei erfolgreich hochgeladen! 📄");
   }
+  if (isUploading) {
+    return <Loading message="Datei wird hochgeladen..." />;
+  }
+
   return (
     <div className="card">
       <BackButton />

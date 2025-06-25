@@ -476,3 +476,328 @@ const filteredItems = items.filter(
 - **Wiederverwendbare Filter-Logik**: Konsistente Implementierung überall
 - **Klare Verantwortlichkeiten**: Jede Komponente hat spezifische Filtering-Aufgabe
 - **Einfache Erweiterung**: Neue Features können leicht hinzugefügt werden
+
+## Phase 7: React Router Implementation und URL-basierte Navigation
+
+### Was wurde gemacht
+
+1. **React Router Installation und Setup**
+
+   ```bash
+   npm install react-router-dom
+   ```
+
+   ```javascript
+   // main.jsx - BrowserRouter Wrapper hinzugefügt
+   <BrowserRouter>
+     <ThemeProvider>
+       <UserDataProvider>
+         <UIProvider>
+           <App />
+         </UIProvider>
+       </UserDataProvider>
+     </ThemeProvider>
+   </BrowserRouter>
+   ```
+
+2. **State-basierte Navigation durch URL-Routing ersetzt**
+
+   ```javascript
+   // Vorher: Conditional Rendering basierend auf State
+   const [current, setCurrent] = useState("home");
+   const appViews = {
+     home: <HomeScreen />,
+     skills: <Skills />,
+     deinweg: <DeinWeg />,
+   };
+   {
+     quickEdit ? appViews.quickedit : appViews[current];
+   }
+
+   // Nachher: React Router mit URL-Pfaden
+   <Routes>
+     <Route path="/" element={<HomeScreen />} />
+     <Route path="/skills" element={<Skills />} />
+     <Route path="/deinweg" element={<DeinWeg />} />
+     <Route path="/quickedit" element={<QuickEdit />} />
+   </Routes>;
+   ```
+
+3. **URL-Struktur definiert**
+
+   - `/` → HomeScreen (Startseite)
+   - `/skills` → Skills & Achtsamkeit
+   - `/deinweg` → Mein Kompass
+   - `/designs` → Designs
+   - `/notfall` → Notfall
+   - `/guide` → Guide (Psychotherapeut:in finden)
+   - `/chat` → Chatbot
+   - `/quickedit` → Schnellzugriff bearbeiten
+
+4. **Navigation-Komponenten aktualisiert**
+
+   ```javascript
+   // Sidebar.jsx - Button durch Link-Komponenten ersetzt
+   // Vorher: State-Updates
+   <button onClick={() => setCurrent(item.key)}>
+     {item.icon} {item.label}
+   </button>
+
+   // Nachher: React Router Links
+   <Link to={getPath(item.key)} className="sidebar-item">
+     <span className="icon">{item.icon}</span>
+     <span className="label">{item.label}</span>
+   </Link>
+   ```
+
+5. **BackButton-Komponente modernisiert**
+
+   ```javascript
+   // BackButton.jsx - useNavigate Hook implementiert
+   // Vorher: onBack Props
+   export default function BackButton({ onClick }) {
+     return <button onClick={onClick}>← Zurück</button>;
+   }
+
+   // Nachher: React Router Navigation
+   import { useNavigate } from "react-router-dom";
+   export default function BackButton() {
+     const navigate = useNavigate();
+     return <button onClick={() => navigate("/")}>← Zurück</button>;
+   }
+   ```
+
+6. **HomeScreen Navigation verbessert**
+
+   ```javascript
+   // HomeScreen.jsx - Programmatische Navigation
+   import { useNavigate } from "react-router-dom";
+   const navigate = useNavigate();
+
+   // QuickEdit-Button
+   <button onClick={() => navigate("/quickedit")}>
+     ⚙️ Schnellzugriff bearbeiten
+   </button>
+
+   // Quick-Access-Items
+   <div onClick={() => navigate(getPath(item.key))}>
+     {item.icon} {item.label}
+   </div>
+   ```
+
+7. **Active State Detection implementiert**
+
+   ```javascript
+   // Sidebar.jsx - URL-basierte Active States
+   import { useLocation } from "react-router-dom";
+   const location = useLocation();
+
+   className={`sidebar-item ${
+     location.pathname === getPath(item.key) ? "active" : ""
+   }`}
+   ```
+
+8. **CSS für Link-Komponenten angepasst**
+
+   ```css
+   /* GlobalStyle.jsx - Link-Styling hinzugefügt */
+   .sidebar button,
+   .sidebar a {
+     /* Gleiche Styles für Buttons und Links */
+     text-decoration: none;
+     color: inherit;
+     /* ... weitere Styles */
+   }
+   ```
+
+### Warum wurde das gemacht
+
+- **Moderne Web-Standards**: URL-basierte Navigation entspricht Benutzererwartungen
+- **Browser-Integration**: Back/Forward-Buttons funktionieren natürlich
+- **Bookmarkable URLs**: Nutzer können spezifische Seiten bookmarken und teilen
+- **SEO-Bereitschaft**: Suchmaschinen können einzelne Seiten indexieren
+- **Entwicklerfreundlichkeit**: Standard React-Patterns für Routing
+
+## Technische Verbesserungen - React Router System
+
+### Browser History Integration
+
+```javascript
+// React Router nutzt Browser's History API
+window.history.pushState(); // Für neue Navigation
+window.history.back(); // Für Browser-Back-Button
+window.history.forward(); // Für Browser-Forward-Button
+```
+
+### Navigation Flow
+
+```javascript
+// Vollständiger Navigationsfluss
+User klickt Link → React Router verhindert Page Reload
+                → URL wird aktualisiert
+                → Route Matching findet stattende Komponente
+                → Komponente wird gerendert
+                → Browser History wird aktualisiert
+```
+
+### Path Conversion Logic
+
+```javascript
+// navigation.jsx - Key zu URL Mapping
+const getPath = (key) => (key === "home" ? "/" : `/${key}`);
+
+// Beispiele:
+"home" → "/"
+"skills" → "/skills"
+"deinweg" → "/deinweg"
+"quickedit" → "/quickedit"
+```
+
+### Component Props Cleanup
+
+```javascript
+// Alle onBack Props entfernt
+// Vorher: Jede Komponente brauchte onBack
+<DeinWeg onBack={() => setCurrentPage("home")} />
+
+// Nachher: BackButton ist selbstständig
+<DeinWeg /> // Keine Navigation-Props nötig
+```
+
+## Code-Cleanup und Architektur-Verbesserungen
+
+### UIContext Vereinfachung
+
+```javascript
+// UIContext.jsx - Unused Navigation State entfernt
+// Entfernt:
+const [currentPage, setCurrentPage] = useState("home");
+const [quickEdit, setQuickEdit] = useState(false);
+const [showGuide, setShowGuide] = useState(false);
+const [showChat, setShowChat] = useState(false);
+function handleSidebarNav(key) {
+  /* ... */
+}
+
+// Behalten:
+const [showWelcome, setShowWelcome] = useState(false);
+const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+const [showDS, setShowDS] = useState(() => !storageService.getDsAccepted());
+const [onboarding, setOnboarding] = useState(
+  () => !storageService.getOnboardingCompleted()
+);
+```
+
+### App.jsx Prop-Vereinfachung
+
+```javascript
+// App.jsx - Weniger Props durch Router
+// Vorher: Viele onBack und Navigation Props
+<DeinWeg onBack={() => setCurrentPage("home")} />
+<Skills onBack={() => setCurrentPage("home")} />
+<QuickEdit onBack={() => { setCurrentPage("home"); setQuickEdit(false); }} />
+
+// Nachher: Nur Daten-Props
+<DeinWeg goals={goals} setGoals={setGoals} /* ... */ />
+<Skills shareSkill={shareSkill} /* ... */ />
+<QuickEdit quickItems={favorites} /* ... */ />
+```
+
+### Unused Pages Folder Cleanup
+
+```javascript
+// src/pages/ Ordner komplett entfernt
+// Waren nur Wrapper-Komponenten:
+export default function ChatPage() {
+  return <Chatbot />;
+}
+
+// React Router verwendet Komponenten direkt:
+<Route path="/chat" element={<Chatbot />} />;
+```
+
+## Ergebnisse der React Router Implementation
+
+### Benutzerfreundlichkeit
+
+- **✅ Bookmarkable URLs**: Nutzer können `/skills`, `/deinweg` etc. bookmarken
+- **✅ Browser Navigation**: Back/Forward-Buttons funktionieren korrekt
+- **✅ Shareable Links**: Direkte Links zu spezifischen App-Bereichen
+- **✅ Refresh Persistence**: Seite bleibt nach Browser-Refresh auf aktueller Route
+- **✅ No WelcomeScreen Interference**: Direkte URL-Navigation umgeht WelcomeScreen
+
+### Entwicklerfreundlichkeit
+
+- **✅ Standard Patterns**: Verwendet React Router Best Practices
+- **✅ Predictable Behavior**: URL entspricht immer angezeigtem Inhalt
+- **✅ Easy Debugging**: Aktueller Zustand ist in URL sichtbar
+- **✅ Better Testing**: Routes können unabhängig getestet werden
+- **✅ Clean Architecture**: Navigation getrennt von Business Logic
+
+### Code-Qualität
+
+- **✅ Reduced Complexity**: Keine manuelle Navigation State Management
+- **✅ Fewer Props**: onBack Props aus allen Komponenten entfernt
+- **✅ Cleaner UIContext**: 50+ Zeilen unused Code entfernt
+- **✅ Industry Standard**: Folgt React Router Konventionen
+- **✅ Future Ready**: Bereit für erweiterte Routing-Features
+
+### Performance
+
+- **✅ No Page Reloads**: SPA-Navigation ohne Full-Page-Refreshes
+- **✅ Efficient Re-renders**: Nur betroffene Komponenten werden neu gerendert
+- **✅ Browser Optimization**: Nutzt native Browser History API
+- **✅ Memory Efficient**: Keine zusätzlichen State-Variablen für Navigation
+
+## Architektur-Transformation Übersicht
+
+### Vorher: State-basierte Navigation
+
+```javascript
+// Komplexe State-Verwaltung
+const [currentPage, setCurrent] = useState("home");
+const [quickEdit, setQuickEdit] = useState(false);
+
+// Conditional Rendering
+{
+  quickEdit ? appViews.quickedit : appViews[currentPage];
+}
+
+// Manuelle Navigation
+function handleSidebarNav(key) {
+  setCurrentPage(key);
+  setIsSidebarOpen(false);
+  // ... weitere State-Updates
+}
+```
+
+### Nachher: URL-basierte Navigation
+
+```javascript
+// React Router Deklaration
+<Routes>
+  <Route path="/" element={<HomeScreen />} />
+  <Route path="/skills" element={<Skills />} />
+</Routes>;
+
+// Einfache Navigation
+const navigate = useNavigate();
+navigate("/skills");
+
+// Automatische Active States
+const location = useLocation();
+const isActive = location.pathname === "/skills";
+```
+
+## Fazit der React Router Implementation
+
+Die Implementation von React Router hat die KompassApp von einer einfachen Single-Page-Application zu einer professionellen Multi-Page-Application mit modernen Web-Standards transformiert. Die URL-basierte Navigation bietet eine deutlich bessere Benutzererfahrung und folgt Industrie-Standards für React-Anwendungen.
+
+**Wichtigste Verbesserungen:**
+
+- **Professionelle Navigation**: Browser-Integration und bookmarkable URLs
+- **Saubere Architektur**: Trennung von Routing und Business Logic
+- **Wartbare Codebase**: Standard React Router Patterns
+- **Zukunftssicher**: Bereit für erweiterte Features wie Route Guards, Lazy Loading, etc.
+
+Die Refaktorierung hat erfolgreich alle ursprünglichen Architektur-Probleme gelöst und eine solide Grundlage für zukünftige Entwicklungen geschaffen.

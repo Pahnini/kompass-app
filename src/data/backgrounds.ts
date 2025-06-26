@@ -1,6 +1,11 @@
-// Background options for the application
+export type BackgroundName = "Clean" | "Grün Verlauf";
 
-export const backgrounds = [
+export type BackgroundOptions = {
+  name: BackgroundName;
+  url: string;
+};
+
+export const backgrounds: BackgroundOptions[] = [
   { name: "Clean", url: "" },
   {
     name: "Grün Verlauf",

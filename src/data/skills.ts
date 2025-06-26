@@ -1,6 +1,8 @@
 // Skills list for the application
 
-export const skillsList = [
+export type Skill = string;
+
+export const skillsList: Skill[] = [
   "Atemübung: 4-7-8",
   "Dankbarkeitstagebuch",
   "Achtsamkeitsübung (Bodyscan)",

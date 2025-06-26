@@ -1,6 +1,9 @@
 // Help resources and emergency contact websites
-
-export const helpResources = [
+export type HelpResource = {
+  name: string;
+  url: string;
+};
+export const helpResources: HelpResource[] = [
   { name: "Nummer gegen Kummer", url: "https://www.nummergegenkummer.de/" },
   {
     name: "KJP Harburg (Asklepios)",

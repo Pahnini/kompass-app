@@ -1,6 +1,11 @@
 // Emoji list with labels for mood tracking
 
-export const emojiList = [
+export type Emoji = {
+  emoji: string;
+  label: string;
+};
+
+export const emojiList: Emoji[] = [
   { emoji: "😃", label: "Glücklich" },
   { emoji: "😐", label: "Neutral" },
   { emoji: "😢", label: "Traurig" },

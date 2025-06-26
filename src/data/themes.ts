@@ -1,6 +1,17 @@
 // Theme definitions for the application
 
-export const modernBlueGrey = {
+export type ThemeName = "Modern Blue-Grey" | "Asklepios" | "Classic" | "Night";
+
+export interface Theme {
+  name: ThemeName;
+  bg: string;
+  primary: string;
+  accent: string;
+  font: string;
+  dark: boolean;
+}
+
+export const modernBlueGrey: Theme = {
   name: "Modern Blue-Grey",
   bg: "#f0f4f8",
   primary: "#2f4f4f",
@@ -9,7 +20,7 @@ export const modernBlueGrey = {
   dark: false,
 };
 
-export const themes = [
+export const themes: Theme[] = [
   modernBlueGrey,
   {
     name: "Asklepios",

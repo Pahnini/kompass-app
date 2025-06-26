@@ -1,6 +1,8 @@
 // Journal entry templates for the application
 
-export const templates = [
+export type Template = string;
+
+export const templates: Template[] = [
   "Ich bin heute stolz auf mich, weil...",
   "Heute habe ich etwas Neues ausprobiert: ...",
   "Ich habe mir Zeit für mich genommen, indem ich...",

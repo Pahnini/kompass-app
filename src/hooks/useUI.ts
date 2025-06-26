@@ -1,11 +1,11 @@
 import { useContext } from "react";
-import UIContext from "../context/UIContext";
+import UIContext, { UIContextType } from "../context/UIContext";
 
 /**
  * Custom hook to use the UI context
- * @returns {Object} UI context value
+ * @returns UI context value
  */
-export function useUI() {
+export function useUI(): UIContextType {
   const context = useContext(UIContext);
   if (context === undefined) {
     throw new Error("useUI must be used within a UIProvider");

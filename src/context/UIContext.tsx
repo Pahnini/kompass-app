@@ -1,25 +1,45 @@
-import { createContext, useEffect, useState } from "react";
+import React, { createContext, ReactNode, useEffect, useState } from "react";
 import * as storageService from "../services/storageService";
 
-// Create the context
-const UIContext = createContext();
+// Define the context type
+export interface UIContextType {
+  showWelcome: boolean;
+  setShowWelcome: (show: boolean) => void;
+  isSidebarOpen: boolean;
+  setIsSidebarOpen: (open: boolean) => void;
+  showDS: boolean;
+  setShowDS: (show: boolean) => void;
+  onboarding: boolean;
+  setOnboarding: (show: boolean) => void;
+  toast: string;
+  showToast: (msg: string) => void;
+}
+
+// Create the context with a default undefined value
+const UIContext = createContext<UIContextType | undefined>(undefined);
+
+interface UIProviderProps {
+  children: ReactNode;
+}
 
 /**
  * UI state provider component
  * Manages UI-related state like modals, sidebar, etc.
  */
-export function UIProvider({ children }) {
+export function UIProvider({ children }: UIProviderProps): React.ReactElement {
   // UI state - WelcomeScreen should only show on first visit to root path
-  const [showWelcome, setShowWelcome] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [showDS, setShowDS] = useState(() => !storageService.getDsAccepted());
-  const [onboarding, setOnboarding] = useState(
+  const [showWelcome, setShowWelcome] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  const [showDS, setShowDS] = useState<boolean>(
+    () => !storageService.getDsAccepted()
+  );
+  const [onboarding, setOnboarding] = useState<boolean>(
     () => !storageService.getOnboardingCompleted()
   );
-  const [toast, setToast] = useState("");
+  const [toast, setToast] = useState<string>("");
 
   // Show toast message
-  function showToast(msg) {
+  function showToast(msg: string): void {
     setToast(msg);
     setTimeout(() => setToast(""), 1200);
   }
@@ -42,7 +62,7 @@ export function UIProvider({ children }) {
   }, []);
 
   // Context value
-  const value = {
+  const value: UIContextType = {
     showWelcome,
     setShowWelcome,
     isSidebarOpen,

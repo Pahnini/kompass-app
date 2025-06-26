@@ -1,4 +1,11 @@
-export default function Loading({ message = "Lädt..." }) {
+import { JSX } from "react";
+
+type LoadingProps = {
+  message: string;
+};
+export default function Loading({
+  message = "Lädt...",
+}: LoadingProps): JSX.Element {
   return (
     <div className="card" style={{ textAlign: "center", padding: "40px 20px" }}>
       <div className="loading-spinner">🧭</div>

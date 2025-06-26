@@ -1,10 +1,15 @@
-import { useEffect, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 import Loading from "./Loading";
+
+type SmartLoadingProps = {
+  message?: string;
+  delay?: number;
+};
 
 export default function SmartLoading({
   message = "Seite wird geladen...",
   delay = 400, // Only show loading after 200ms
-}) {
+}: SmartLoadingProps): JSX.Element | null {
   const [showLoading, setShowLoading] = useState(false);
 
   useEffect(() => {

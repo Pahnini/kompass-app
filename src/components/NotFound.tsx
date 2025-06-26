@@ -1,6 +1,7 @@
+import { JSX } from "react";
 import { useNavigate } from "react-router-dom";
 
-export default function NotFound() {
+export default function NotFound(): JSX.Element {
   const navigate = useNavigate();
 
   return (

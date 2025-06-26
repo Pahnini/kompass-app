@@ -1,17 +1,39 @@
-import React from "react";
+import React, { ErrorInfo } from "react";
 
-class ErrorBoundary extends React.Component {
-  constructor(props) {
+// Add type declaration for Vite's import.meta.env
+declare global {
+  interface ImportMeta {
+    env: {
+      DEV: boolean;
+      PROD: boolean;
+      MODE: string;
+      [key: string]: any;
+    };
+  }
+}
+
+type Props = {
+  children: React.ReactNode;
+};
+
+type State = {
+  hasError: boolean;
+  error: Error | null;
+  errorInfo: React.ErrorInfo | null;
+};
+
+class ErrorBoundary extends React.Component<Props, State> {
+  constructor(props: Props) {
     super(props);
     this.state = { hasError: false, error: null, errorInfo: null };
   }
 
-  static getDerivedStateFromError() {
+  static getDerivedStateFromError(): Partial<State> {
     // Update state so the next render will show the fallback UI
     return { hasError: true };
   }
 
-  componentDidCatch(error, errorInfo) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     // Log error details
     console.error("ErrorBoundary caught an error:", error, errorInfo);
     this.setState({
@@ -91,7 +113,7 @@ class ErrorBoundary extends React.Component {
               >
                 {this.state.error && this.state.error.toString()}
                 <br />
-                {this.state.errorInfo.componentStack}
+                {this.state.errorInfo?.componentStack}
               </pre>
             </details>
           )}

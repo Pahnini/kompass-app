@@ -1,6 +1,7 @@
+import React from "react";
 import BackButton from "./BackButton";
 
-export default function Chatbot() {
+export default function Chatbot(): React.ReactElement {
   return (
     <div className="card info-card">
       <BackButton />

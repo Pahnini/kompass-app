@@ -1,5 +1,12 @@
+import React from "react";
 
-export default function OnboardingModal({ onClose }) {
+interface OnboardingModalProps {
+  onClose: () => void;
+}
+
+export default function OnboardingModal({
+  onClose,
+}: OnboardingModalProps): React.ReactElement {
   return (
     <div className="ds-modal">
       <div className="ds-box" style={{ maxWidth: 500, textAlign: "left" }}>

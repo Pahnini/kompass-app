@@ -1,12 +1,21 @@
 import { Compass } from "lucide-react";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { SidebarItem } from "../data/navigation";
+
+interface HomeScreenProps {
+  username: string;
+  setUsername: (username: string) => void;
+  quickItems: string[];
+  allItems: SidebarItem[];
+}
 
 export default function HomeScreen({
   username,
   setUsername,
   quickItems,
   allItems,
-}) {
+}: HomeScreenProps): React.ReactElement {
   const navigate = useNavigate();
 
   // Filter allItems to only show selected favorites
@@ -15,7 +24,7 @@ export default function HomeScreen({
   );
 
   // Convert item key to path
-  const getPath = (key) => (key === "home" ? "/" : `/${key}`);
+  const getPath = (key: string): string => (key === "home" ? "/" : `/${key}`);
 
   return (
     <div className="card">
@@ -32,15 +41,17 @@ export default function HomeScreen({
             <input
               type="text"
               placeholder="Wie soll ich dich nennen?"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && e.target.value.trim()) {
-                  setUsername(e.target.value.trim());
+              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+                const input = e.currentTarget;
+                if (e.key === "Enter" && input.value.trim()) {
+                  setUsername(input.value.trim());
                 }
               }}
             />
             <button
-              onClick={(e) => {
-                const input = e.target.previousElementSibling;
+              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
+                const button = e.currentTarget;
+                const input = button.previousElementSibling as HTMLInputElement;
                 if (input.value.trim()) {
                   setUsername(input.value.trim());
                 }

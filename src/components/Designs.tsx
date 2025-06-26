@@ -1,4 +1,16 @@
+import React from "react";
+import { BackgroundOptions } from "../data/backgrounds";
+import { Theme } from "../data/themes";
 import BackButton from "./BackButton";
+
+interface DesignsProps {
+  theme: Theme;
+  setTheme: (theme: Theme) => void;
+  background: BackgroundOptions;
+  setBackground: (background: BackgroundOptions) => void;
+  themes: Theme[];
+  backgrounds: BackgroundOptions[];
+}
 
 export default function Designs({
   theme,
@@ -7,7 +19,7 @@ export default function Designs({
   setBackground,
   themes,
   backgrounds,
-}) {
+}: DesignsProps): React.ReactElement {
   return (
     <div className="card">
       <BackButton />

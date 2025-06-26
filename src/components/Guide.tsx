@@ -1,6 +1,7 @@
+import React from "react";
 import BackButton from "./BackButton";
 
-export default function Guide() {
+export default function Guide(): React.ReactElement {
   return (
     <div className="card">
       <BackButton />

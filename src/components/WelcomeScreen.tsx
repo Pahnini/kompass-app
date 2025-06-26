@@ -1,7 +1,14 @@
+import React from "react";
 import compassImg from "../assets/kompass-welcome.png";
 import "./WelcomeScreen.css";
 
-export default function WelcomeScreen({ onContinue }) {
+interface WelcomeScreenProps {
+  onContinue: () => void;
+}
+
+export default function WelcomeScreen({
+  onContinue,
+}: WelcomeScreenProps): React.ReactElement {
   return (
     <div className="welcome-screen">
       <div className="welcome-content">

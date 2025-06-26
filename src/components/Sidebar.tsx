@@ -1,8 +1,21 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
+import { SidebarItem } from "../data/navigation";
 
-export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }) {
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 700);
+interface SidebarProps {
+  items: SidebarItem[];
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+  favorites?: string[];
+}
+
+export default function Sidebar({
+  items,
+  isOpen,
+  setIsOpen,
+  favorites = [],
+}: SidebarProps): React.ReactElement {
+  const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth > 700);
   const location = useLocation();
 
   useEffect(() => {
@@ -19,21 +32,20 @@ export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }) {
       item.key === "quickedit"
   );
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
-  const handleClick = (key) => {
-    setCurrent(key);
-      if (!isDesktop) {
+  const toggleSidebar = (): void => setIsOpen(!isOpen);
+  const handleClick = (): void => {
+    if (!isDesktop) {
       setTimeout(() => setIsOpen(false), 300);
     }
- };
+  };
 
   // Convert item key to path
-  const getPath = (key) => (key === "home" ? "/" : `/${key}`);
+  const getPath = (key: string): string => (key === "home" ? "/" : `/${key}`);
 
   return (
     <>
       {!isDesktop && (
-              <button
+        <button
           className="sidebar-toggle-mobile"
           onClick={toggleSidebar}
           aria-label="Menü öffnen"

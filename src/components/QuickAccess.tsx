@@ -1,5 +1,17 @@
+import React from "react";
+import { SidebarItem } from "../data/navigation";
 
-export default function QuickAccess({ items, quickItems, setCurrentPage }) {
+interface QuickAccessProps {
+  items: SidebarItem[];
+  quickItems: string[];
+  setCurrentPage: (page: string) => void;
+}
+
+export default function QuickAccess({
+  items,
+  quickItems,
+  setCurrentPage,
+}: QuickAccessProps): React.ReactElement {
   return (
     <div className="quickaccess">
       {/* Dynamische Quick-Items */}

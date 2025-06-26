@@ -1,6 +1,14 @@
+import React from "react";
+import { HelpResource } from "../data/helpResources";
 import BackButton from "./BackButton";
 
-export default function Notfall({ helpResources }) {
+interface NotfallProps {
+  helpResources: HelpResource[];
+}
+
+export default function Notfall({
+  helpResources,
+}: NotfallProps): React.ReactElement {
   return (
     <div className="card notfall-card">
       <BackButton />
@@ -45,7 +53,9 @@ export default function Notfall({ helpResources }) {
           <input
             readOnly
             value={window.location.href}
-            onFocus={(e) => e.target.select()}
+            onFocus={(e: React.FocusEvent<HTMLInputElement>) =>
+              e.target.select()
+            }
             style={{ width: "80%" }}
           />{" "}
           <button

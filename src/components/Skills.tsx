@@ -1,27 +1,47 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Skill } from "../data/skills";
 import { showSuccessToast } from "../utils/toastUtils";
 import BackButton from "./BackButton";
 import DeleteButton from "./DeleteButton";
 import Loading from "./Loading";
 import ShareButton from "./ShareButton";
 
+interface WordFile {
+  name: string;
+  url: string;
+}
+
+interface SkillsProps {
+  shareSkill: (skill: string) => void;
+  wordFiles: WordFile[];
+  setWordFiles: (files: WordFile[]) => void;
+  skillsList: Skill[];
+}
+
+interface SkillsDoneState {
+  [key: number]: boolean;
+}
+
 export default function Skills({
   shareSkill,
   wordFiles,
   setWordFiles,
   skillsList,
-}) {
-  const [done, setDone] = useState(
-    () => JSON.parse(localStorage.getItem("kompass_skills_done")) || {}
+}: SkillsProps): React.ReactElement {
+  const [done, setDone] = useState<SkillsDoneState>(
+    () => JSON.parse(localStorage.getItem("kompass_skills_done") || "{}") || {}
   );
-  const [isUploading, setIsUploading] = useState(false);
+  const [isUploading, setIsUploading] = useState<boolean>(false);
 
   useEffect(() => {
     localStorage.setItem("kompass_skills_done", JSON.stringify(done));
   }, [done]);
 
-  function handleFile(e) {
-    const file = e.target.files[0];
+  function handleFile(e: React.ChangeEvent<HTMLInputElement>): void {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const file = files[0];
     if (!file) return;
 
     setIsUploading(true);
@@ -56,7 +76,10 @@ export default function Skills({
             />
             <span className="text-content">{skill}</span>
             <div className="actions">
-              <ShareButton onClick={() => shareSkill(skill)} />
+              <ShareButton
+                onClick={() => shareSkill(skill)}
+                ariaLabel="Skill teilen"
+              />
             </div>
           </li>
         ))}

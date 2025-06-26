@@ -1,7 +1,19 @@
+import React from "react";
+import { SidebarItem } from "../data/navigation";
 import BackButton from "./BackButton";
 
-export default function QuickEdit({ quickItems, setQuickItems, allItems }) {
-  function toggleQuick(key) {
+interface QuickEditProps {
+  quickItems: string[];
+  setQuickItems: (items: string[]) => void;
+  allItems: SidebarItem[];
+}
+
+export default function QuickEdit({
+  quickItems,
+  setQuickItems,
+  allItems,
+}: QuickEditProps): React.ReactElement {
+  function toggleQuick(key: string): void {
     setQuickItems(
       quickItems.includes(key)
         ? quickItems.filter((f) => f !== key)

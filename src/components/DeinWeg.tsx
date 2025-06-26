@@ -1,9 +1,30 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
+import { Emoji } from "../data/emojis";
+import {
+  Achievement,
+  CalendarNotes,
+  Goal,
+  Symptoms,
+} from "../services/storageService";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import BackButton from "./BackButton";
 import DeleteButton from "./DeleteButton";
 import ShareButton from "./ShareButton";
 
+interface DeinWegProps {
+  goals: Goal[];
+  setGoals: (goals: Goal[]) => void;
+  achievements: Achievement[];
+  setAchievements: (achievements: Achievement[]) => void;
+  calendarNotes: CalendarNotes;
+  setCalendarNotes: (notes: CalendarNotes) => void;
+  symptoms: Symptoms;
+  setSymptoms: (symptoms: Symptoms) => void;
+  shareAchievement: (achievement: Achievement) => void;
+  showReminder?: boolean;
+  emojiList: Emoji[];
+  templates?: string[];
+}
 export default function DeinWeg({
   goals,
   setGoals,
@@ -17,7 +38,7 @@ export default function DeinWeg({
   showReminder,
   emojiList,
   templates,
-}) {
+}: DeinWegProps): React.ReactElement {
   const [goalInput, setGoalInput] = useState("");
   const [achievementInput, setAchievementInput] = useState("");
   const [selectedDate, setSelectedDate] = useState(
@@ -25,22 +46,36 @@ export default function DeinWeg({
   );
   const [emoji, setEmoji] = useState("");
   const [noteText, setNoteText] = useState("");
-  const [symptomScore, setSymptomScore] = useState(
-    () => symptoms[selectedDate] || 0
-  );
+  const [symptomScore, setSymptomScore] = useState(() => {
+    const dateSymptoms = symptoms[selectedDate];
+    return dateSymptoms && dateSymptoms.length > 0
+      ? dateSymptoms[0].intensity
+      : 0;
+  });
   const [justSelectedEmoji, setJustSelectedEmoji] = useState("");
 
   const addGoal = () => {
     if (goalInput.trim())
-      setGoals([...goals, { text: goalInput, done: false }]);
+      setGoals([
+        ...goals,
+        {
+          id: Date.now().toString(),
+          text: goalInput,
+          completed: false,
+          date: new Date().toISOString().split("T")[0],
+        },
+      ]);
     setGoalInput("");
   };
-  const toggleGoal = (i) =>
-    setGoals(goals.map((g, idx) => (idx === i ? { ...g, done: !g.done } : g)));
+  const toggleGoal = (i: number): void =>
+    setGoals(
+      goals.map((g, idx) => (idx === i ? { ...g, completed: !g.completed } : g))
+    );
   const addAchievement = () => {
     if (achievementInput.trim())
       setAchievements([
         {
+          id: Date.now().toString(),
           text: achievementInput,
           date: new Date().toISOString().split("T")[0],
         },
@@ -50,41 +85,57 @@ export default function DeinWeg({
   };
 
   useEffect(() => {
-    const note = calendarNotes[selectedDate] || { emoji: "", text: "" };
-    setEmoji(note.emoji);
+    const note = calendarNotes[selectedDate] || {
+      text: "",
+      date: selectedDate,
+    };
     setNoteText(note.text);
-    setSymptomScore(symptoms[selectedDate] || 0);
+
+    const dateSymptoms = symptoms[selectedDate];
+    setSymptomScore(
+      dateSymptoms && dateSymptoms.length > 0 ? dateSymptoms[0].intensity : 0
+    );
   }, [selectedDate, calendarNotes, symptoms]);
 
   const saveNote = () => {
     // Validation: Check if there's any meaningful content
-    if (!emoji && !noteText.trim() && symptomScore === 0) {
-      showErrorToast(
-        "Bitte füge mindestens ein Emoji, eine Notiz oder einen Symptom-Score hinzu"
-      );
+    if (!noteText.trim() && symptomScore === 0) {
+      showErrorToast("Bitte füge eine Notiz oder einen Symptom-Score hinzu");
       return;
     }
 
+    // Update calendar notes
     const updatedCalendarNotes = {
       ...calendarNotes,
-      [selectedDate]: { emoji, text: noteText },
+      [selectedDate]: { text: noteText, date: selectedDate },
     };
     setCalendarNotes(updatedCalendarNotes);
-    const updatedSymptoms = { ...symptoms, [selectedDate]: symptomScore };
+
+    // Update symptoms
+    const updatedSymptoms = {
+      ...symptoms,
+      [selectedDate]: [
+        {
+          name: "General",
+          intensity: symptomScore,
+          date: selectedDate,
+        },
+      ],
+    };
     setSymptoms(updatedSymptoms);
 
     showSuccessToast("Tagebucheintrag gespeichert! 📝");
   };
 
   // Helper function to format date in German format (DD.MM.YYYY)
-  const formatDateGerman = (dateString) => {
+  const formatDateGerman = (dateString: string): string => {
     const [year, month, day] = dateString.split("-");
     return `${day}.${month}.${year}`;
   };
 
   // Get current note for display
   const currentNote = calendarNotes[selectedDate];
-  const hasCurrentNote = currentNote && (currentNote.emoji || currentNote.text);
+  const hasCurrentNote = currentNote && currentNote.text;
 
   return (
     <div className="card">
@@ -96,8 +147,9 @@ export default function DeinWeg({
         </div>
       )}
       <div className="stat-banner">
-        🎯 Diese Woche geschafft: <b>{goals.filter((g) => g.done).length}</b>{" "}
-        Ziel{goals.filter((g) => g.done).length !== 1 && "e"}!
+        🎯 Diese Woche geschafft:{" "}
+        <b>{goals.filter((g) => g.completed).length}</b> Ziel
+        {goals.filter((g) => g.completed).length !== 1 && "e"}!
       </div>
       <div className="section">
         <h3>Symptom-Tagebuch</h3>
@@ -123,9 +175,9 @@ export default function DeinWeg({
             <h4 style={{ margin: "0 0 8px 0", color: "#2c5aa0" }}>
               Gespeicherter Eintrag für {formatDateGerman(selectedDate)}:
             </h4>
-            {currentNote.emoji && (
+            {emoji && (
               <div style={{ fontSize: "24px", marginBottom: "5px" }}>
-                {currentNote.emoji}
+                {emoji}
               </div>
             )}
             {currentNote.text && (
@@ -133,9 +185,9 @@ export default function DeinWeg({
                 "{currentNote.text}"
               </div>
             )}
-            {symptoms[selectedDate] !== undefined && (
+            {symptoms[selectedDate] && symptoms[selectedDate].length > 0 && (
               <div style={{ marginTop: "5px", color: "#666" }}>
-                Symptom-Score: {symptoms[selectedDate]}/10
+                Symptom-Score: {symptoms[selectedDate][0].intensity}/10
               </div>
             )}
           </div>
@@ -156,35 +208,37 @@ export default function DeinWeg({
           {symptomScore}
         </span>
       </div>
-      <div className="emoji-row">
-        {emojiList.map((em) => (
-          <span
-            key={em.emoji}
-            className={`emoji-selector ${emoji === em.emoji ? "active" : ""} ${
-              justSelectedEmoji === em.emoji ? "just-selected" : ""
-            }`}
-            onClick={() => {
-              setEmoji(em.emoji);
-              setJustSelectedEmoji(em.emoji);
-              // Remove animation class after animation completes
-              setTimeout(() => setJustSelectedEmoji(""), 300);
-            }}
-            title={em.label}
-            aria-label={em.label}
-            tabIndex={0}
-            onKeyDown={(e) => {
-              if (e.key === "Enter" || e.key === " ") {
-                e.preventDefault();
+      {emojiList && (
+        <div className="emoji-row">
+          {emojiList.map((em) => (
+            <span
+              key={em.emoji}
+              className={`emoji-selector ${
+                emoji === em.emoji ? "active" : ""
+              } ${justSelectedEmoji === em.emoji ? "just-selected" : ""}`}
+              onClick={() => {
                 setEmoji(em.emoji);
                 setJustSelectedEmoji(em.emoji);
+                // Remove animation class after animation completes
                 setTimeout(() => setJustSelectedEmoji(""), 300);
-              }
-            }}
-          >
-            {em.emoji}
-          </span>
-        ))}
-      </div>
+              }}
+              title={em.label}
+              aria-label={em.label}
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  setEmoji(em.emoji);
+                  setJustSelectedEmoji(em.emoji);
+                  setTimeout(() => setJustSelectedEmoji(""), 300);
+                }
+              }}
+            >
+              {em.emoji}
+            </span>
+          ))}
+        </div>
+      )}
       <textarea
         value={noteText}
         onChange={(e) => setNoteText(e.target.value)}
@@ -207,10 +261,10 @@ export default function DeinWeg({
         </div>
         <ul>
           {goals.map((g, i) => (
-            <li key={i} className={g.done ? "done" : ""}>
+            <li key={i} className={g.completed ? "done" : ""}>
               <input
                 type="checkbox"
-                checked={g.done}
+                checked={g.completed}
                 onChange={() => toggleGoal(i)}
               />
               <span className="text-content">{g.text}</span>
@@ -226,17 +280,19 @@ export default function DeinWeg({
       </div>
       <div className="section">
         <h3>Erfolge</h3>
-        <div className="templates">
-          {templates.map((value, i) => (
-            <button
-              key={i}
-              className="template-btn"
-              onClick={() => setAchievementInput(value)}
-            >
-              {value}
-            </button>
-          ))}
-        </div>
+        {templates && (
+          <div className="templates">
+            {templates.map((value, i) => (
+              <button
+                key={i}
+                className="template-btn"
+                onClick={() => setAchievementInput(value)}
+              >
+                {value}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="form-row">
           <input
             value={achievementInput}
@@ -252,7 +308,10 @@ export default function DeinWeg({
                 {formatDateGerman(achievement.date)}: {achievement.text}
               </span>
               <div className="actions">
-                <ShareButton onClick={() => shareAchievement(achievement)} />
+                <ShareButton
+                  onClick={() => shareAchievement(achievement)}
+                  ariaLabel="Erfolg teilen"
+                />
                 <DeleteButton
                   onDelete={() =>
                     setAchievements(achievements.filter((_, idx) => idx !== i))

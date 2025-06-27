@@ -1,4 +1,13 @@
-/**
+/**import { Goal, Achievement, CalendarNotes, Symptoms } from "../types/userdata";
+ * import type {
+  Goal,
+  Achievement,
+  CalendarNotes,
+  Symptoms,
+  WordFile,
+  UserData
+} from "../types";
+
  * Storage service for handling localStorage operations
  * Centralizes all storage-related code for better maintainability
  */

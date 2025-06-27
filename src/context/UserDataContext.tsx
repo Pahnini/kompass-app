@@ -1,11 +1,14 @@
 import React, { createContext, ReactNode, useState } from "react";
 import * as storageService from "../services/storageService";
-import {
+import type {
+  Goal,
   Achievement,
   CalendarNotes,
-  Goal,
   Symptoms,
-} from "../services/storageService";
+  WordFile,
+  UserData
+} from "../types";
+
 
 // Define the context type
 export interface UserDataContextType {
@@ -21,8 +24,8 @@ export interface UserDataContextType {
   setSymptoms: (symptoms: Symptoms) => void;
   favorites: string[];
   setFavorites: (favorites: string[]) => void;
-  wordFiles: any[]; // TODO: Define proper type when implementing word file functionality
-  setWordFiles: (files: any[]) => void;
+  wordFiles: WordFile[]; // TODO: Define proper type when implementing word file functionality
+  setWordFiles: (files: WordFile[]) => void;
   hasGoalsReminder: boolean;
 }
 
@@ -121,3 +124,10 @@ export function UserDataProvider({
 }
 
 export default UserDataContext;
+export function useUserData(): UserDataContextType {
+  const context = React.useContext(UserDataContext);
+  if (!context) {
+    throw new Error("useUserData must be used within a UserDataProvider");
+  }
+  return context;
+}

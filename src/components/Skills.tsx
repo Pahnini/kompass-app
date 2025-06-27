@@ -5,6 +5,7 @@ import BackButton from "./BackButton";
 import DeleteButton from "./DeleteButton";
 import Loading from "./Loading";
 import ShareButton from "./ShareButton";
+import type { WordFile } from "../types";
 
 interface WordFile {
   name: string;

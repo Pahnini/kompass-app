@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Skill } from "../data/skills";
+import type { Skill, WordFile } from "../types";
 import { showSuccessToast } from "../utils/toastUtils";
 import BackButton from "./BackButton";
 import DeleteButton from "./DeleteButton";
 import Loading from "./Loading";
 import ShareButton from "./ShareButton";
-import type { WordFile } from "../types";
 
-interface WordFile {
-  name: string;
-  url: string;
-}
+
 
 interface SkillsProps {
   shareSkill: (skill: string) => void;
@@ -52,9 +48,14 @@ export default function Skills({
       return;
     }
     setWordFiles([
-      ...wordFiles,
-      { name: file.name, url: URL.createObjectURL(file) },
-    ]);
+  ...wordFiles,
+  {
+    id: crypto.randomUUID(), // oder Date.now().toString()
+    name: file.name,
+    file: file,
+    url: URL.createObjectURL(file),
+  },
+]);
     setIsUploading(false);
     showSuccessToast("Datei erfolgreich hochgeladen! 📄");
   }

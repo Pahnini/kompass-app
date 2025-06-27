@@ -1,14 +1,17 @@
 // Theme definitions for the application
-
+// import type { Theme } from "../data/themes";
 export type ThemeName = "Modern Blue-Grey" | "Asklepios" | "Classic" | "Night";
 
-export interface Theme {
+export type Theme = {
   name: ThemeName;
   bg: string;
   primary: string;
   accent: string;
+  secondary: string;
   font: string;
   dark: boolean;
+  text: string;
+  background: string;
 }
 
 export const modernBlueGrey: Theme = {
@@ -18,6 +21,9 @@ export const modernBlueGrey: Theme = {
   accent: "#5dade2",
   font: "'Poppins', sans-serif",
   dark: false,
+  secondary: "",
+  text: "",
+  background: ""
 };
 
 export const themes: Theme[] = [
@@ -29,6 +35,9 @@ export const themes: Theme[] = [
     accent: "#69c86a",
     font: "'Poppins', Arial, sans-serif",
     dark: false,
+    secondary: "",
+    text: "",
+    background: ""
   },
   {
     name: "Classic",
@@ -37,6 +46,9 @@ export const themes: Theme[] = [
     accent: "#9acaaa",
     font: "'Roboto', Arial, sans-serif",
     dark: false,
+    secondary: "",
+    text: "",
+    background: ""
   },
   {
     name: "Night",
@@ -45,6 +57,9 @@ export const themes: Theme[] = [
     accent: "#12b985",
     font: "'Share Tech Mono', monospace",
     dark: true,
+    secondary: "",
+    text: "",
+    background: ""
   },
 ];
 

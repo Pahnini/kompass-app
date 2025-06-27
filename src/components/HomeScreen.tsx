@@ -1,7 +1,7 @@
 import { Compass } from "lucide-react";
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import { SidebarItem } from "../data/navigation";
+import type { SidebarItem } from "../types";
 
 interface HomeScreenProps {
   username: string;

@@ -5,9 +5,7 @@ import type {
   Achievement,
   CalendarNotes,
   Symptoms,
-  WordFile,
-  UserData
-} from "../types";
+  WordFile} from "../types";
 
 
 // Define the context type

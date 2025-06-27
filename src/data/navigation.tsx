@@ -9,13 +9,9 @@ import {
   Settings,
   Sparkles,
 } from "lucide-react";
-import { ReactNode } from "react";
 
-export type SidebarItem = {
-  key: string;
-  label: string;
-  icon: ReactNode;
-};
+import type { SidebarItem } from "../types";
+
 
 export const sidebarItems: SidebarItem[] = [
   { key: "home", label: "Home", icon: <Home size={18} /> },

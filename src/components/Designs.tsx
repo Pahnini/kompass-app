@@ -1,37 +1,35 @@
 import React from "react";
-import { BackgroundOptions } from "../data/backgrounds";
-import { Theme } from "../data/themes";
 import BackButton from "./BackButton";
+import { useTheme } from "../hooks/useTheme";
 
-interface DesignsProps {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-  background: BackgroundOptions;
-  setBackground: (background: BackgroundOptions) => void;
-  themes: Theme[];
-  backgrounds: BackgroundOptions[];
-}
+export default function Designs(): React.ReactElement {
+  const {
+    theme,
+    setTheme,
+    background,
+    setBackground,
+    availableThemes,
+    availableBackgrounds,
+  } = useTheme();
 
-export default function Designs({
-  theme,
-  setTheme,
-  background,
-  setBackground,
-  themes,
-  backgrounds,
-}: DesignsProps): React.ReactElement {
   return (
     <div className="card">
       <BackButton />
       <h2>Designs</h2>
-      <div className="section">
-        <h3>Farbschema</h3>
+
+      <div className="theme-selector">
+        <label>🎨 Theme wählen:</label>
         <div className="theme-options">
-          {themes.map((t, i) => (
+          {availableThemes.map((t) => (
             <button
-              key={i}
-              className={theme.name === t.name ? "selected" : ""}
+              key={t.name}
               onClick={() => setTheme(t)}
+              style={{
+                backgroundColor: t.bg,
+                fontFamily: t.font,
+                color: t.dark ? "#fff" : "#000",
+                border: theme.name === t.name ? `3px solid ${t.accent}` : "1px solid #ccc",
+              }}
             >
               {t.name}
             </button>
@@ -39,16 +37,17 @@ export default function Designs({
         </div>
       </div>
 
-      <div className="section">
-        <h3>Hintergrundbild</h3>
+      <div className="background-selector">
+        <label>🖼️ Hintergrund wählen:</label>
         <div className="background-options">
-          {backgrounds.map((bg, i) => (
+          {availableBackgrounds.map((bg) => (
             <button
-              key={i}
-              className={background.name === bg.name ? "selected" : ""}
+              key={bg.id}
+              className={`bg-button ${background.id === bg.id ? "active" : ""}`}
               onClick={() => setBackground(bg)}
+              style={{ backgroundColor: bg.color }}
             >
-              {bg.name}
+              {bg.label}
             </button>
           ))}
         </div>

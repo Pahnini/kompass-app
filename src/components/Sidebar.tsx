@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { SidebarItem } from "../data/navigation";
+import type { SidebarItem } from "../types";
 
 interface SidebarProps {
   items: SidebarItem[];

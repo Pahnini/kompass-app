@@ -22,7 +22,6 @@ import { shareAchievement, shareSkill } from "./utils/shareUtils";
 // Lazy load components for better performance
 const Chatbot = lazy(() => import("./components/Chatbot"));
 const DeinWeg = lazy(() => import("./components/DeinWeg"));
-const Designs = lazy(() => import("./components/Designs"));
 const Guide = lazy(() => import("./components/Guide"));
 const Notfall = lazy(() => import("./components/Notfall"));
 const QuickEdit = lazy(() => import("./components/QuickEdit"));
@@ -35,11 +34,7 @@ export default function App(): React.ReactElement {
   // Use theme context
   const {
     theme,
-    setTheme,
     background,
-    setBackground,
-    availableThemes,
-    availableBackgrounds,
   } = useTheme();
 
   // Use user data context
@@ -137,19 +132,7 @@ export default function App(): React.ReactElement {
                 />
               }
             />
-            <Route
-              path="/designs"
-              element={
-                <Designs
-                  theme={theme}
-                  setTheme={setTheme}
-                  background={background}
-                  setBackground={setBackground}
-                  themes={availableThemes}
-                  backgrounds={availableBackgrounds}
-                />
-              }
-            />
+            
             <Route
               path="/notfall"
               element={<Notfall helpResources={helpResources} />}

@@ -1,29 +1,25 @@
 // src/types/index.d.ts
 
-export type Goal = {
+export type Goal = { id: string; title: string; text: string; completed: boolean };
+export type Achievement = { id: string; title: string; text: string; date: string };
+export type CalendarNote = { title: string; text: string };
+export type CalendarNotes = { [date: string]: CalendarNote };
+export type Symptom = { title: string; intensity: number };
+export type Symptoms = { [date: string]: Symptom[] };
+export type WordFile = { id: string; name: string; file: File; url: string };
+export type Skill = string;
+
+export type SidebarItem = {
+  key: string;
+  label: string;
+  icon: JSX.Element;
+};
+
+export type BackgroundOptions = {
   id: string;
-  title: string;
-  completed: boolean;
-};
-
-export type Achievement = {
-  id: string;
-  title: string;
-  date: string; // oder Date
-};
-
-export type CalendarNotes = {
-  [date: string]: string;
-};
-
-export type Symptoms = {
-  [date: string]: string[];
-};
-
-export type WordFile = {
-  id: string;
-  name: string;
-  file: File; // oder Blob, je nach App-Usecase
+  label: string;
+  color: string;
+  url?: string;
 };
 
 export type UserData = {

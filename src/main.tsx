@@ -1,9 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { ThemeProvider } from "./context/ThemeContext";
 import App from "./App";
 import ErrorBoundary from "./components/ErrorBoundary";
-import { ThemeProvider } from "./context/ThemeContext";
 import { UIProvider } from "./context/UIContext";
 import { UserDataProvider } from "./context/UserDataContext";
 

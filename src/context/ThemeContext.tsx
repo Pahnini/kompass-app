@@ -1,38 +1,55 @@
-import React, { createContext, ReactNode, useEffect, useState } from "react";
-import { BackgroundOptions, backgrounds } from "../data/backgrounds";
-import { modernBlueGrey, Theme, themes } from "../data/themes";
+import React, {
+  createContext,
+  ReactNode,
+  useEffect,
+  useState,
+  useContext,
+} from "react";
+import type { BackgroundOptions } from "../data/backgrounds";
+import type { Theme } from "../data/themes";
+import { themes, modernBlueGrey } from "../data/themes";
+import { backgrounds } from "../data/backgrounds";
 
-// Define the context type
 export interface ThemeContextType {
   theme: Theme;
   setTheme: (theme: Theme) => void;
   background: BackgroundOptions;
-  setBackground: (background: BackgroundOptions) => void;
+  setBackground: (bg: BackgroundOptions) => void;
   availableThemes: Theme[];
   availableBackgrounds: BackgroundOptions[];
 }
 
-// Create the context with a default undefined value
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-interface ThemeProviderProps {
-  children: ReactNode;
-}
+export const useTheme = (): ThemeContextType => {
+  const ctx = useContext(ThemeContext);
+  if (!ctx) throw new Error("useTheme must be used within ThemeProvider");
+  return ctx;
+};
 
-/**
- * Theme provider component
- * Manages theme and background state
- */
+// 🔁 ❗️ Wichtig: ThemeContext exportieren
+export { ThemeContext };
+
 export function ThemeProvider({
   children,
-}: ThemeProviderProps): React.ReactElement {
-  // Theme state
-  const [theme, setTheme] = useState<Theme>(() => modernBlueGrey);
+}: {
+  children: ReactNode;
+}): React.ReactElement {
+  const [theme, setThemeState] = useState<Theme>(() => {
+    const saved = localStorage.getItem("kompass_theme");
+    const found = themes.find((t) => t.name === saved);
+    return found || modernBlueGrey;
+  });
+
+  const setTheme = (newTheme: Theme): void => {
+    setThemeState(newTheme);
+    localStorage.setItem("kompass_theme", newTheme.name);
+  };
+
   const [background, setBackground] = useState<BackgroundOptions>(
     () => backgrounds[0]
   );
 
-  // Apply theme to document body
   useEffect(() => {
     document.body.style.background = theme.bg;
     document.body.style.fontFamily = theme.font;
@@ -40,19 +57,18 @@ export function ThemeProvider({
     document.body.className = theme.dark ? "night" : "";
   }, [theme]);
 
-  // Context value
-  const value: ThemeContextType = {
-    theme,
-    setTheme,
-    background,
-    setBackground,
-    availableThemes: themes,
-    availableBackgrounds: backgrounds,
-  };
-
   return (
-    <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>
+    <ThemeContext.Provider
+      value={{
+        theme,
+        setTheme,
+        background,
+        setBackground,
+        availableThemes: themes,
+        availableBackgrounds: backgrounds,
+      }}
+    >
+      {children}
+    </ThemeContext.Provider>
   );
 }
-
-export default ThemeContext;

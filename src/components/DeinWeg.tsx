@@ -5,7 +5,7 @@ import {
   CalendarNotes,
   Goal,
   Symptoms,
-} from "../services/storageService";
+} from "../types";
 import { showErrorToast, showSuccessToast } from "../utils/toastUtils";
 import BackButton from "./BackButton";
 import DeleteButton from "./DeleteButton";
@@ -62,7 +62,7 @@ export default function DeinWeg({
           id: Date.now().toString(),
           text: goalInput,
           completed: false,
-          date: new Date().toISOString().split("T")[0],
+          title: ""
         },
       ]);
     setGoalInput("");
@@ -78,6 +78,7 @@ export default function DeinWeg({
           id: Date.now().toString(),
           text: achievementInput,
           date: new Date().toISOString().split("T")[0],
+          title: ""
         },
         ...achievements,
       ]);
@@ -107,7 +108,7 @@ export default function DeinWeg({
     // Update calendar notes
     const updatedCalendarNotes = {
       ...calendarNotes,
-      [selectedDate]: { text: noteText, date: selectedDate },
+      [selectedDate]: { text: noteText, title: "", /* or provide a title if needed */ },
     };
     setCalendarNotes(updatedCalendarNotes);
 
@@ -116,9 +117,8 @@ export default function DeinWeg({
       ...symptoms,
       [selectedDate]: [
         {
-          name: "General",
+          title: "Allgemein",
           intensity: symptomScore,
-          date: selectedDate,
         },
       ],
     };

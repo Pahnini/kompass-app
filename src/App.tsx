@@ -1,4 +1,4 @@
-import { lazy, Suspense } from "react";
+import React, { lazy, Suspense } from "react";
 import { Route, Routes } from "react-router-dom";
 import DatenschutzModal from "./components/DatenschutzModal";
 import GlobalStyle from "./components/GlobalStyle";
@@ -10,7 +10,7 @@ import SmartLoading from "./components/SmartLoading";
 import WelcomeScreen from "./components/WelcomeScreen";
 import { emojiList } from "./data/emojis";
 import { helpResources } from "./data/helpResources";
-import { sidebarItems } from "./data/navigation.jsx";
+import { sidebarItems } from "./data/navigation";
 import { skillsList } from "./data/skills";
 import { templates } from "./data/templates";
 import { usePageTitle } from "./hooks/usePageTitle";
@@ -28,7 +28,7 @@ const Notfall = lazy(() => import("./components/Notfall"));
 const QuickEdit = lazy(() => import("./components/QuickEdit"));
 const Skills = lazy(() => import("./components/Skills"));
 
-export default function App() {
+export default function App(): React.ReactElement {
   // Set page title based on current route
   usePageTitle();
 

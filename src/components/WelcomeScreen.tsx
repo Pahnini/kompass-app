@@ -28,6 +28,7 @@ interface FeatureItem {
   label: string;
 }
 
+
 const defaultItems: FeatureItem[] = [
   { id: "skills", icon: "🎯", label: "Skills" },
   { id: "tagebuch", icon: "📝", label: "Tagebuch" },
@@ -45,6 +46,7 @@ export default function WelcomeScreen({
     useSensor(TouchSensor)
   );
 
+  // Reihenfolge beim Laden wiederherstellen
   useEffect(() => {
     const data = loadData();
     if (data?.buttonOrder) {
@@ -67,6 +69,17 @@ export default function WelcomeScreen({
     const newOrder = newItems.map((i) => i.id);
     const existingData = loadData() || {};
     saveData({ ...existingData, buttonOrder: newOrder });
+    if (active.id !== over.id) {
+      const oldIndex = items.findIndex((i) => i.id === active.id);
+      const newIndex = items.findIndex((i) => i.id === over.id);
+      const newItems = arrayMove(items, oldIndex, newIndex);
+      setItems(newItems);
+
+      // Neue Reihenfolge speichern
+      const newOrder = newItems.map((i) => i.id);
+      const existingData = loadData() || {};
+      saveData({ ...existingData, buttonOrder: newOrder });
+    }
   };
 
   return (

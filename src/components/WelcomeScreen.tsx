@@ -1,24 +1,8 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import compassImg from "../assets/kompass-welcome.png";
 import supabase from "../utils/supabase";
-import {
-  DndContext,
-  closestCenter,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { loadData, saveData } from "../services/storageService";
 import "./WelcomeScreen.css";
 
 export default function WelcomeScreen(): React.ReactElement {
@@ -119,18 +103,3 @@ export default function WelcomeScreen(): React.ReactElement {
     </div>
   );
 }
-
-interface FeatureItem {
-  id: string;
-  icon: string;
-  label: string;
-}
-
-const defaultItems: FeatureItem[] = [
-  { id: "skills", icon: "🎯", label: "Skills" },
-  { id: "tagebuch", icon: "📝", label: "Tagebuch" },
-  { id: "chatbot", icon: "🤖", label: "Chatbot" },
-  { id: "notfall", icon: "🚨", label: "Notfall" },
-];
-
-// If you want to use the drag-and-drop feature, move the relevant code into the main WelcomeScreen component above, or create a new component for it.

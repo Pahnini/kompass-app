@@ -1,14 +1,11 @@
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
 import React from "react";
 import compassImg from "../assets/kompass-welcome.png";
+import supabase from "../utils/supabase";
 import "./WelcomeScreen.css";
 
-interface WelcomeScreenProps {
-  onContinue: () => void;
-}
-
-export default function WelcomeScreen({
-  onContinue,
-}: WelcomeScreenProps): React.ReactElement {
+export default function WelcomeScreen(): React.ReactElement {
   return (
     <div className="welcome-screen">
       <div className="welcome-content">
@@ -18,10 +15,6 @@ export default function WelcomeScreen({
             alt="Kompass Illustration"
             className="welcome-image"
           />
-          {/* <h1 className="welcome-title">Willkommen bei KompassApp</h1>
-          <p className="welcome-subtitle">
-            Deine App für den Alltag nach der Klinik
-          </p> */}
         </div>
 
         <div className="welcome-features">
@@ -44,10 +37,44 @@ export default function WelcomeScreen({
         </div>
 
         <div className="welcome-actions">
-          <button className="continue-btn" onClick={onContinue}>
-            <span>Los geht's</span>
-            <span className="btn-arrow">→</span>
-          </button>
+          <div className="auth-container">
+            <Auth
+              supabaseClient={supabase}
+              appearance={{
+                theme: ThemeSupa,
+                style: {
+                  container: { width: "100%" },
+                  button: {
+                    borderRadius: "8px",
+                    backgroundColor: "#5dade2",
+                    color: "white",
+                    fontWeight: "bold",
+                  },
+                  input: { borderRadius: "8px" },
+                },
+              }}
+              providers={[]}
+              redirectTo={window.location.origin}
+              localization={{
+                variables: {
+                  sign_in: {
+                    email_label: "Email",
+                    password_label: "Passwort",
+                    button_label: "Anmelden",
+                    loading_button_label: "Anmelden...",
+                    link_text: "Bereits ein Konto? Anmelden",
+                  },
+                  sign_up: {
+                    email_label: "Email",
+                    password_label: "Passwort",
+                    button_label: "Registrieren",
+                    loading_button_label: "Registrieren...",
+                    link_text: "Kein Konto? Registrieren",
+                  },
+                },
+              }}
+            />
+          </div>
           <p className="welcome-note">
             Immer für dich da – Skills, Pläne & Hilfe bei Krisen
           </p>

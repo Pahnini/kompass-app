@@ -153,6 +153,54 @@
   margin-top: 32px;
 }
 
+/* Auth Container */
+.auth-container {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+}
+
+/* Override Supabase Auth UI styles */
+.auth-container form {
+  width: 100%;
+}
+
+.auth-container label {
+  color: white !important;
+  font-weight: 500;
+}
+
+.auth-container input {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  color: white !important;
+}
+
+.auth-container input::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.auth-container a {
+  color: #abebc6 !important;
+  text-decoration: none !important;
+}
+
+.auth-container a:hover {
+  text-decoration: underline !important;
+}
+
+.auth-container button {
+  transition: all 0.3s ease !important;
+}
+
+.auth-container button:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
 .continue-btn {
   background: linear-gradient(135deg, #abebc6, #5dade2);
   color: #2f4f4f;

@@ -1,11 +1,31 @@
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import compassImg from "../assets/kompass-welcome.png";
 import supabase from "../utils/supabase";
 import "./WelcomeScreen.css";
 
 export default function WelcomeScreen(): React.ReactElement {
+  // Create a ref to store the auth container element
+  const authContainerRef = useRef<HTMLDivElement>(null);
+
+  // Focus the email input field after component mounts or when returning from logout
+  useEffect(() => {
+    // Short timeout to ensure the Auth UI is fully rendered
+    const timer = setTimeout(() => {
+      if (authContainerRef.current) {
+        // Find the email input field and focus it
+        const emailInput = authContainerRef.current.querySelector(
+          'input[name="email"]'
+        ) as HTMLInputElement;
+        if (emailInput) {
+          emailInput.focus();
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
   return (
     <div className="welcome-screen">
       <div className="welcome-content">
@@ -18,7 +38,7 @@ export default function WelcomeScreen(): React.ReactElement {
         </div>
 
         <div className="welcome-actions">
-          <div className="auth-container">
+          <div className="auth-container" ref={authContainerRef}>
             <Auth
               supabaseClient={supabase}
               appearance={{

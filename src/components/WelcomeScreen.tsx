@@ -1,5 +1,8 @@
-import React, { useState, useEffect } from "react";
+import { Auth } from "@supabase/auth-ui-react";
+import { ThemeSupa } from "@supabase/auth-ui-shared";
+import React, { useEffect, useRef, useState } from "react";
 import compassImg from "../assets/kompass-welcome.png";
+import supabase from "../utils/supabase";
 import {
   DndContext,
   closestCenter,
@@ -18,8 +21,103 @@ import { CSS } from "@dnd-kit/utilities";
 import { loadData, saveData } from "../services/storageService";
 import "./WelcomeScreen.css";
 
-interface WelcomeScreenProps {
-  onContinue: () => void;
+export default function WelcomeScreen(): React.ReactElement {
+  // Create a ref to store the auth container element
+  const authContainerRef = useRef<HTMLDivElement>(null);
+
+  // Focus the email input field after component mounts or when returning from logout
+  useEffect(() => {
+    // Short timeout to ensure the Auth UI is fully rendered
+    const timer = setTimeout(() => {
+      if (authContainerRef.current) {
+        // Find the email input field and focus it
+        const emailInput = authContainerRef.current.querySelector(
+          'input[name="email"]'
+        ) as HTMLInputElement;
+        if (emailInput) {
+          emailInput.focus();
+        }
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, []);
+  return (
+    <div className="welcome-screen">
+      <div className="welcome-content">
+        <div className="welcome-header">
+          <img
+            src={compassImg}
+            alt="Kompass Illustration"
+            className="welcome-image"
+          />
+        </div>
+
+        <div className="welcome-actions">
+          <div className="auth-container" ref={authContainerRef}>
+            <Auth
+              supabaseClient={supabase}
+              appearance={{
+                theme: ThemeSupa,
+                style: {
+                  container: { width: "100%" },
+                  button: {
+                    borderRadius: "8px",
+                    backgroundColor: "#5dade2",
+                    color: "white",
+                    fontWeight: "bold",
+                  },
+                  input: { borderRadius: "8px" },
+                },
+              }}
+              providers={[]}
+              redirectTo={window.location.origin}
+              localization={{
+                variables: {
+                  sign_in: {
+                    email_label: "Email",
+                    password_label: "Passwort",
+                    button_label: "Anmelden",
+                    loading_button_label: "Anmelden...",
+                    link_text: "Bereits ein Konto? Anmelden",
+                  },
+                  sign_up: {
+                    email_label: "Email",
+                    password_label: "Passwort",
+                    button_label: "Registrieren",
+                    loading_button_label: "Registrieren...",
+                    link_text: "Kein Konto? Registrieren",
+                  },
+                },
+              }}
+            />
+          </div>
+          <p className="welcome-note">
+            Immer für dich da – Skills, Pläne & Hilfe bei Krisen
+          </p>
+        </div>
+
+        <div className="welcome-features">
+          <div className="feature-item">
+            <span className="feature-icon">🎯</span>
+            <span className="feature-text">Skills & Achtsamkeit</span>
+          </div>
+          <div className="feature-item">
+            <span className="feature-icon">📝</span>
+            <span className="feature-text">Tagebuch & Ziele</span>
+          </div>
+          <div className="feature-item">
+            <span className="feature-icon">🤖</span>
+            <span className="feature-text">Chatbot Unterstützung</span>
+          </div>
+          <div className="feature-item">
+            <span className="feature-icon">🚨</span>
+            <span className="feature-text">Notfall Hilfe</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 interface FeatureItem {
@@ -28,7 +126,6 @@ interface FeatureItem {
   label: string;
 }
 
-
 const defaultItems: FeatureItem[] = [
   { id: "skills", icon: "🎯", label: "Skills" },
   { id: "tagebuch", icon: "📝", label: "Tagebuch" },
@@ -36,169 +133,4 @@ const defaultItems: FeatureItem[] = [
   { id: "notfall", icon: "🚨", label: "Notfall" },
 ];
 
-export default function WelcomeScreen({
-  onContinue,
-}: WelcomeScreenProps): React.ReactElement {
-  const [items, setItems] = useState<FeatureItem[]>(defaultItems);
-
-const sensors = useSensors(
-  useSensor(PointerSensor),
-  useSensor(TouchSensor)
-);
-
-  // Reihenfolge beim Laden wiederherstellen
-  useEffect(() => {
-    const data = loadData();
-    if (data?.buttonOrder) {
-      const ordered = data.buttonOrder
-        .map((id) => defaultItems.find((item) => item.id === id))
-        .filter(Boolean) as FeatureItem[];
-      setItems(ordered);
-    }
-  }, []);
-
-  const handleDragEnd = (event: any) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    const oldIndex = items.findIndex((i) => i.id === active.id);
-    const newIndex = items.findIndex((i) => i.id === over.id);
-    const newItems = arrayMove(items, oldIndex, newIndex);
-    setItems(newItems);
-
-    const newOrder = newItems.map((i) => i.id);
-    const existingData = loadData() || {};
-    saveData({ ...existingData, buttonOrder: newOrder });
-  };
-
-  return (
-    <div
-      className="welcome-screen"
-      style={{
-        backgroundImage: `url(${compassImg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        height: "100vh",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        padding: "1rem",
-      }}
-    >
-      <div
-        className="welcome-content"
-        style={{
-          backgroundColor: "rgba(255, 255, 255, 0.85)",
-          borderRadius: "1.5rem",
-          padding: "2rem",
-          maxWidth: "500px",
-          width: "100%",
-          boxShadow: "0 8px 24px rgba(0, 0, 0, 0.15)",
-          textAlign: "center",
-        }}
-      >
-        <h1
-          style={{
-            fontSize: "1.8rem",
-            fontWeight: 700,
-            marginBottom: "1rem",
-            color: "#2f4f4f",
-          }}
-        >
-          Schön, dass du wieder da bist
-        </h1>
-
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext
-            items={items.map((i) => i.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            <div
-              className="feature-grid"
-              style={{
-                display: "grid",
-                gridTemplateColumns: "1fr 1fr",
-                gap: "1rem",
-                margin: "2rem 0",
-              }}
-            >
-              {items.map((item) => (
-                <SortableFeatureCard
-                  key={item.id}
-                  id={item.id}
-                  icon={item.icon}
-                  label={item.label}
-                />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
-
-        <button
-          className="continue-btn"
-          onClick={onContinue}
-          style={{
-            backgroundColor: "#2f4f4f",
-            color: "white",
-            padding: "0.75rem 1.5rem",
-            borderRadius: "999px",
-            fontWeight: 600,
-            border: "none",
-            cursor: "pointer",
-            marginBottom: "1rem",
-          }}
-        >
-          Los geht's →
-        </button>
-        <p
-          style={{
-            fontSize: "0.9rem",
-            color: "#555",
-          }}
-        >
-          Immer für dich da – Skills, Pläne & Hilfe bei Krisen
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function SortableFeatureCard({
-  id,
-  icon,
-  label,
-}: {
-  id: string;
-  icon: string;
-  label: string;
-}) {
-  const { attributes, listeners, setNodeRef, transform, transition } =
-    useSortable({ id });
-
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    backgroundColor: "#f0f4f5",
-    borderRadius: "1rem",
-    padding: "1rem",
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    fontWeight: 600,
-    color: "#2f4f4f",
-    boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-    cursor: "grab",
-  };
-
-  return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      <span style={{ fontSize: "1.5rem", marginBottom: "0.5rem" }}>{icon}</span>
-      <span>{label}</span>
-    </div>
-  );
-}
+// If you want to use the drag-and-drop feature, move the relevant code into the main WelcomeScreen component above, or create a new component for it.

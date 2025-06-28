@@ -1,12 +1,12 @@
 import React, { createContext, ReactNode, useState } from "react";
 import * as storageService from "../services/storageService";
 import type {
-  Goal,
   Achievement,
   CalendarNotes,
+  Goal,
   Symptoms,
-  WordFile} from "../types";
-
+  WordFile,
+} from "../types";
 
 // Define the context type
 export interface UserDataContextType {

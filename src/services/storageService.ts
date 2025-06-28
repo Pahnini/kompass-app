@@ -1,3 +1,4 @@
+import { Achievement, CalendarNotes, Goal, Symptoms, WordFile } from "../types";
 const STORAGE_KEY = "kompassAppData";
 
 export interface AppData {

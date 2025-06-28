@@ -1,4 +1,5 @@
-import React, { lazy, Suspense } from "react";
+import { Session } from "@supabase/supabase-js";
+import React, { lazy, Suspense, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import DatenschutzModal from "./components/DatenschutzModal";
 import GlobalStyle from "./components/GlobalStyle";
@@ -18,10 +19,12 @@ import { useTheme } from "./hooks/useTheme";
 import { useUI } from "./hooks/useUI";
 import { useUserData } from "./hooks/useUserData";
 import { shareAchievement, shareSkill } from "./utils/shareUtils";
+import supabase from "./utils/supabase";
 
 // Lazy load components for better performance
 const Chatbot = lazy(() => import("./components/Chatbot"));
 const DeinWeg = lazy(() => import("./components/DeinWeg"));
+const Designs = lazy(() => import("./components/Designs"));
 const Guide = lazy(() => import("./components/Guide"));
 const Notfall = lazy(() => import("./components/Notfall"));
 const QuickEdit = lazy(() => import("./components/QuickEdit"));
@@ -31,11 +34,31 @@ export default function App(): React.ReactElement {
   // Set page title based on current route
   usePageTitle();
 
+  // Track authentication state
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Check for authentication on load and listen for changes
+  useEffect(() => {
+    // Get initial session
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    // Listen for auth changes
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    // Cleanup subscription
+    return () => subscription.unsubscribe();
+  }, []);
+
   // Use theme context
-  const {
-    theme,
-    background,
-  } = useTheme();
+  const { theme, background } = useTheme();
 
   // Use user data context
   const {
@@ -68,8 +91,20 @@ export default function App(): React.ReactElement {
     setOnboarding,
   } = useUI();
 
-  if (showWelcome)
-    return <WelcomeScreen onContinue={() => setShowWelcome(false)} />;
+  // Show loading state while checking authentication
+  if (loading) {
+    return <SmartLoading message="Verbindung wird hergestellt..." />;
+  }
+
+  // Show welcome screen if not authenticated
+  if (!session) {
+    return <WelcomeScreen />;
+  }
+
+  // Skip welcome screen if authenticated
+  if (showWelcome) {
+    setShowWelcome(false);
+  }
 
   return (
     <div>
@@ -132,11 +167,12 @@ export default function App(): React.ReactElement {
                 />
               }
             />
-            
+
             <Route
               path="/notfall"
               element={<Notfall helpResources={helpResources} />}
             />
+            <Route path="/designs" element={<Designs />} />
             <Route path="/guide" element={<Guide />} />
             <Route path="/chat" element={<Chatbot />} />
             <Route

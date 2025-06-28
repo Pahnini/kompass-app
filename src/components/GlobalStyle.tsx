@@ -113,6 +113,25 @@ export default function GlobalStyle(): React.ReactElement | null {
         height: 100vh;
         overflow: hidden;
       }
+      
+      /* Sidebar content and logout button layout */
+      .sidebar-content {
+        flex: 1;
+        overflow-y: auto;
+        display: flex;
+        flex-direction: column;
+      }
+      
+      .logout-button {
+        margin-top: auto;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        background: rgba(255, 255, 255, 0.05);
+        color: #ff6b6b;
+      }
+      
+      .logout-button:hover {
+        background: rgba(255, 255, 255, 0.1);
+      }
 
       .sidebar.open {
         transform: translateX(0);

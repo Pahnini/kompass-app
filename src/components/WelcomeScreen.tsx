@@ -17,25 +17,6 @@ export default function WelcomeScreen(): React.ReactElement {
           />
         </div>
 
-        <div className="welcome-features">
-          <div className="feature-item">
-            <span className="feature-icon">🎯</span>
-            <span className="feature-text">Skills & Achtsamkeit</span>
-          </div>
-          <div className="feature-item">
-            <span className="feature-icon">📝</span>
-            <span className="feature-text">Tagebuch & Ziele</span>
-          </div>
-          <div className="feature-item">
-            <span className="feature-icon">🤖</span>
-            <span className="feature-text">Chatbot Unterstützung</span>
-          </div>
-          <div className="feature-item">
-            <span className="feature-icon">🚨</span>
-            <span className="feature-text">Notfall Hilfe</span>
-          </div>
-        </div>
-
         <div className="welcome-actions">
           <div className="auth-container">
             <Auth
@@ -78,6 +59,25 @@ export default function WelcomeScreen(): React.ReactElement {
           <p className="welcome-note">
             Immer für dich da – Skills, Pläne & Hilfe bei Krisen
           </p>
+        </div>
+
+        <div className="welcome-features">
+          <div className="feature-item">
+            <span className="feature-icon">🎯</span>
+            <span className="feature-text">Skills & Achtsamkeit</span>
+          </div>
+          <div className="feature-item">
+            <span className="feature-icon">📝</span>
+            <span className="feature-text">Tagebuch & Ziele</span>
+          </div>
+          <div className="feature-item">
+            <span className="feature-icon">🤖</span>
+            <span className="feature-text">Chatbot Unterstützung</span>
+          </div>
+          <div className="feature-item">
+            <span className="feature-icon">🚨</span>
+            <span className="feature-text">Notfall Hilfe</span>
+          </div>
         </div>
       </div>
     </div>

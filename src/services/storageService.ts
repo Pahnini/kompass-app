@@ -1,10 +1,4 @@
-import {
-  Goal,
-  Achievement,
-  CalendarNotes,
-  Symptoms,
-  WordFile
-} from "../types";
+import { Achievement, CalendarNotes, Goal, Symptoms, WordFile } from "../types";
 
 // ---------- USERNAME ----------
 export function getUsername(): string {

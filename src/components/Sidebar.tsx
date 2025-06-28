@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { SidebarItem } from "../types";
+import supabase from "../utils/supabase";
 
 interface SidebarProps {
   items: SidebarItem[];
@@ -17,6 +18,15 @@ export default function Sidebar({
 }: SidebarProps): React.ReactElement {
   const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth > 700);
   const location = useLocation();
+
+  // Handle logout
+  const handleLogout = async (): Promise<void> => {
+    await supabase.auth.signOut();
+    // Redirect will happen automatically due to auth state change in App.tsx
+    if (!isDesktop) {
+      setIsOpen(false);
+    }
+  };
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth > 700);
@@ -55,19 +65,26 @@ export default function Sidebar({
       )}
 
       <aside className={`sidebar ${isOpen || isDesktop ? "open" : ""}`}>
-        {filteredItems.map((item) => (
-          <Link
-            key={item.key}
-            to={getPath(item.key)}
-            className={`sidebar-item ${
-              location.pathname === getPath(item.key) ? "active" : ""
-            }`}
-            onClick={handleClick}
-          >
-            <span className="icon">{item.icon}</span>
-            <span className="label">{item.label}</span>
-          </Link>
-        ))}
+        <div className="sidebar-content">
+          {filteredItems.map((item) => (
+            <Link
+              key={item.key}
+              to={getPath(item.key)}
+              className={`sidebar-item ${
+                location.pathname === getPath(item.key) ? "active" : ""
+              }`}
+              onClick={handleClick}
+            >
+              <span className="icon">{item.icon}</span>
+              <span className="label">{item.label}</span>
+            </Link>
+          ))}
+        </div>
+
+        <button className="sidebar-item logout-button" onClick={handleLogout}>
+          <span className="icon">🚪</span>
+          <span className="label">Abmelden</span>
+        </button>
       </aside>
     </>
   );

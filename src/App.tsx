@@ -24,9 +24,9 @@ import supabase from "./utils/supabase";
 // Lazy load components for better performance
 const Chatbot = lazy(() => import("./components/Chatbot"));
 const DeinWeg = lazy(() => import("./components/DeinWeg"));
+const Designs = lazy(() => import("./components/Designs"));
 const Guide = lazy(() => import("./components/Guide"));
 const Notfall = lazy(() => import("./components/Notfall"));
-const Desings = lazy(() => import("./components/Designs"));
 const QuickEdit = lazy(() => import("./components/QuickEdit"));
 const Skills = lazy(() => import("./components/Skills"));
 
@@ -172,7 +172,7 @@ export default function App(): React.ReactElement {
               path="/notfall"
               element={<Notfall helpResources={helpResources} />}
             />
-            <Route path="/desings" element={<Desings />} />
+            <Route path="/designs" element={<Designs />} />
             <Route path="/guide" element={<Guide />} />
             <Route path="/chat" element={<Chatbot />} />
             <Route

@@ -4,6 +4,7 @@ import {
   DndContext,
   closestCenter,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -27,7 +28,6 @@ interface FeatureItem {
   label: string;
 }
 
-
 const defaultItems: FeatureItem[] = [
   { id: "skills", icon: "🎯", label: "Skills" },
   { id: "tagebuch", icon: "📝", label: "Tagebuch" },
@@ -40,9 +40,11 @@ export default function WelcomeScreen({
 }: WelcomeScreenProps): React.ReactElement {
   const [items, setItems] = useState<FeatureItem[]>(defaultItems);
 
-  const sensors = useSensors(useSensor(PointerSensor));
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(TouchSensor)
+  );
 
-  // Reihenfolge beim Laden wiederherstellen
   useEffect(() => {
     const data = loadData();
     if (data?.buttonOrder) {
@@ -55,17 +57,16 @@ export default function WelcomeScreen({
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event;
-    if (active.id !== over.id) {
-      const oldIndex = items.findIndex((i) => i.id === active.id);
-      const newIndex = items.findIndex((i) => i.id === over.id);
-      const newItems = arrayMove(items, oldIndex, newIndex);
-      setItems(newItems);
+    if (!over || active.id === over.id) return;
 
-      // Neue Reihenfolge speichern
-      const newOrder = newItems.map((i) => i.id);
-      const existingData = loadData() || {};
-      saveData({ ...existingData, buttonOrder: newOrder });
-    }
+    const oldIndex = items.findIndex((i) => i.id === active.id);
+    const newIndex = items.findIndex((i) => i.id === over.id);
+    const newItems = arrayMove(items, oldIndex, newIndex);
+    setItems(newItems);
+
+    const newOrder = newItems.map((i) => i.id);
+    const existingData = loadData() || {};
+    saveData({ ...existingData, buttonOrder: newOrder });
   };
 
   return (

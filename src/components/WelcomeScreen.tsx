@@ -3,9 +3,6 @@ import { ThemeSupa } from "@supabase/auth-ui-shared";
 import React, { useEffect, useRef } from "react";
 import compassImg from "../assets/kompass-welcome.png";
 import supabase from "../utils/supabase";
-import React, { useEffect, useRef, useState } from "react";
-import compassImg from "../assets/kompass-welcome.png";
-import supabase from "../utils/supabase";
 import "./WelcomeScreen.css";
 
 export default function WelcomeScreen(): React.ReactElement {

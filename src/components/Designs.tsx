@@ -1,6 +1,6 @@
 import React from "react";
+import { useTheme } from "../context/ThemeContext";
 import BackButton from "./BackButton";
-import { useTheme } from "../hooks/useTheme";
 
 export default function Designs(): React.ReactElement {
   const {
@@ -28,7 +28,10 @@ export default function Designs(): React.ReactElement {
                 backgroundColor: t.bg,
                 fontFamily: t.font,
                 color: t.dark ? "#fff" : "#000",
-                border: theme.name === t.name ? `3px solid ${t.accent}` : "1px solid #ccc",
+                border:
+                  theme.name === t.name
+                    ? `3px solid ${t.accent}`
+                    : "1px solid #ccc",
               }}
             >
               {t.name}
@@ -45,7 +48,7 @@ export default function Designs(): React.ReactElement {
               key={bg.id}
               className={`bg-button ${background.id === bg.id ? "active" : ""}`}
               onClick={() => setBackground(bg)}
-              style={{ backgroundColor: bg.color }}
+              style={{ backgroundColor: bg.color, color: "#000" }} //171, 235, 198)
             >
               {bg.label}
             </button>

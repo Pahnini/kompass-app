@@ -1,34 +1,34 @@
-import { Session } from "@supabase/supabase-js";
-import React, { lazy, Suspense, useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
-import DatenschutzModal from "./components/DatenschutzModal";
-import GlobalStyle from "./components/GlobalStyle";
-import HomeScreen from "./components/HomeScreen";
-import NotFound from "./components/NotFound";
-import OnboardingModal from "./components/OnboardingModal";
-import Sidebar from "./components/Sidebar";
-import SmartLoading from "./components/SmartLoading";
-import WelcomeScreen from "./components/WelcomeScreen";
-import { emojiList } from "./data/emojis";
-import { helpResources } from "./data/helpResources";
-import { sidebarItems } from "./data/navigation";
-import { skillsList } from "./data/skills";
-import { templates } from "./data/templates";
-import { usePageTitle } from "./hooks/usePageTitle";
-import { useTheme } from "./hooks/useTheme";
-import { useUI } from "./hooks/useUI";
-import { useUserData } from "./hooks/useUserData";
-import { shareAchievement, shareSkill } from "./utils/shareUtils";
-import supabase from "./utils/supabase";
+import { Session } from '@supabase/supabase-js';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import DatenschutzModal from './components/DatenschutzModal';
+import GlobalStyle from './components/GlobalStyle';
+import HomeScreen from './components/HomeScreen';
+import NotFound from './components/NotFound';
+import OnboardingModal from './components/OnboardingModal';
+import Sidebar from './components/Sidebar';
+import SmartLoading from './components/SmartLoading';
+import WelcomeScreen from './components/WelcomeScreen';
+import { emojiList } from './data/emojis';
+import { helpResources } from './data/helpResources';
+import { sidebarItems } from './data/navigation';
+import { skillsList } from './data/skills';
+import { templates } from './data/templates';
+import { usePageTitle } from './hooks/usePageTitle';
+import { useTheme } from './hooks/useTheme';
+import { useUI } from './hooks/useUI';
+import { useUserData } from './hooks/useUserData';
+import { shareAchievement, shareSkill } from './utils/shareUtils';
+import supabase from './utils/supabase';
 
 // Lazy load components for better performance
-const Chatbot = lazy(() => import("./components/Chatbot"));
-const DeinWeg = lazy(() => import("./components/DeinWeg"));
-const Designs = lazy(() => import("./components/Designs"));
-const Guide = lazy(() => import("./components/Guide"));
-const Notfall = lazy(() => import("./components/Notfall"));
-const QuickEdit = lazy(() => import("./components/QuickEdit"));
-const Skills = lazy(() => import("./components/Skills"));
+const Chatbot = lazy(() => import('./components/Chatbot'));
+const DeinWeg = lazy(() => import('./components/DeinWeg'));
+const Designs = lazy(() => import('./components/Designs'));
+const Guide = lazy(() => import('./components/Guide'));
+const Notfall = lazy(() => import('./components/Notfall'));
+const QuickEdit = lazy(() => import('./components/QuickEdit'));
+const Skills = lazy(() => import('./components/Skills'));
 
 export default function App(): React.ReactElement {
   // Set page title based on current route
@@ -118,10 +118,8 @@ export default function App(): React.ReactElement {
       <main
         className="main-area"
         style={{
-          background: background.url
-            ? `url(${background.url}) center/cover`
-            : theme.bg,
-          minHeight: "100vh",
+          background: background.url ? `url(${background.url}) center/cover` : theme.bg,
+          minHeight: '100vh',
         }}
       >
         <Suspense fallback={<SmartLoading message="Seite wird geladen..." />}>
@@ -168,10 +166,7 @@ export default function App(): React.ReactElement {
               }
             />
 
-            <Route
-              path="/notfall"
-              element={<Notfall helpResources={helpResources} />}
-            />
+            <Route path="/notfall" element={<Notfall helpResources={helpResources} />} />
             <Route path="/designs" element={<Designs />} />
             <Route path="/guide" element={<Guide />} />
             <Route path="/chat" element={<Chatbot />} />

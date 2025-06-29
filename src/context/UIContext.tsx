@@ -1,5 +1,5 @@
-import React, { createContext, ReactNode, useEffect, useState } from "react";
-import * as storageService from "../services/storageService";
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
+import * as storageService from '../services/storageService';
 
 // Define the context type
 export interface UIContextType {
@@ -30,18 +30,16 @@ export function UIProvider({ children }: UIProviderProps): React.ReactElement {
   // UI state - WelcomeScreen should only show on first visit to root path
   const [showWelcome, setShowWelcome] = useState<boolean>(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const [showDS, setShowDS] = useState<boolean>(
-    () => !storageService.getDsAccepted()
-  );
+  const [showDS, setShowDS] = useState<boolean>(() => !storageService.getDsAccepted());
   const [onboarding, setOnboarding] = useState<boolean>(
     () => !storageService.getOnboardingCompleted()
   );
-  const [toast, setToast] = useState<string>("");
+  const [toast, setToast] = useState<string>('');
 
   // Show toast message
   function showToast(msg: string): void {
     setToast(msg);
-    setTimeout(() => setToast(""), 1200);
+    setTimeout(() => setToast(''), 1200);
   }
 
   // Update localStorage when modals are closed
@@ -56,7 +54,7 @@ export function UIProvider({ children }: UIProviderProps): React.ReactElement {
   // Show sidebar hint on first visit
   useEffect(() => {
     if (!storageService.getSidebarHintShown()) {
-      alert("Tipp: Über ☰ oben rechts erreichst du das Menü.");
+      alert('Tipp: Über ☰ oben rechts erreichst du das Menü.');
       storageService.setSidebarHintShown();
     }
   }, []);

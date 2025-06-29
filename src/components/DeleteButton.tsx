@@ -3,10 +3,7 @@ type DeleteButtonProps = {
   ariaLabel?: string;
 };
 
-export default function DeleteButton({
-  onDelete,
-  ariaLabel = "Löschen",
-}: DeleteButtonProps) {
+export default function DeleteButton({ onDelete, ariaLabel = 'Löschen' }: DeleteButtonProps) {
   if (!onDelete) {
     return null;
   }

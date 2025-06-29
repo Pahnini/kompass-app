@@ -2,7 +2,7 @@
  * Toast utility functions for showing notifications
  */
 
-export type ToastType = "success" | "error" | "info";
+export type ToastType = 'success' | 'error' | 'info';
 
 /**
  * Show a toast notification
@@ -13,16 +13,16 @@ export type ToastType = "success" | "error" | "info";
 export function showToast(
   message: string,
   duration: number = 1300,
-  type: ToastType = "success"
+  type: ToastType = 'success'
 ): void {
   // Remove any existing toast
-  const existingToast = document.querySelector(".toast-notification");
+  const existingToast = document.querySelector('.toast-notification');
   if (existingToast) {
     existingToast.remove();
   }
 
   // Create toast element
-  const toast = document.createElement("div");
+  const toast = document.createElement('div');
   toast.className = `toast-notification toast-${type}`;
   toast.textContent = message;
 
@@ -42,7 +42,7 @@ export function showToast(
  * @param message - The success message
  */
 export function showSuccessToast(message: string): void {
-  showToast(message, 1300, "success");
+  showToast(message, 1300, 'success');
 }
 
 /**
@@ -50,7 +50,7 @@ export function showSuccessToast(message: string): void {
  * @param message - The error message
  */
 export function showErrorToast(message: string): void {
-  showToast(message, 2000, "error");
+  showToast(message, 2000, 'error');
 }
 
 /**
@@ -58,7 +58,7 @@ export function showErrorToast(message: string): void {
  * @param message - The info message
  */
 export function showInfoToast(message: string): void {
-  showToast(message, 1500, "info");
+  showToast(message, 1500, 'info');
 }
 
 export default {

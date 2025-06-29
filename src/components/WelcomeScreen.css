@@ -13,32 +13,24 @@
 
 /* Animated background elements */
 .welcome-screen::before {
-  content: "";
+  content: '';
   position: absolute;
   top: -50%;
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(171, 235, 198, 0.1) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle, rgba(171, 235, 198, 0.1) 0%, transparent 70%);
   animation: float 6s ease-in-out infinite;
 }
 
 .welcome-screen::after {
-  content: "";
+  content: '';
   position: absolute;
   bottom: -50%;
   right: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(
-    circle,
-    rgba(93, 173, 226, 0.1) 0%,
-    transparent 70%
-  );
+  background: radial-gradient(circle, rgba(93, 173, 226, 0.1) 0%, transparent 70%);
   animation: float 8s ease-in-out infinite reverse;
 }
 
@@ -58,7 +50,8 @@
   background: rgba(255, 255, 255, 0.12);
   padding: 2.5rem 2rem;
   border-radius: 1.5rem;
-  box-shadow: 0 0.5rem 2rem rgba(0, 0, 0, 0.3),
+  box-shadow:
+    0 0.5rem 2rem rgba(0, 0, 0, 0.3),
     0 0 0 1px rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(0.75rem);
   border: 1px solid rgba(255, 255, 255, 0.1);

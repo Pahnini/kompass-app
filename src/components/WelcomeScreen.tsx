@@ -1,9 +1,9 @@
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import React, { useEffect, useRef } from "react";
-import compassImg from "../assets/kompass-welcome.png";
-import supabase from "../utils/supabase";
-import "./WelcomeScreen.css";
+import { Auth } from '@supabase/auth-ui-react';
+import { ThemeSupa } from '@supabase/auth-ui-shared';
+import React, { useEffect, useRef } from 'react';
+import compassImg from '../assets/kompass-welcome.png';
+import supabase from '../utils/supabase';
+import './WelcomeScreen.css';
 
 export default function WelcomeScreen(): React.ReactElement {
   // Create a ref to store the auth container element
@@ -30,11 +30,7 @@ export default function WelcomeScreen(): React.ReactElement {
     <div className="welcome-screen">
       <div className="welcome-content">
         <div className="welcome-header">
-          <img
-            src={compassImg}
-            alt="Kompass Illustration"
-            className="welcome-image"
-          />
+          <img src={compassImg} alt="Kompass Illustration" className="welcome-image" />
         </div>
 
         <div className="welcome-actions">
@@ -44,14 +40,14 @@ export default function WelcomeScreen(): React.ReactElement {
               appearance={{
                 theme: ThemeSupa,
                 style: {
-                  container: { width: "100%" },
+                  container: { width: '100%' },
                   button: {
-                    borderRadius: "8px",
-                    backgroundColor: "#5dade2",
-                    color: "white",
-                    fontWeight: "bold",
+                    borderRadius: '8px',
+                    backgroundColor: '#5dade2',
+                    color: 'white',
+                    fontWeight: 'bold',
                   },
-                  input: { borderRadius: "8px" },
+                  input: { borderRadius: '8px' },
                 },
               }}
               providers={[]}
@@ -59,26 +55,24 @@ export default function WelcomeScreen(): React.ReactElement {
               localization={{
                 variables: {
                   sign_in: {
-                    email_label: "Email",
-                    password_label: "Passwort",
-                    button_label: "Anmelden",
-                    loading_button_label: "Anmelden...",
-                    link_text: "Bereits ein Konto? Anmelden",
+                    email_label: 'Email',
+                    password_label: 'Passwort',
+                    button_label: 'Anmelden',
+                    loading_button_label: 'Anmelden...',
+                    link_text: 'Bereits ein Konto? Anmelden',
                   },
                   sign_up: {
-                    email_label: "Email",
-                    password_label: "Passwort",
-                    button_label: "Registrieren",
-                    loading_button_label: "Registrieren...",
-                    link_text: "Kein Konto? Registrieren",
+                    email_label: 'Email',
+                    password_label: 'Passwort',
+                    button_label: 'Registrieren',
+                    loading_button_label: 'Registrieren...',
+                    link_text: 'Kein Konto? Registrieren',
                   },
                 },
               }}
             />
           </div>
-          <p className="welcome-note">
-            Immer für dich da – Skills, Pläne & Hilfe bei Krisen
-          </p>
+          <p className="welcome-note">Immer für dich da – Skills, Pläne & Hilfe bei Krisen</p>
         </div>
 
         <div className="welcome-features">

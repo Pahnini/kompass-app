@@ -117,9 +117,6 @@
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
   "include": ["src"] /* Only include source files in the src directory */,
-  "exclude": [
-    "node_modules",
-    "dist"
-  ] /* Exclude node_modules and build output */,
+  "exclude": ["node_modules", "dist"] /* Exclude node_modules and build output */,
   "references": [{ "path": "./tsconfig.node.json" }]
 }

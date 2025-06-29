@@ -35,7 +35,6 @@ Diese Dokumentation beschreibt die umfassende Refaktorierung der KompassApp, die
    ```
 
 2. **Hardcodierte Daten in dedizierte Dateien verschoben**
-
    - `src/data/themes.js` - Theme-Definitionen
    - `src/data/backgrounds.js` - Hintergrund-Optionen
    - `src/data/skills.js` - Skills-Liste
@@ -45,13 +44,11 @@ Diese Dokumentation beschreibt die umfassende Refaktorierung der KompassApp, die
    - `src/data/navigation.jsx` - Sidebar-Navigationselemente
 
 3. **Service-Layer erstellt**
-
    - `src/services/storageService.js` - Zentralisierte localStorage-Operationen
    - Fehlerbehandlung und konsistente API
    - Spezifische Getter/Setter-Funktionen für App-Daten
 
 4. **Utility-Funktionen erstellt**
-
    - `src/utils/shareUtils.js` - Sharing-Funktionalität mit Web Share API
 
 5. **Context Provider erstellt**
@@ -84,19 +81,16 @@ Diese Dokumentation beschreibt die umfassende Refaktorierung der KompassApp, die
    ```
 
 2. **Custom Hooks erstellt**
-
    - `src/hooks/useTheme.js` - Hook für Theme-Context
    - `src/hooks/useUserData.js` - Hook für UserData-Context
    - `src/hooks/useUI.js` - Hook für UI-Context
 
 3. **App.jsx drastisch vereinfacht**
-
    - **Vorher**: 190+ Zeilen mit 11+ useState Hooks
    - **Nachher**: 150+ Zeilen mit 0 useState Hooks
    - Alle Zustände in entsprechende Contexts verschoben
 
 4. **storageService.js implementiert**
-
    - Ersetzt direkte localStorage-Aufrufe
    - Integrierte Fehlerbehandlung
    - Konsistente API für Datenpersistierung
@@ -163,28 +157,24 @@ Diese Dokumentation beschreibt die umfassende Refaktorierung der KompassApp, die
 ### Was wurde gemacht
 
 1. **Toast-Notification-System implementiert**
-
    - `src/utils/toastUtils.js` - Zentrale Toast-Funktionen
    - `showSuccessToast()`, `showErrorToast()`, `showInfoToast()`
    - CSS-Animationen in GlobalStyle.jsx
    - Ersetzt Browser-Alerts durch elegante Notifications
 
 2. **ShareUtils mit Toast-Integration verbessert**
-
    - Erfolgreiche Shares zeigen Success-Toast
    - Fehler zeigen Error-Toast
    - Abgebrochene Shares zeigen Info-Toast
    - Bessere Benutzerführung und Feedback
 
 3. **DeinWeg.jsx Note-Saving verbessert**
-
    - **Validierung hinzugefügt**: Verhindert leere Notizen
    - **Notizen-Anzeige**: Gespeicherte Einträge werden sichtbar dargestellt
    - **Toast-Integration**: Ersetzt useState-basierte Nachrichten
    - **Bessere UX**: Klares visuelles Feedback
 
 4. **Skills.jsx Upload-Feedback verbessert**
-
    - **useState entfernt**: `uploadMsg` durch Toast-System ersetzt
    - **Konsistente Nachrichten**: Einheitliches Feedback-System
    - **Bessere Performance**: Weniger State-Management
@@ -212,14 +202,12 @@ Diese Dokumentation beschreibt die umfassende Refaktorierung der KompassApp, die
    ```
 
 2. **Responsive Emoji-Interaktionen**
-
    - **Desktop**: Hover-Effekte, Scale-Animation, Tooltips
    - **Mobile**: Touch-Feedback, Press-Animation
    - **Accessibility**: Keyboard-Navigation, ARIA-Labels
    - **Selection-Animation**: Bounce-Effekt bei Auswahl
 
 3. **Strukturiertes CSS-System in GlobalStyle.jsx**
-
    - **Layout-Klassen**: `.section`, `.form-row`, `.text-content`, `.actions`
    - **Component-Klassen**: `.template-btn`, `.share-btn`, `.delete-btn`
    - **Container-Klassen**: `.templates`, `.quick-items-grid`, `.emoji-row`
@@ -237,14 +225,12 @@ Diese Dokumentation beschreibt die umfassende Refaktorierung der KompassApp, die
 ### Was wurde gemacht
 
 1. **Umfassende Layout-Fixes**
-
    - **Form-Alignment**: `.form-row` mit Flexbox für Input + Button
    - **List-Struktur**: Konsistente `.text-content` + `.actions` Layout
    - **Spacing-System**: Einheitliche Margins und Paddings
    - **Button-Gruppierung**: Organisierte Action-Buttons
 
 2. **Component-Updates durchgeführt**
-
    - **DeinWeg.jsx**: Goals und Achievements mit neuen CSS-Klassen
    - **Skills.jsx**: Skills-Liste und Word-Files mit konsistentem Layout
    - **Designs.jsx**: Theme/Background-Optionen mit `.theme-options`
@@ -255,19 +241,18 @@ Diese Dokumentation beschreibt die umfassende Refaktorierung der KompassApp, die
    ```css
    /* Layout-Klassen */
    .section, .form-row, .text-content, .actions
-   
+
    /* Component-Klassen */
    .template-btn, .share-btn, .delete-btn, .quick-item
-   
+
    /* Container-Klassen */
    .templates, .quick-items-grid, .theme-options
-   
+
    /* State-Klassen */
    .stat-banner, .reminder, .welcome-section;
    ```
 
 4. **Mobile/Desktop Responsive Design**
-
    - **Mobile**: Stacked Layout, Touch-Targets (44px)
    - **Desktop**: Sidebar-Layout, Hover-Effekte
    - **Flexbox/Grid**: Moderne Layout-Techniken
@@ -286,12 +271,12 @@ Diese Dokumentation beschreibt die umfassende Refaktorierung der KompassApp, die
 
 ```javascript
 // Vorher: Browser alerts und useState
-alert("Gespeichert!");
-const [saveMsg, setSaveMsg] = useState("");
+alert('Gespeichert!');
+const [saveMsg, setSaveMsg] = useState('');
 
 // Nachher: Elegante Toast-Notifications
-showSuccessToast("Tagebucheintrag gespeichert! 📝");
-showErrorToast("Bitte füge mindestens ein Emoji hinzu");
+showSuccessToast('Tagebucheintrag gespeichert! 📝');
+showErrorToast('Bitte füge mindestens ein Emoji hinzu');
 ```
 
 ### CSS-Architektur
@@ -357,7 +342,6 @@ showErrorToast("Bitte füge mindestens ein Emoji hinzu");
 ### Was wurde gemacht
 
 1. **QuickEdit-System vollständig implementiert**
-
    - **Problem behoben**: QuickEdit-Checkboxen funktionierten nicht
    - **Data-Flow repariert**: Props zwischen App.jsx, HomeScreen und QuickEdit korrigiert
    - **Filtering-Logic**: HomeScreen und Sidebar filtern basierend auf Benutzerauswahl
@@ -367,7 +351,7 @@ showErrorToast("Bitte füge mindestens ein Emoji hinzu");
    ```javascript
    // storageService.js - Sinnvolle Standardwerte
    export const getFavorites = () =>
-     getItem(STORAGE_KEYS.FAVORITES, ["skills", "deinweg", "notfall", "guide"]);
+     getItem(STORAGE_KEYS.FAVORITES, ['skills', 'deinweg', 'notfall', 'guide']);
    ```
 
 3. **HomeScreen Interface-Filtering**
@@ -375,7 +359,7 @@ showErrorToast("Bitte füge mindestens ein Emoji hinzu");
    ```javascript
    // HomeScreen.jsx - Filtert "Alle Bereiche" basierend auf Favoriten
    const filteredItems = allItems.filter(
-     (item) => quickItems.includes(item.key) || item.key === "home"
+     item => quickItems.includes(item.key) || item.key === 'home'
    );
    ```
 
@@ -384,15 +368,11 @@ showErrorToast("Bitte füge mindestens ein Emoji hinzu");
    ```javascript
    // Sidebar.jsx - Zeigt nur ausgewählte Items
    const filteredItems = items.filter(
-     (item) =>
-       favorites.includes(item.key) ||
-       item.key === "home" ||
-       item.key === "quickedit"
+     item => favorites.includes(item.key) || item.key === 'home' || item.key === 'quickedit'
    );
    ```
 
 5. **Props-Kette repariert**
-
    - **App.jsx**: `quickItems={favorites}` an HomeScreen weitergegeben
    - **App.jsx**: `favorites={favorites}` an Sidebar weitergegeben
    - **QuickEdit.jsx**: Bereits korrekt implementiert mit Toggle-Funktionalität
@@ -430,7 +410,7 @@ Sidebar → filteredItems (gefilterte Navigation)
 function toggleQuick(key) {
   setQuickItems(
     quickItems.includes(key)
-      ? quickItems.filter((f) => f !== key) // Entfernen
+      ? quickItems.filter(f => f !== key) // Entfernen
       : [...quickItems, key] // Hinzufügen
   );
 }
@@ -440,9 +420,9 @@ function toggleQuick(key) {
 
 ```javascript
 // Bestimmte Items sind immer sichtbar
-const alwaysVisible = ["home", "quickedit"];
+const alwaysVisible = ['home', 'quickedit'];
 const filteredItems = items.filter(
-  (item) => favorites.includes(item.key) || alwaysVisible.includes(item.key)
+  item => favorites.includes(item.key) || alwaysVisible.includes(item.key)
 );
 ```
 
@@ -504,7 +484,7 @@ const filteredItems = items.filter(
 
    ```javascript
    // Vorher: Conditional Rendering basierend auf State
-   const [current, setCurrent] = useState("home");
+   const [current, setCurrent] = useState('home');
    const appViews = {
      home: <HomeScreen />,
      skills: <Skills />,
@@ -524,7 +504,6 @@ const filteredItems = items.filter(
    ```
 
 3. **URL-Struktur definiert**
-
    - `/` → HomeScreen (Startseite)
    - `/skills` → Skills & Achtsamkeit
    - `/deinweg` → Mein Kompass
@@ -671,7 +650,7 @@ const getPath = (key) => (key === "home" ? "/" : `/${key}`);
 ```javascript
 // UIContext.jsx - Unused Navigation State entfernt
 // Entfernt:
-const [currentPage, setCurrentPage] = useState("home");
+const [currentPage, setCurrentPage] = useState('home');
 const [quickEdit, setQuickEdit] = useState(false);
 const [showGuide, setShowGuide] = useState(false);
 const [showChat, setShowChat] = useState(false);
@@ -683,9 +662,7 @@ function handleSidebarNav(key) {
 const [showWelcome, setShowWelcome] = useState(false);
 const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 const [showDS, setShowDS] = useState(() => !storageService.getDsAccepted());
-const [onboarding, setOnboarding] = useState(
-  () => !storageService.getOnboardingCompleted()
-);
+const [onboarding, setOnboarding] = useState(() => !storageService.getOnboardingCompleted());
 ```
 
 ### App.jsx Prop-Vereinfachung
@@ -755,7 +732,7 @@ export default function ChatPage() {
 
 ```javascript
 // Komplexe State-Verwaltung
-const [currentPage, setCurrent] = useState("home");
+const [currentPage, setCurrent] = useState('home');
 const [quickEdit, setQuickEdit] = useState(false);
 
 // Conditional Rendering
@@ -782,11 +759,11 @@ function handleSidebarNav(key) {
 
 // Einfache Navigation
 const navigate = useNavigate();
-navigate("/skills");
+navigate('/skills');
 
 // Automatische Active States
 const location = useLocation();
-const isActive = location.pathname === "/skills";
+const isActive = location.pathname === '/skills';
 ```
 
 ## Fazit der React Router Implementation

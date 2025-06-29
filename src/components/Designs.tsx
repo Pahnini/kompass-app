@@ -1,16 +1,10 @@
-import React from "react";
-import { useTheme } from "../context/ThemeContext";
-import BackButton from "./BackButton";
+import React from 'react';
+import { useTheme } from '../context/ThemeContext';
+import BackButton from './BackButton';
 
 export default function Designs(): React.ReactElement {
-  const {
-    theme,
-    setTheme,
-    background,
-    setBackground,
-    availableThemes,
-    availableBackgrounds,
-  } = useTheme();
+  const { theme, setTheme, background, setBackground, availableThemes, availableBackgrounds } =
+    useTheme();
 
   return (
     <div className="card">
@@ -20,18 +14,15 @@ export default function Designs(): React.ReactElement {
       <div className="theme-selector">
         <label>🎨 Theme wählen:</label>
         <div className="theme-options">
-          {availableThemes.map((t) => (
+          {availableThemes.map(t => (
             <button
               key={t.name}
               onClick={() => setTheme(t)}
               style={{
                 backgroundColor: t.bg,
                 fontFamily: t.font,
-                color: t.dark ? "#fff" : "#000",
-                border:
-                  theme.name === t.name
-                    ? `3px solid ${t.accent}`
-                    : "1px solid #ccc",
+                color: t.dark ? '#fff' : '#000',
+                border: theme.name === t.name ? `3px solid ${t.accent}` : '1px solid #ccc',
               }}
             >
               {t.name}
@@ -43,12 +34,12 @@ export default function Designs(): React.ReactElement {
       <div className="background-selector">
         <label>🖼️ Hintergrund wählen:</label>
         <div className="background-options">
-          {availableBackgrounds.map((bg) => (
+          {availableBackgrounds.map(bg => (
             <button
               key={bg.id}
-              className={`bg-button ${background.id === bg.id ? "active" : ""}`}
+              className={`bg-button ${background.id === bg.id ? 'active' : ''}`}
               onClick={() => setBackground(bg)}
-              style={{ backgroundColor: bg.color, color: "#000" }} //171, 235, 198)
+              style={{ backgroundColor: bg.color, color: '#000' }} //171, 235, 198)
             >
               {bg.label}
             </button>

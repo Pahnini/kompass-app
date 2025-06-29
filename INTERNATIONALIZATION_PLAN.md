@@ -105,13 +105,13 @@ src/
 
 ```javascript
 // Hierarchical structure
-"page.component.element.type";
+'page.component.element.type';
 
 // Examples:
-"sidebar.navigation.home"; // "Startseite" / "Home"
-"deinweg.goals.placeholder"; // "Neues Ziel..." / "New Goal..."
-"skills.shareButton"; // "Teilen" / "Share"
-"common.buttons.back"; // "Zurück" / "Back"
+'sidebar.navigation.home'; // "Startseite" / "Home"
+'deinweg.goals.placeholder'; // "Neues Ziel..." / "New Goal..."
+'skills.shareButton'; // "Teilen" / "Share"
+'common.buttons.back'; // "Zurück" / "Back"
 ```
 
 ## 🔄 **Usage Pattern in Components**
@@ -190,11 +190,11 @@ Using existing `storageService.js`:
 
 ```javascript
 // Add to STORAGE_KEYS
-LANGUAGE: "kompass_language";
+LANGUAGE: 'kompass_language';
 
 // Add functions
-export const getLanguage = () => getItem(STORAGE_KEYS.LANGUAGE, "de");
-export const setLanguage = (lang) => setItem(STORAGE_KEYS.LANGUAGE, lang);
+export const getLanguage = () => getItem(STORAGE_KEYS.LANGUAGE, 'de');
+export const setLanguage = lang => setItem(STORAGE_KEYS.LANGUAGE, lang);
 ```
 
 ## 🎯 **Current Status**

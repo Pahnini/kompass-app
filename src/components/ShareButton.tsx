@@ -1,4 +1,4 @@
-import { JSX } from "react";
+import { JSX } from 'react';
 
 type ShareButtonProps = {
   onClick: () => void;
@@ -7,7 +7,7 @@ type ShareButtonProps = {
 
 export default function ShareButton({
   onClick,
-  ariaLabel = "Teilen",
+  ariaLabel = 'Teilen',
 }: ShareButtonProps): JSX.Element {
   return (
     <button onClick={onClick} className="share-btn" aria-label={ariaLabel}>

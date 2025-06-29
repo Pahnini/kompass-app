@@ -1,5 +1,5 @@
-import React from "react";
-import type { SidebarItem } from "../types";
+import React from 'react';
+import type { SidebarItem } from '../types';
 
 interface QuickAccessProps {
   items: SidebarItem[];
@@ -15,8 +15,8 @@ export default function QuickAccess({
   return (
     <div className="quickaccess">
       {/* Dynamische Quick-Items */}
-      {quickItems.map((key) => {
-        const item = items.find((i) => i.key === key);
+      {quickItems.map(key => {
+        const item = items.find(i => i.key === key);
         if (!item) return null;
         return (
           <button
@@ -32,11 +32,11 @@ export default function QuickAccess({
       })}
 
       {/* Feste zusätzliche Buttons */}
-      <button className="quick-btn" onClick={() => setCurrentPage("notfall")}>
+      <button className="quick-btn" onClick={() => setCurrentPage('notfall')}>
         <span className="icon-gradient">🚨</span>
         <span>Notfall</span>
       </button>
-      <button className="quick-btn" onClick={() => setCurrentPage("guide")}>
+      <button className="quick-btn" onClick={() => setCurrentPage('guide')}>
         <span className="icon-gradient">ℹ️</span>
         <span>Therapeut:in finden</span>
       </button>

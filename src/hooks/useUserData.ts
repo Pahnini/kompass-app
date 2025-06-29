@@ -1,7 +1,5 @@
-import { useContext } from "react";
-import UserDataContext, {
-  UserDataContextType,
-} from "../context/UserDataContext";
+import { useContext } from 'react';
+import UserDataContext, { UserDataContextType } from '../context/UserDataContext';
 
 /**
  * Custom hook to use the user data context
@@ -10,7 +8,7 @@ import UserDataContext, {
 export function useUserData(): UserDataContextType {
   const context = useContext(UserDataContext);
   if (context === undefined) {
-    throw new Error("useUserData must be used within a UserDataProvider");
+    throw new Error('useUserData must be used within a UserDataProvider');
   }
   return context;
 }

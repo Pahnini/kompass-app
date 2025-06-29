@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
 export default function GlobalStyle(): React.ReactElement | null {
   useEffect((): (() => void) => {
-    const styleTag = document.createElement("style");
+    const styleTag = document.createElement('style');
     styleTag.innerHTML = `
       @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
 

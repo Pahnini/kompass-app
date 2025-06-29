@@ -10,7 +10,7 @@ Die Kompass-App unterstützt junge Menschen nach einem psychiatrischen Klinikauf
 - 📍 Mein Kompass: persönliche Ziele & Tagesstruktur
 - 🆘 Notfallhilfe & direkte Kontakte
 - 🤖 Chatbot für Hilfe & Orientierung
-- 💬 (Geplant): Guide zur Therapeut*innensuche
+- 💬 (Geplant): Guide zur Therapeut\*innensuche
 - 📱 Mobile-optimiertes Design
 
 ## 🛠 Tech-Stack
@@ -26,17 +26,20 @@ Die Kompass-App unterstützt junge Menschen nach einem psychiatrischen Klinikauf
 ## 🚀 Installation
 
 ### 1. Klonen
+
 ```bash
 git clone https://github.com/DEIN-NUTZERNAME/kompass-app.git
 cd kompass-app
 ```
 
 ### 2. Abhängigkeiten installieren
+
 ```bash
 npm install
 ```
 
 ### 3. Lokalen Dev-Server starten
+
 ```bash
 npm run dev
 ```
@@ -57,6 +60,7 @@ Du willst helfen? Großartig! Jede Unterstützung ist willkommen – ob UX-Ideen
 4. Branch erstellen, PR öffnen, fertig 💪
 
 ### Labels:
+
 - `good first issue`: ideal zum Reinkommen
 - `bug`: Fehler beheben
 - `enhancement`: Verbesserungen
@@ -80,19 +84,21 @@ src/
 
 ## 📜 Lizenz
 
-MIT License – siehe [LICENSE](./LICENSE)  
-
+MIT License – siehe [LICENSE](./LICENSE)
 
 ---
 
 ## 📣 Kontakt
 
-Bei Fragen, Ideen oder Feedback:  
+Bei Fragen, Ideen oder Feedback:
+
 > **florianpahn@aol.com**  
-Oder direkt via GitHub Issues.
+> Oder direkt via GitHub Issues.
 
 ---
+
 ---
+
 ---
 
 ##⚠️ Lizenzhinweis
@@ -102,4 +108,5 @@ Dieses Projekt ist **nicht Open Source**.
 Der Code ist urheberrechtlich geschützt und darf **nicht ohne ausdrückliche Genehmigung** verwendet, kopiert, verändert oder veröffentlicht werden – auch nicht auszugsweise.
 
 Bei Interesse an einer Nutzung oder Kooperation:
+
 > **florianpahn@aol.com**

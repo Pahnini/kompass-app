@@ -1,5 +1,5 @@
-import React from "react";
-import BackButton from "./BackButton";
+import React from 'react';
+import BackButton from './BackButton';
 
 export default function Chatbot(): React.ReactElement {
   return (
@@ -7,8 +7,7 @@ export default function Chatbot(): React.ReactElement {
       <BackButton />
       <h2>Chatbot (Demo)</h2>
       <p>
-        Hier könntest du in einer echten App anonym schreiben oder Skills/Tipps
-        bekommen.
+        Hier könntest du in einer echten App anonym schreiben oder Skills/Tipps bekommen.
         <br />
         In dieser Demo ist der Chat nur eine Platzhalterfunktion.
       </p>

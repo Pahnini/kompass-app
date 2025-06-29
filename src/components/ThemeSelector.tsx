@@ -1,6 +1,6 @@
-import React from "react";
-import type { Theme } from "../data/themes";
-import { themes } from "../data/themes";
+import React from 'react';
+import type { Theme } from '../data/themes';
+import { themes } from '../data/themes';
 
 interface ThemeSelectorProps {
   currentTheme: string;
@@ -18,12 +18,12 @@ export default function ThemeSelector({
         <select
           id="theme-select"
           value={currentTheme}
-          onChange={(e) => {
-            const selected = themes.find((t) => t.name === e.target.value);
+          onChange={e => {
+            const selected = themes.find(t => t.name === e.target.value);
             if (selected) onChange(selected);
           }}
         >
-          {themes.map((theme) => (
+          {themes.map(theme => (
             <option key={theme.name} value={theme.name}>
               {theme.name.charAt(0).toUpperCase() + theme.name.slice(1)}
             </option>
@@ -32,24 +32,20 @@ export default function ThemeSelector({
       </div>
 
       <div className="theme-options">
-        {themes.map((t) => (
+        {themes.map(t => (
           <button
             key={t.name}
-            className={`theme-button ${
-              currentTheme === t.name ? "active" : ""
-            }`}
+            className={`theme-button ${currentTheme === t.name ? 'active' : ''}`}
             onClick={() => onChange(t)}
             style={{
               backgroundColor: t.bg,
               color: t.primary,
               fontFamily: t.font,
-              border: `2px solid ${
-                currentTheme === t.name ? t.accent : "transparent"
-              }`,
-              padding: "10px",
-              margin: "6px",
-              borderRadius: "8px",
-              cursor: "pointer",
+              border: `2px solid ${currentTheme === t.name ? t.accent : 'transparent'}`,
+              padding: '10px',
+              margin: '6px',
+              borderRadius: '8px',
+              cursor: 'pointer',
             }}
           >
             {t.name}

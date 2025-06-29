@@ -16,7 +16,7 @@ export type SidebarItem = {
 };
 
 declare namespace React {
-  type ReactNode = any;
+  type ReactNode = unknown;
 }
 
 export type BackgroundOptions = {

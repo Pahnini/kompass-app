@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { SidebarItem } from "../types";
-import supabase from "../utils/supabase";
+import { supabase } from "../utils/supabase";
 
 interface SidebarProps {
   items: SidebarItem[];

@@ -1,13 +1,28 @@
-import { Compass } from 'lucide-react';
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import type { SidebarItem } from '../types';
+import {
+  DndContext,
+  closestCenter,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
+import { Compass } from 'lucide-react'
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
+import type { SidebarItem } from '../types'
+import SortableQuickItem from './SortableQuickItem'
+import * as storageService from '../services/storageService'
 
 interface HomeScreenProps {
-  username: string;
-  setUsername: (username: string) => void;
-  quickItems: string[];
-  allItems: SidebarItem[];
+  username: string
+  setUsername: (username: string) => void
+  quickItems: string[]
+  allItems: SidebarItem[]
+  setFavorites: (items: string[]) => void
 }
 
 export default function HomeScreen({
@@ -15,16 +30,25 @@ export default function HomeScreen({
   setUsername,
   quickItems,
   allItems,
+  setFavorites,
 }: HomeScreenProps): React.ReactElement {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
-  // Filter allItems to only show selected favorites
-  const filteredItems = allItems.filter(
-    item => quickItems.includes(item.key) || item.key === 'home'
-  );
+  const sensors = useSensors(useSensor(PointerSensor))
 
-  // Convert item key to path
-  const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
+
+const handleDragEnd = (event: any) => {
+  const { active, over } = event
+  if (active.id !== over?.id) {
+    const oldIndex = quickItems.indexOf(active.id)
+    const newIndex = quickItems.indexOf(over.id)
+    const newOrder = arrayMove(quickItems, oldIndex, newIndex)
+
+    setFavorites(newOrder)                    // ✅ Zustand aktualisieren
+    storageService.set('favorites', newOrder) // ✅ dauerhaft speichern
+  }
+}
+  const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`)
 
   return (
     <div className="card">
@@ -42,18 +66,18 @@ export default function HomeScreen({
               type="text"
               placeholder="Wie soll ich dich nennen?"
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
-                const input = e.currentTarget;
+                const input = e.currentTarget
                 if (e.key === 'Enter' && input.value.trim()) {
-                  setUsername(input.value.trim());
+                  setUsername(input.value.trim())
                 }
               }}
             />
             <button
               onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                const button = e.currentTarget;
-                const input = button.previousElementSibling as HTMLInputElement;
+                const button = e.currentTarget
+                const input = button.previousElementSibling as HTMLInputElement
                 if (input.value.trim()) {
-                  setUsername(input.value.trim());
+                  setUsername(input.value.trim())
                 }
               }}
             >
@@ -64,22 +88,28 @@ export default function HomeScreen({
       </div>
 
       <div className="section">
-        <button className="edit-quick-items" onClick={() => navigate('/quickedit')}>
-          ⚙️ Schnellzugriff bearbeiten
-        </button>
-      </div>
-
-      <div className="section">
-        <h3>Alle Bereiche</h3>
-        <div className="quick-items-grid">
-          {filteredItems.map((item, i) => (
-            <div key={i} className="quick-item" onClick={() => navigate(getPath(item.key))}>
-              <div className="icon">{item.icon as React.ReactNode}</div>
-              <div className="label">{item.label}</div>
+        <h3>Deine Schnellzugriffe</h3>
+        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={quickItems} strategy={verticalListSortingStrategy}>
+            <div className="quick-items-grid">
+              {quickItems.map(key => {
+                const item = allItems.find(i => i.key === key)
+                return (
+                  item && (
+                    <SortableQuickItem
+                      key={item.key}
+                      id={item.key}
+                      icon={item.icon as React.ReactNode}
+                      label={item.label}
+                      onClick={() => navigate(getPath(item.key))}
+                    />
+                  )
+                )
+              })}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
       </div>
     </div>
-  );
+  )
 }

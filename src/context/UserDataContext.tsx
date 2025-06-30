@@ -1,83 +1,84 @@
-import React, { createContext, ReactNode, useState } from 'react';
-import * as storageService from '../services/storageService';
-import type { Achievement, CalendarNotes, Goal, Symptoms, WordFile } from '../types';
+import React, { createContext, ReactNode, useState } from 'react'
+import * as storageService from '../services/storageService'
+import type { Achievement, CalendarNotes, Goal, Symptoms, WordFile } from '../types'
 
-// Define the context type
 export interface UserDataContextType {
-  username: string;
-  setUsername: (username: string) => void;
-  goals: Goal[];
-  setGoals: (goals: Goal[]) => void;
-  achievements: Achievement[];
-  setAchievements: (achievements: Achievement[]) => void;
-  calendarNotes: CalendarNotes;
-  setCalendarNotes: (notes: CalendarNotes) => void;
-  symptoms: Symptoms;
-  setSymptoms: (symptoms: Symptoms) => void;
-  favorites: string[];
-  setFavorites: (favorites: string[]) => void;
-  wordFiles: WordFile[]; // TODO: Define proper type when implementing word file functionality
-  setWordFiles: (files: WordFile[]) => void;
-  hasGoalsReminder: boolean;
+  username: string
+  setUsername: (username: string) => void
+  goals: Goal[]
+  setGoals: (goals: Goal[]) => void
+  achievements: Achievement[]
+  setAchievements: (achievements: Achievement[]) => void
+  calendarNotes: CalendarNotes
+  setCalendarNotes: (notes: CalendarNotes) => void
+  symptoms: Symptoms
+  setSymptoms: (symptoms: Symptoms) => void
+  favorites: string[]
+  setFavorites: (favorites: string[]) => void
+  wordFiles: WordFile[]
+  setWordFiles: (files: WordFile[]) => void
+  hasGoalsReminder: boolean
 }
 
-// Create the context with a default undefined value
-const UserDataContext = createContext<UserDataContextType | undefined>(undefined);
+const UserDataContext = createContext<UserDataContextType | undefined>(undefined)
 
 interface UserDataProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
-/**
- * User data provider component
- * Manages user-related state like goals, achievements, etc.
- */
 export function UserDataProvider({ children }: UserDataProviderProps): React.ReactElement {
-  // User data state
-  const [username, setUsernameState] = useState<string>(() => storageService.getUsername());
-  const [goals, setGoalsState] = useState<Goal[]>(() => storageService.getGoals());
-  const [achievements, setAchievementsState] = useState<Achievement[]>(() =>
-    storageService.getAchievements()
-  );
-  const [calendarNotes, setCalendarNotesState] = useState<CalendarNotes>(() =>
-    storageService.getCalendarNotes()
-  );
-  const [symptoms, setSymptomsState] = useState<Symptoms>(() => storageService.getSymptome());
-  const [favorites, setFavoritesState] = useState<string[]>(() => storageService.getFavorites());
-  const [wordFiles, setWordFiles] = useState<any[]>([]);
+  const [username, setUsernameState] = useState<string>(
+    storageService.get<string>('username') ?? ''
+  )
+  const [goals, setGoalsState] = useState<Goal[]>(
+    storageService.get<Goal[]>('goals') ?? []
+  )
+  const [achievements, setAchievementsState] = useState<Achievement[]>(
+    storageService.get<Achievement[]>('achievements') ?? []
+  )
+  const [calendarNotes, setCalendarNotesState] = useState<CalendarNotes>(
+    storageService.get<CalendarNotes>('calendarNotes') ?? {}
+  )
+  const [symptoms, setSymptomsState] = useState<Symptoms>(
+    storageService.get<Symptoms>('symptoms') ?? {}
+  )
+  const [favorites, setFavoritesState] = useState<string[]>(
+    storageService.get<string[]>('favorites') ?? ['home', 'skills', 'notfall', 'guide']
+  )
+  const [wordFiles, setWordFiles] = useState<WordFile[]>(
+    storageService.get<WordFile[]>('wordFiles') ?? []
+  )
 
-  // Wrapper functions to update both state and localStorage
-  const setUsername = (newUsername: string): void => {
-    setUsernameState(newUsername);
-    storageService.setUsername(newUsername);
-  };
+  const setUsername = (value: string) => {
+    setUsernameState(value)
+    storageService.set('username', value)
+  }
 
-  const setGoals = (newGoals: Goal[]): void => {
-    setGoalsState(newGoals);
-    storageService.setGoals(newGoals);
-  };
+  const setGoals = (value: Goal[]) => {
+    setGoalsState(value)
+    storageService.set('goals', value)
+  }
 
-  const setAchievements = (newAchievements: Achievement[]): void => {
-    setAchievementsState(newAchievements);
-    storageService.setAchievements(newAchievements);
-  };
+  const setAchievements = (value: Achievement[]) => {
+    setAchievementsState(value)
+    storageService.set('achievements', value)
+  }
 
-  const setCalendarNotes = (newNotes: CalendarNotes): void => {
-    setCalendarNotesState(newNotes);
-    storageService.setCalendarNotes(newNotes);
-  };
+  const setCalendarNotes = (value: CalendarNotes) => {
+    setCalendarNotesState(value)
+    storageService.set('calendarNotes', value)
+  }
 
-  const setSymptoms = (newSymptoms: Symptoms): void => {
-    setSymptomsState(newSymptoms);
-    storageService.setSymptome(newSymptoms);
-  };
+  const setSymptoms = (value: Symptoms) => {
+    setSymptomsState(value)
+    storageService.set('symptoms', value)
+  }
 
-  const setFavorites = (newFavorites: string[]): void => {
-    setFavoritesState(newFavorites);
-    storageService.setFavorites(newFavorites);
-  };
+  const setFavorites = (value: string[]) => {
+    setFavoritesState(value)
+    storageService.set('favorites', value)
+  }
 
-  // Context value
   const value: UserDataContextType = {
     username,
     setUsername,
@@ -94,16 +95,15 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
     wordFiles,
     setWordFiles,
     hasGoalsReminder: goals.length > 0 && !goals.some(g => g.completed),
-  };
+  }
 
-  return <UserDataContext.Provider value={value}>{children}</UserDataContext.Provider>;
+  return <UserDataContext.Provider value={value}>{children}</UserDataContext.Provider>
 }
 
-export default UserDataContext;
 export function useUserData(): UserDataContextType {
-  const context = React.useContext(UserDataContext);
+  const context = React.useContext(UserDataContext)
   if (!context) {
-    throw new Error('useUserData must be used within a UserDataProvider');
+    throw new Error('useUserData must be used within a UserDataProvider')
   }
-  return context;
+  return context
 }

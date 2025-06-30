@@ -1,65 +1,63 @@
-import React, { createContext, ReactNode, useEffect, useState } from 'react';
-import * as storageService from '../services/storageService';
+import React, { createContext, ReactNode, useEffect, useState } from 'react'
+import * as storageService from '../services/storageService'
 
-// Define the context type
 export interface UIContextType {
-  showWelcome: boolean;
-  setShowWelcome: (show: boolean) => void;
-  isSidebarOpen: boolean;
-  setIsSidebarOpen: (open: boolean) => void;
-  showDS: boolean;
-  setShowDS: (show: boolean) => void;
-  onboarding: boolean;
-  setOnboarding: (show: boolean) => void;
-  toast: string;
-  showToast: (msg: string) => void;
+  showWelcome: boolean
+  setShowWelcome: (show: boolean) => void
+  isSidebarOpen: boolean
+  setIsSidebarOpen: (open: boolean) => void
+  showDS: boolean
+  setShowDS: (show: boolean) => void
+  onboarding: boolean
+  setOnboarding: (show: boolean) => void
+  toast: string
+  showToast: (msg: string) => void
 }
 
-// Create the context with a default undefined value
-const UIContext = createContext<UIContextType | undefined>(undefined);
+const UIContext = createContext<UIContextType | undefined>(undefined)
 
 interface UIProviderProps {
-  children: ReactNode;
+  children: ReactNode
 }
 
-/**
- * UI state provider component
- * Manages UI-related state like modals, sidebar, etc.
- */
 export function UIProvider({ children }: UIProviderProps): React.ReactElement {
-  // UI state - WelcomeScreen should only show on first visit to root path
-  const [showWelcome, setShowWelcome] = useState<boolean>(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
-  const [showDS, setShowDS] = useState<boolean>(() => !storageService.getDsAccepted());
-  const [onboarding, setOnboarding] = useState<boolean>(
-    () => !storageService.getOnboardingCompleted()
-  );
-  const [toast, setToast] = useState<string>('');
+  const [showWelcome, setShowWelcome] = useState<boolean>(false)
+  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false)
 
-  // Show toast message
+  const [showDS, setShowDS] = useState<boolean>(() => {
+    const accepted = storageService.get<boolean>('dsAccepted')
+    return accepted === null ? true : !accepted
+  })
+
+  const [onboarding, setOnboarding] = useState<boolean>(() => {
+    const completed = storageService.get<boolean>('onboardingCompleted')
+    return completed === null ? true : !completed
+  })
+
+  const [toast, setToast] = useState<string>('')
+
   function showToast(msg: string): void {
-    setToast(msg);
-    setTimeout(() => setToast(''), 1200);
+    setToast(msg)
+    setTimeout(() => setToast(''), 1200)
   }
 
-  // Update localStorage when modals are closed
+  // Speicherung bei Änderung
   useEffect(() => {
-    if (!showDS) storageService.setDsAccepted();
-  }, [showDS]);
+    if (!showDS) storageService.set('dsAccepted', true)
+  }, [showDS])
 
   useEffect(() => {
-    if (!onboarding) storageService.setOnboardingCompleted();
-  }, [onboarding]);
+    if (!onboarding) storageService.set('onboardingCompleted', true)
+  }, [onboarding])
 
-  // Show sidebar hint on first visit
   useEffect(() => {
-    if (!storageService.getSidebarHintShown()) {
-      alert('Tipp: Über ☰ oben rechts erreichst du das Menü.');
-      storageService.setSidebarHintShown();
+    const hintShown = storageService.get<boolean>('sidebarHintShown')
+    if (!hintShown) {
+      alert('Tipp: Über ☰ oben rechts erreichst du das Menü.')
+      storageService.set('sidebarHintShown', true)
     }
-  }, []);
+  }, [])
 
-  // Context value
   const value: UIContextType = {
     showWelcome,
     setShowWelcome,
@@ -71,9 +69,9 @@ export function UIProvider({ children }: UIProviderProps): React.ReactElement {
     setOnboarding,
     toast,
     showToast,
-  };
+  }
 
-  return <UIContext.Provider value={value}>{children}</UIContext.Provider>;
+  return <UIContext.Provider value={value}>{children}</UIContext.Provider>
 }
 
-export default UIContext;
+export default UIContext

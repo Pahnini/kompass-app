@@ -17,7 +17,7 @@ import { templates } from "./data/templates";
 import { usePageTitle } from "./hooks/usePageTitle";
 import { useTheme } from "./hooks/useTheme";
 import { useUI } from "./hooks/useUI";
-import { useUserData } from "./hooks/useUserData";
+import { useUserData } from "./context/UserDataContext"
 import { shareAchievement, shareSkill } from "./utils/shareUtils";
 import { supabase } from "./utils/supabase";
 
@@ -116,17 +116,19 @@ export default function App(): React.ReactElement {
       >
         <Suspense fallback={<SmartLoading message="Seite wird geladen..." />}>
           <Routes>
-            <Route
-              path="/"
-              element={
-                <HomeScreen
-                  username={username}
-                  setUsername={setUsername}
-                  quickItems={favorites}
-                  allItems={sidebarItems}
-                />
-              }
-            />
+<Route
+  path="/"
+  element={
+    <HomeScreen
+      username={username}
+      setUsername={setUsername}
+      quickItems={favorites}
+      allItems={sidebarItems}
+      setFavorites={setFavorites}  // ✅ HIER ergänzen
+    />
+  }
+/>
+
             <Route
               path="/deinweg"
               element={

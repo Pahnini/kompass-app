@@ -1,86 +1,43 @@
-// import { Achievement, CalendarNotes, Goal, Symptoms, WordFile } from '../types';
-const STORAGE_KEY = 'kompassAppData';
+// src/services/storageService.ts
 
-export interface AppData {
-  username?: string;
-  goals?: any[];
-  achievements?: any[];
-  calendarNotes?: any;
-  symptoms?: any;
-  favorites?: string[];
-  buttonOrder?: string[];
-  dsAccepted?: boolean;
-  onboardingCompleted?: boolean;
-  sidebarHintShown?: boolean;
-  // wordFiles etc. folgen später
+/**
+ * Speichert einen beliebigen Wert im localStorage, typisiert als JSON.
+ * @param key - Der Schlüssel für den Eintrag
+ * @param value - Der zu speichernde Wert (string, object, array, etc.)
+ */
+export function set<T = unknown>(key: string, value: T): void {
+  try {
+    const json = JSON.stringify(value)
+    localStorage.setItem(key, json)
+  } catch (error) {
+    console.error(`[storageService] Fehler beim Speichern von "${key}":`, error)
+  }
 }
 
-// Daten laden
-export const loadData = (): AppData => {
+/**
+ * Lädt einen gespeicherten Wert aus localStorage.
+ * @param key - Der Schlüssel des Werts
+ * @returns Der gespeicherte Wert (typisiert) oder null
+ */
+export function get<T = unknown>(key: string): T | null {
   try {
-    const json = localStorage.getItem(STORAGE_KEY);
-    return json ? JSON.parse(json) : {};
+    const raw = localStorage.getItem(key)
+    if (!raw) return null
+    return JSON.parse(raw) as T
   } catch (error) {
-    console.error('Fehler beim Laden der Daten:', error);
-    return {};
+    console.error(`[storageService] Fehler beim Laden von "${key}":`, error)
+    return null
   }
-};
+}
 
-// Daten speichern
-export const saveData = (data: AppData): void => {
+/**
+ * Entfernt einen Eintrag aus dem localStorage.
+ * @param key - Der Schlüssel, der gelöscht werden soll
+ */
+export function remove(key: string): void {
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    localStorage.removeItem(key)
   } catch (error) {
-    console.error('Fehler beim Speichern der Daten:', error);
+    console.error(`[storageService] Fehler beim Entfernen von "${key}":`, error)
   }
-};
-
-// Reset-Funktion
-export const resetData = (): void => {
-  localStorage.removeItem(STORAGE_KEY);
-};
-
-// Utility zum gezielten Updaten einzelner Felder
-const updateField = <K extends keyof AppData>(key: K, value: AppData[K]) => {
-  const data = loadData();
-  saveData({ ...data, [key]: value });
-};
-
-// ===============================
-// USER-DATEN (UserDataContext.tsx)
-// ===============================
-
-export const getUsername = (): string => loadData().username || '';
-export const setUsername = (value: string): void => updateField('username', value);
-
-export const getGoals = (): any[] => loadData().goals || [];
-export const setGoals = (goals: any[]): void => updateField('goals', goals);
-
-export const getAchievements = (): any[] => loadData().achievements || [];
-export const setAchievements = (val: any[]): void => updateField('achievements', val);
-
-export const getCalendarNotes = (): any => loadData().calendarNotes || {};
-export const setCalendarNotes = (val: any): void => updateField('calendarNotes', val);
-
-export const getSymptome = (): any => loadData().symptoms || {};
-export const setSymptome = (val: any): void => updateField('symptoms', val);
-
-export const getFavorites = (): string[] => loadData().favorites || [];
-export const setFavorites = (val: string[]): void => updateField('favorites', val);
-
-// ===============================
-// UI-DATEN (UIContext.tsx)
-// ===============================
-
-export const getDsAccepted = (): boolean => !!loadData().dsAccepted;
-export const setDsAccepted = (): void => updateField('dsAccepted', true);
-
-export const getOnboardingCompleted = (): boolean => !!loadData().onboardingCompleted;
-export const setOnboardingCompleted = (): void => updateField('onboardingCompleted', true);
-
-export const getSidebarHintShown = (): boolean => !!loadData().sidebarHintShown;
-export const setSidebarHintShown = (): void => updateField('sidebarHintShown', true);
-
-// ===============================
-// Weitere Felder bei Bedarf ergänzen
-// ===============================
+}

@@ -12,8 +12,12 @@ export type Skill = string;
 export type SidebarItem = {
   key: string;
   label: string;
-  icon: JSX.Element;
+  icon: React.ReactNode;
 };
+
+declare namespace React {
+  type ReactNode = unknown;
+}
 
 export type BackgroundOptions = {
   id: string;

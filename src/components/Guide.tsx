@@ -1,12 +1,12 @@
-import React from "react";
-import BackButton from "./BackButton";
+import React from 'react';
+import BackButton from './BackButton';
 
 export default function Guide(): React.ReactElement {
   return (
     <div className="card">
       <BackButton />
       <h2>
-        Psychotherapeut:in finden{" "}
+        Psychotherapeut:in finden{' '}
         <span role="img" aria-label="Kompass">
           🧭
         </span>
@@ -19,16 +19,16 @@ export default function Guide(): React.ReactElement {
             <div
               style={{
                 marginTop: 8,
-                display: "flex",
-                flexDirection: "column",
-                gap: "6px",
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '6px',
               }}
             >
               <a
                 href="https://www.therapie.de/psychotherapie/"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: "#abebc6", display: "block" }}
+                style={{ color: '#abebc6', display: 'block' }}
               >
                 → therapie.de
               </a>
@@ -36,7 +36,7 @@ export default function Guide(): React.ReactElement {
                 href="https://www.kbv.de/html/arztsuche.php"
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{ color: "#abebc6", display: "block" }}
+                style={{ color: '#abebc6', display: 'block' }}
               >
                 → KBV-Arztsuche
               </a>
@@ -52,7 +52,7 @@ export default function Guide(): React.ReactElement {
           Direkt Praxen anrufen und nach freien Plätzen & Wartelisten fragen.
         </li>
         <li>
-          <span style={{ color: "#cc3366", marginRight: 4 }}>🏥</span>
+          <span style={{ color: '#cc3366', marginRight: 4 }}>🏥</span>
           Sozialdienst der Klinik um Empfehlungen bitten.
         </li>
         <li>
@@ -60,9 +60,8 @@ export default function Guide(): React.ReactElement {
           Notfall-Angebote nutzen, wenn schnelle Hilfe nötig ist!
         </li>
       </ul>
-      <p style={{ marginTop: 18, color: "#888" }}>
-        Sprich immer mit Vertrauenspersonen – und nutze im Zweifel die
-        Notfallnummern im Menü{" "}
+      <p style={{ marginTop: 18, color: '#888' }}>
+        Sprich immer mit Vertrauenspersonen – und nutze im Zweifel die Notfallnummern im Menü{' '}
         <span role="img" aria-label="Notruf">
           🚨
         </span>

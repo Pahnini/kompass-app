@@ -1,12 +1,6 @@
-import React, { createContext, ReactNode, useState } from "react";
-import * as storageService from "../services/storageService";
-import type {
-  Achievement,
-  CalendarNotes,
-  Goal,
-  Symptoms,
-  WordFile,
-} from "../types";
+import React, { createContext, ReactNode, useState } from 'react';
+import * as storageService from '../services/storageService';
+import type { Achievement, CalendarNotes, Goal, Symptoms, WordFile } from '../types';
 
 // Define the context type
 export interface UserDataContextType {
@@ -28,9 +22,7 @@ export interface UserDataContextType {
 }
 
 // Create the context with a default undefined value
-const UserDataContext = createContext<UserDataContextType | undefined>(
-  undefined
-);
+const UserDataContext = createContext<UserDataContextType | undefined>(undefined);
 
 interface UserDataProviderProps {
   children: ReactNode;
@@ -40,28 +32,18 @@ interface UserDataProviderProps {
  * User data provider component
  * Manages user-related state like goals, achievements, etc.
  */
-export function UserDataProvider({
-  children,
-}: UserDataProviderProps): React.ReactElement {
+export function UserDataProvider({ children }: UserDataProviderProps): React.ReactElement {
   // User data state
-  const [username, setUsernameState] = useState<string>(() =>
-    storageService.getUsername()
-  );
-  const [goals, setGoalsState] = useState<Goal[]>(() =>
-    storageService.getGoals()
-  );
+  const [username, setUsernameState] = useState<string>(() => storageService.getUsername());
+  const [goals, setGoalsState] = useState<Goal[]>(() => storageService.getGoals());
   const [achievements, setAchievementsState] = useState<Achievement[]>(() =>
     storageService.getAchievements()
   );
   const [calendarNotes, setCalendarNotesState] = useState<CalendarNotes>(() =>
     storageService.getCalendarNotes()
   );
-  const [symptoms, setSymptomsState] = useState<Symptoms>(() =>
-    storageService.getSymptome()
-  );
-  const [favorites, setFavoritesState] = useState<string[]>(() =>
-    storageService.getFavorites()
-  );
+  const [symptoms, setSymptomsState] = useState<Symptoms>(() => storageService.getSymptome());
+  const [favorites, setFavoritesState] = useState<string[]>(() => storageService.getFavorites());
   const [wordFiles, setWordFiles] = useState<any[]>([]);
 
   // Wrapper functions to update both state and localStorage
@@ -111,21 +93,17 @@ export function UserDataProvider({
     setFavorites,
     wordFiles,
     setWordFiles,
-    hasGoalsReminder: goals.length > 0 && !goals.some((g) => g.completed),
+    hasGoalsReminder: goals.length > 0 && !goals.some(g => g.completed),
   };
 
-  return (
-    <UserDataContext.Provider value={value}>
-      {children}
-    </UserDataContext.Provider>
-  );
+  return <UserDataContext.Provider value={value}>{children}</UserDataContext.Provider>;
 }
 
 export default UserDataContext;
 export function useUserData(): UserDataContextType {
   const context = React.useContext(UserDataContext);
   if (!context) {
-    throw new Error("useUserData must be used within a UserDataProvider");
+    throw new Error('useUserData must be used within a UserDataProvider');
   }
   return context;
 }

@@ -1,7 +1,7 @@
 /**
  * Utility functions for sharing content
  */
-import { showErrorToast, showInfoToast, showSuccessToast } from "./toastUtils";
+import { showErrorToast, showInfoToast, showSuccessToast } from './toastUtils';
 
 export interface Achievement {
   text: string;
@@ -16,25 +16,25 @@ export function shareAchievement(achievement: Achievement): void {
   if (navigator.share) {
     navigator
       .share({
-        title: "Erfolg",
+        title: 'Erfolg',
         text: `${achievement.text} (${achievement.date})`,
         url: window.location.href,
       })
       .then(() => {
-        showSuccessToast("Erfolg erfolgreich geteilt! 🎉");
+        showSuccessToast('Erfolg erfolgreich geteilt! 🎉');
       })
       .catch((error: Error) => {
-        console.error("Error sharing achievement:", error);
-        if (error.name === "AbortError") {
+        console.error('Error sharing achievement:', error);
+        if (error.name === 'AbortError') {
           // User cancelled sharing - don't show error
-          console.log("Sharing cancelled by user");
-          showInfoToast("Teilen abgebrochen");
+          console.log('Sharing cancelled by user');
+          showInfoToast('Teilen abgebrochen');
         } else {
-          showErrorToast("Fehler beim Teilen des Erfolgs");
+          showErrorToast('Fehler beim Teilen des Erfolgs');
         }
       });
   } else {
-    showErrorToast("Teilen wird von diesem Browser nicht unterstützt");
+    showErrorToast('Teilen wird von diesem Browser nicht unterstützt');
   }
 }
 
@@ -46,24 +46,24 @@ export function shareSkill(skill: string): void {
   if (navigator.share) {
     navigator
       .share({
-        title: "Skill",
+        title: 'Skill',
         text: skill,
         url: window.location.href,
       })
       .then(() => {
-        showSuccessToast("Skill erfolgreich geteilt! ✨");
+        showSuccessToast('Skill erfolgreich geteilt! ✨');
       })
       .catch((error: Error) => {
-        console.error("Error sharing skill:", error);
-        if (error.name === "AbortError") {
+        console.error('Error sharing skill:', error);
+        if (error.name === 'AbortError') {
           // User cancelled sharing
-          showInfoToast("Teilen abgebrochen");
+          showInfoToast('Teilen abgebrochen');
         } else {
-          showErrorToast("Fehler beim Teilen des Skills");
+          showErrorToast('Fehler beim Teilen des Skills');
         }
       });
   } else {
-    showErrorToast("Teilen wird von diesem Browser nicht unterstützt");
+    showErrorToast('Teilen wird von diesem Browser nicht unterstützt');
   }
 }
 

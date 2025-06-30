@@ -74,7 +74,7 @@ export default function HomeScreen({
         <div className="quick-items-grid">
           {filteredItems.map((item, i) => (
             <div key={i} className="quick-item" onClick={() => navigate(getPath(item.key))}>
-              <div className="icon">{item.icon}</div>
+              <div className="icon">{item.icon as React.ReactNode}</div>
               <div className="label">{item.label}</div>
             </div>
           ))}

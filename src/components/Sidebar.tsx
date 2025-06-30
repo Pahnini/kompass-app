@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
-import type { SidebarItem } from '../types';
-import supabase from '../utils/supabase';
+import React, { useEffect, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
+import type { SidebarItem } from "../types";
+import { supabase } from "../utils/supabase";
 
 interface SidebarProps {
   items: SidebarItem[];
@@ -66,7 +66,7 @@ export default function Sidebar({
               className={`sidebar-item ${location.pathname === getPath(item.key) ? 'active' : ''}`}
               onClick={handleClick}
             >
-              <span className="icon">{item.icon}</span>
+              <span className="icon">{item.icon as React.ReactNode}</span>
               <span className="label">{item.label}</span>
             </Link>
           ))}

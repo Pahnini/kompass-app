@@ -2,7 +2,11 @@
 
 export type Goal = { id: string; title: string; text: string; completed: boolean };
 export type Achievement = {
-  type: string; id: string; title: string; text: string; date: string 
+  type: string;
+  id: string;
+  title: string;
+  text: string;
+  date: string;
 };
 export type CalendarNote = { title: string; text: string };
 export type CalendarNotes = { [date: string]: CalendarNote };

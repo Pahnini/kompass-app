@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-import type { SidebarItem } from "../types";
-import { supabase } from "../utils/supabase";
-import { useUserData } from "../context/UserDataContext";
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import type { SidebarItem } from '../types';
+import { supabase } from '../utils/supabase';
+import { useUserData } from '../hooks/useUserData';
 
 interface SidebarProps {
   items: SidebarItem[];
@@ -57,11 +57,8 @@ export default function Sidebar({
 
       <aside className={`sidebar ${isOpen || isDesktop ? 'open' : ''}`}>
         <div className="sidebar-content">
-
           {/* Punktestand anzeigen */}
-          <div className="sidebar-points">
-            🌟 {points} Punkte
-          </div>
+          <div className="sidebar-points">🌟 {points} Punkte</div>
 
           {filteredItems.map(item => (
             <Link

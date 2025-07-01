@@ -1,16 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import type { Skill, WordFile } from '../types';
 import { showSuccessToast } from '../utils/toastUtils';
+import { parseWordDocument } from '../utils/wordParser';
 import BackButton from './BackButton';
 import DeleteButton from './DeleteButton';
 import Loading from './Loading';
 import ShareButton from './ShareButton';
+import WordFilePreview from './WordFilePreview';
 
 interface SkillsProps {
   shareSkill: (skill: string) => void;
   wordFiles: WordFile[];
   setWordFiles: (files: WordFile[]) => void;
   skillsList: Skill[];
+  setSkillsList: (skills: Skill[]) => void;
 }
 
 interface SkillsDoneState {
@@ -22,17 +25,19 @@ export default function Skills({
   wordFiles,
   setWordFiles,
   skillsList,
+  setSkillsList,
 }: SkillsProps): React.ReactElement {
   const [done, setDone] = useState<SkillsDoneState>(
     () => JSON.parse(localStorage.getItem('kompass_skills_done') || '{}') || {}
   );
   const [isUploading, setIsUploading] = useState<boolean>(false);
+  const [parsedLines, setParsedLines] = useState<string[]>([]);
 
   useEffect(() => {
     localStorage.setItem('kompass_skills_done', JSON.stringify(done));
   }, [done]);
 
-  function handleFile(e: React.ChangeEvent<HTMLInputElement>): void {
+  async function handleFile(e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     const files = e.target.files;
     if (!files || files.length === 0) return;
 
@@ -45,20 +50,38 @@ export default function Skills({
       setIsUploading(false);
       return;
     }
-    setWordFiles([
-      ...wordFiles,
-      {
-        id: crypto.randomUUID(), // oder Date.now().toString()
-        name: file.name,
-        file: file,
-        url: URL.createObjectURL(file),
-      },
-    ]);
-    setIsUploading(false);
-    showSuccessToast('Datei erfolgreich hochgeladen! 📄');
+
+    try {
+      const lines = await parseWordDocument(file);
+      setParsedLines(lines);
+    } catch (error) {
+      console.error('Error parsing document:', error);
+      showSuccessToast('Fehler beim Parsen des Dokuments. 📄');
+    } finally {
+      setIsUploading(false);
+    }
   }
+
+  function handleAddSkills(newSkills: Skill[]): void {
+    const updatedSkills = [...skillsList, ...newSkills];
+    setSkillsList(updatedSkills);
+    setParsedLines([]);
+
+    showSuccessToast('Skills erfolgreich hinzugefügt! 🎉');
+  }
+
   if (isUploading) {
-    return <Loading message="Datei wird hochgeladen..." />;
+    return <Loading message="Datei wird hochgeladen und verarbeitet..." />;
+  }
+
+  if (parsedLines.length > 0) {
+    return (
+      <WordFilePreview
+        parsedLines={parsedLines}
+        onAddSkills={handleAddSkills}
+        onCancel={() => setParsedLines([])}
+      />
+    );
   }
 
   return (

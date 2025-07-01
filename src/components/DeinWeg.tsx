@@ -64,6 +64,7 @@ export default function DeinWeg({
     if (achievementInput.trim())
       setAchievements([
         {
+          type: 'achievement',
           id: Date.now().toString(),
           text: achievementInput,
           date: new Date().toISOString().split('T')[0],

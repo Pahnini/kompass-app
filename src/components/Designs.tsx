@@ -1,5 +1,6 @@
 import React from 'react';
-import { useTheme } from '../context/ThemeContext';
+
+import useTheme from 'src/hooks/useTheme';
 import BackButton from './BackButton';
 
 export default function Designs(): React.ReactElement {

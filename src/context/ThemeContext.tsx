@@ -1,8 +1,8 @@
-import React, { createContext, ReactNode, useEffect, useState, useContext } from 'react';
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import type { BackgroundOptions } from '../data/backgrounds';
-import type { Theme } from '../data/themes';
-import { themes, modernBlueGrey } from '../data/themes';
 import { backgrounds } from '../data/backgrounds';
+import type { Theme } from '../data/themes';
+import { modernBlueGrey, themes } from '../data/themes';
 
 export interface ThemeContextType {
   theme: Theme;
@@ -14,14 +14,6 @@ export interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-export const useTheme = (): ThemeContextType => {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useTheme must be used within ThemeProvider');
-  return ctx;
-};
-
-// 🔁 ❗️ Wichtig: ThemeContext exportieren
 export { ThemeContext };
 
 export function ThemeProvider({ children }: { children: ReactNode }): React.ReactElement {

@@ -1,6 +1,7 @@
 import React, { createContext, ReactNode, useState } from 'react'
 import * as storageService from '../services/storageService'
 import type { Achievement, CalendarNotes, Goal, Symptoms, WordFile } from '../types'
+import pointSound from '../assets/sounds/point.wav'
 
 export interface UserDataContextType {
   username: string
@@ -18,6 +19,8 @@ export interface UserDataContextType {
   wordFiles: WordFile[]
   setWordFiles: (files: WordFile[]) => void
   hasGoalsReminder: boolean
+  points: number
+  addPoints: (amount: number) => void
 }
 
 const UserDataContext = createContext<UserDataContextType | undefined>(undefined)
@@ -45,8 +48,11 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
   const [favorites, setFavoritesState] = useState<string[]>(
     storageService.get<string[]>('favorites') ?? ['home', 'skills', 'notfall', 'guide']
   )
-  const [wordFiles, setWordFiles] = useState<WordFile[]>(
+  const [wordFiles, setWordFilesState] = useState<WordFile[]>(
     storageService.get<WordFile[]>('wordFiles') ?? []
+  )
+  const [points, setPoints] = useState<number>(
+    storageService.get<number>('points') ?? 0
   )
 
   const setUsername = (value: string) => {
@@ -79,6 +85,19 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
     storageService.set('favorites', value)
   }
 
+  const setWordFiles = (value: WordFile[]) => {
+    setWordFilesState(value)
+    storageService.set('wordFiles', value)
+  }
+
+  const addPoints = (amount: number) => {
+    const newPoints = points + amount
+    const audio = new Audio(pointSound)
+    audio.play().catch(() => {}) // Falls Browser blockiert, kein Fehler
+    setPoints(newPoints)
+    storageService.set('points', newPoints)
+  }
+
   const value: UserDataContextType = {
     username,
     setUsername,
@@ -95,6 +114,8 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
     wordFiles,
     setWordFiles,
     hasGoalsReminder: goals.length > 0 && !goals.some(g => g.completed),
+    points,
+    addPoints,
   }
 
   return <UserDataContext.Provider value={value}>{children}</UserDataContext.Provider>

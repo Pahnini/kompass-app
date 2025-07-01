@@ -139,7 +139,16 @@ export default function GlobalStyle(): React.ReactElement | null {
         opacity: 1;
         visibility: visible;
       }
-
+.sidebar-points {
+  padding: 10px 16px;
+  margin-bottom: 16px;
+  background-color: #2f4f4f;
+  color: #ffffff;
+  border-radius: 12px;
+  font-weight: bold;
+  font-size: 14px;
+  text-align: center;
+}
       .sidebar button,
       .sidebar a {
         background: transparent;

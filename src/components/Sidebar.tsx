@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import type { SidebarItem } from "../types";
 import { supabase } from "../utils/supabase";
+import { useUserData } from "../context/UserDataContext";
 
 interface SidebarProps {
   items: SidebarItem[];
@@ -18,11 +19,10 @@ export default function Sidebar({
 }: SidebarProps): React.ReactElement {
   const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth > 700);
   const location = useLocation();
+  const { points } = useUserData();
 
-  // Handle logout
   const handleLogout = async (): Promise<void> => {
     await supabase.auth.signOut();
-    // Redirect will happen automatically due to auth state change in App.tsx
     if (!isDesktop) {
       setIsOpen(false);
     }
@@ -34,7 +34,6 @@ export default function Sidebar({
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Filter items to show only favorites, but always show 'home' and 'quickedit'
   const filteredItems = items.filter(
     item => favorites.includes(item.key) || item.key === 'home' || item.key === 'quickedit'
   );
@@ -46,7 +45,6 @@ export default function Sidebar({
     }
   };
 
-  // Convert item key to path
   const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
 
   return (
@@ -59,6 +57,12 @@ export default function Sidebar({
 
       <aside className={`sidebar ${isOpen || isDesktop ? 'open' : ''}`}>
         <div className="sidebar-content">
+
+          {/* Punktestand anzeigen */}
+          <div className="sidebar-points">
+            🌟 {points} Punkte
+          </div>
+
           {filteredItems.map(item => (
             <Link
               key={item.key}

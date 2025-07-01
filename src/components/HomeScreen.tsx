@@ -11,11 +11,13 @@ import {
   verticalListSortingStrategy,
 } from '@dnd-kit/sortable'
 import { Compass } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import type { SidebarItem } from '../types'
 import SortableQuickItem from './SortableQuickItem'
 import * as storageService from '../services/storageService'
+import { useUserData } from '../context/UserDataContext'
+import './HomeScreen.css'
 
 interface HomeScreenProps {
   username: string
@@ -33,22 +35,30 @@ export default function HomeScreen({
   setFavorites,
 }: HomeScreenProps): React.ReactElement {
   const navigate = useNavigate()
-
   const sensors = useSensors(useSensor(PointerSensor))
+  const { addPoints } = useUserData()
+  const [animatingKey, setAnimatingKey] = useState<string | null>(null)
 
+  const handleDragEnd = (event: any) => {
+    const { active, over } = event
+    if (active.id !== over?.id) {
+      const oldIndex = quickItems.indexOf(active.id)
+      const newIndex = quickItems.indexOf(over.id)
+      const newOrder = arrayMove(quickItems, oldIndex, newIndex)
 
-const handleDragEnd = (event: any) => {
-  const { active, over } = event
-  if (active.id !== over?.id) {
-    const oldIndex = quickItems.indexOf(active.id)
-    const newIndex = quickItems.indexOf(over.id)
-    const newOrder = arrayMove(quickItems, oldIndex, newIndex)
-
-    setFavorites(newOrder)                    // ✅ Zustand aktualisieren
-    storageService.set('favorites', newOrder) // ✅ dauerhaft speichern
+      setFavorites(newOrder)
+      storageService.set('favorites', newOrder)
+    }
   }
-}
+
   const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`)
+
+  const handleQuickClick = (key: string) => {
+    setAnimatingKey(key)
+    addPoints(1)
+    setTimeout(() => setAnimatingKey(null), 300)
+    navigate(getPath(key))
+  }
 
   return (
     <div className="card">
@@ -101,7 +111,8 @@ const handleDragEnd = (event: any) => {
                       id={item.key}
                       icon={item.icon as React.ReactNode}
                       label={item.label}
-                      onClick={() => navigate(getPath(item.key))}
+                      onClick={() => handleQuickClick(item.key)}
+                      className={animatingKey === item.key ? 'bounce' : ''}
                     />
                   )
                 )

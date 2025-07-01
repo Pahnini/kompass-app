@@ -1,6 +1,6 @@
 // Theme definitions for the application
 // import type { Theme } from "../data/themes";
-export type ThemeName = 'Modern Blue-Grey' | 'Asklepios' | 'Classic' | 'Night';
+export type ThemeName = 'Modern Blue-Grey' | 'Grün' | 'Classic' | 'Night';
 
 export type Theme = {
   name: ThemeName;
@@ -29,7 +29,7 @@ export const modernBlueGrey: Theme = {
 export const themes: Theme[] = [
   modernBlueGrey,
   {
-    name: 'Asklepios',
+    name: 'Grün',
     bg: '#f6fefa',
     primary: '#0b9444',
     accent: '#69c86a',

@@ -172,6 +172,13 @@ export default function App(): React.ReactElement {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Update showWelcome state based on session
+  useEffect(() => {
+    if (session) {
+      setShowWelcome(false);
+    }
+  }, [session, setShowWelcome]);
+
   if (loading) {
     return <SmartLoading message="Verbindung wird hergestellt..." />;
   }
@@ -179,8 +186,6 @@ export default function App(): React.ReactElement {
   if (!session) {
     return <WelcomeScreen />;
   }
-
-  setShowWelcome(false);
 
   return <AuthenticatedApp />;
 }

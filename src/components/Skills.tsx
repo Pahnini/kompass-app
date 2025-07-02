@@ -98,6 +98,10 @@ export default function Skills({
               onChange={() => setDone(prev => ({ ...prev, [i]: !prev[i] }))}
             />
             <span className="text-content">{skill}</span>
+            <DeleteButton
+              onDelete={() => setSkillsList(skillsList.filter((_, idx) => idx !== i))}
+              ariaLabel="Skill löschen"
+            />
             <div className="actions">
               <ShareButton onClick={() => shareSkill(skill)} ariaLabel="Skill teilen" />
             </div>

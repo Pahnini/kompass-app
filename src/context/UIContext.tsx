@@ -21,25 +21,43 @@ interface UIProviderProps {
 }
 
 export function UIProvider({ children }: UIProviderProps): React.ReactElement {
-  const [showWelcome, setShowWelcome] = useState<boolean>(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+  // Use lazy initialization for all state to avoid unnecessary localStorage access on re-renders
+  const [showWelcome, setShowWelcomeState] = useState<boolean>(false);
+  const [isSidebarOpen, setIsSidebarOpenState] = useState<boolean>(false);
 
-  const [showDS, setShowDS] = useState<boolean>(() => {
+  const [showDS, setShowDSState] = useState<boolean>(() => {
     const accepted = storageService.get<boolean>('dsAccepted');
     return accepted === null ? true : !accepted;
   });
 
-  const [onboarding, setOnboarding] = useState<boolean>(() => {
+  const [onboarding, setOnboardingState] = useState<boolean>(() => {
     const completed = storageService.get<boolean>('onboardingCompleted');
     return completed === null ? true : !completed;
   });
 
   const [toast, setToast] = useState<string>('');
 
-  function showToast(msg: string): void {
+  // Use useCallback for all setter functions to ensure stable references
+  const setShowWelcome = React.useCallback((show: boolean): void => {
+    setShowWelcomeState(show);
+  }, []);
+
+  const setIsSidebarOpen = React.useCallback((open: boolean): void => {
+    setIsSidebarOpenState(open);
+  }, []);
+
+  const setShowDS = React.useCallback((show: boolean): void => {
+    setShowDSState(show);
+  }, []);
+
+  const setOnboarding = React.useCallback((show: boolean): void => {
+    setOnboardingState(show);
+  }, []);
+
+  const showToast = React.useCallback((msg: string): void => {
     setToast(msg);
     setTimeout(() => setToast(''), 1200);
-  }
+  }, []);
 
   // Speicherung bei Änderung
   useEffect(() => {
@@ -58,18 +76,33 @@ export function UIProvider({ children }: UIProviderProps): React.ReactElement {
     }
   }, []);
 
-  const value: UIContextType = {
-    showWelcome,
-    setShowWelcome,
-    isSidebarOpen,
-    setIsSidebarOpen,
-    showDS,
-    setShowDS,
-    onboarding,
-    setOnboarding,
-    toast,
-    showToast,
-  };
+  // Memoize the context value to prevent unnecessary re-renders
+  const value = React.useMemo<UIContextType>(
+    () => ({
+      showWelcome,
+      setShowWelcome,
+      isSidebarOpen,
+      setIsSidebarOpen,
+      showDS,
+      setShowDS,
+      onboarding,
+      setOnboarding,
+      toast,
+      showToast,
+    }),
+    [
+      showWelcome,
+      setShowWelcome,
+      isSidebarOpen,
+      setIsSidebarOpen,
+      showDS,
+      setShowDS,
+      onboarding,
+      setOnboarding,
+      toast,
+      showToast,
+    ]
+  );
 
   return <UIContext.Provider value={value}>{children}</UIContext.Provider>;
 }

@@ -52,14 +52,7 @@ function AuthenticatedApp() {
     hasGoalsReminder,
   } = useUserData();
 
-  const {
-    isSidebarOpen,
-    setIsSidebarOpen,
-    showDS,
-    setShowDS,
-    onboarding,
-    setOnboarding,
-  } = useUI();
+  const { isSidebarOpen, setIsSidebarOpen, showDS, setShowDS, onboarding, setOnboarding } = useUI();
 
   return (
     <div>
@@ -160,7 +153,7 @@ export default function App(): React.ReactElement {
 
   useEffect(() => {
     if (!supabase) {
-      console.error("Supabase client is not initialized.");
+      console.error('Supabase client is not initialized.');
       setLoading(false);
       return;
     }

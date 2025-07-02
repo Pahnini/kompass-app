@@ -33,29 +33,30 @@ interface UserDataProviderProps {
 }
 
 export function UserDataProvider({ children }: UserDataProviderProps): React.ReactElement {
+  // Use lazy initialization for all state to avoid unnecessary localStorage access on re-renders
   const [username, setUsernameState] = useState<string>(
-    storageService.get<string>('username') ?? ''
+    () => storageService.get<string>('username') ?? ''
   );
-  const [goals, setGoalsState] = useState<Goal[]>(storageService.get<Goal[]>('goals') ?? []);
+  const [goals, setGoalsState] = useState<Goal[]>(() => storageService.get<Goal[]>('goals') ?? []);
   const [achievements, setAchievementsState] = useState<Achievement[]>(
-    storageService.get<Achievement[]>('achievements') ?? []
+    () => storageService.get<Achievement[]>('achievements') ?? []
   );
   const [calendarNotes, setCalendarNotesState] = useState<CalendarNotes>(
-    storageService.get<CalendarNotes>('calendarNotes') ?? {}
+    () => storageService.get<CalendarNotes>('calendarNotes') ?? {}
   );
   const [symptoms, setSymptomsState] = useState<Symptoms>(
-    storageService.get<Symptoms>('symptoms') ?? {}
+    () => storageService.get<Symptoms>('symptoms') ?? {}
   );
   const [favorites, setFavoritesState] = useState<string[]>(
-    storageService.get<string[]>('favorites') ?? ['home', 'skills', 'notfall', 'guide']
+    () => storageService.get<string[]>('favorites') ?? ['home', 'skills', 'notfall', 'guide']
   );
   const [wordFiles, setWordFilesState] = useState<WordFile[]>(
-    storageService.get<WordFile[]>('wordFiles') ?? []
+    () => storageService.get<WordFile[]>('wordFiles') ?? []
   );
   const [skillsList, setSkillsListState] = useState<Skill[]>(
-    storageService.get<Skill[]>('skillsList') ?? defaultSkills
+    () => storageService.get<Skill[]>('skillsList') ?? defaultSkills
   );
-  const [points, setPoints] = useState<number>(storageService.get<number>('points') ?? 0);
+  const [points, setPoints] = useState<number>(() => storageService.get<number>('points') ?? 0);
 
   const setUsername = React.useCallback((value: string) => {
     setUsernameState(value);
@@ -99,15 +100,25 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
 
   const addPoints = React.useCallback(
     (amount: number) => {
-      const newPoints = points + amount;
-      const audio = new Audio(pointSound);
-      audio.play().catch(() => {}); // Falls Browser blockiert, kein Fehler
-      setPoints(newPoints);
-      storageService.set('points', newPoints);
+      setPoints(currentPoints => {
+        const newPoints = currentPoints + amount;
+        const audio = new Audio(pointSound);
+        audio.play().catch(() => {}); // Falls Browser blockiert, kein Fehler
+        storageService.set('points', newPoints);
+        return newPoints;
+      });
     },
-    [points]
+    [] // No dependencies needed with functional updates
   );
 
+  // Compute derived state separately to keep the dependency array smaller
+  const hasGoalsReminder = React.useMemo(
+    () => goals.length > 0 && !goals.some(g => g.completed),
+    [goals]
+  );
+
+  // Only include state values in the dependency array, not the setter functions
+  // since the setter functions are stable references (from useCallback)
   const value = React.useMemo<UserDataContextType>(
     () => ({
       username,
@@ -126,28 +137,30 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       setWordFiles,
       skillsList,
       setSkillsList,
-      hasGoalsReminder: goals.length > 0 && !goals.some(g => g.completed),
+      hasGoalsReminder,
       points,
       addPoints,
     }),
     [
       username,
-      setUsername,
       goals,
-      setGoals,
       achievements,
-      setAchievements,
       calendarNotes,
-      setCalendarNotes,
       symptoms,
-      setSymptoms,
       favorites,
-      setFavorites,
       wordFiles,
-      setWordFiles,
       skillsList,
-      setSkillsList,
+      hasGoalsReminder,
       points,
+      // Setter functions are stable and don't need to be in the dependency array
+      setUsername,
+      setGoals,
+      setAchievements,
+      setCalendarNotes,
+      setSymptoms,
+      setFavorites,
+      setWordFiles,
+      setSkillsList,
       addPoints,
     ]
   );

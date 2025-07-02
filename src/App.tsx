@@ -1,62 +1,37 @@
-import { Session } from "@supabase/supabase-js";
-import React, { lazy, Suspense, useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
-import DatenschutzModal from "./components/DatenschutzModal";
-import GlobalStyle from "./components/GlobalStyle";
-import HomeScreen from "./components/HomeScreen";
-import NotFound from "./components/NotFound";
-import OnboardingModal from "./components/OnboardingModal";
-import Sidebar from "./components/Sidebar";
-import SmartLoading from "./components/SmartLoading";
-import WelcomeScreen from "./components/WelcomeScreen";
-import { emojiList } from "./data/emojis";
-import { helpResources } from "./data/helpResources";
-import { sidebarItems } from "./data/navigation";
-import { skillsList } from "./data/skills";
-import { templates } from "./data/templates";
-import { usePageTitle } from "./hooks/usePageTitle";
-import { useTheme } from "./hooks/useTheme";
-import { useUI } from "./hooks/useUI";
-import { useUserData } from "./context/UserDataContext"
-import { shareAchievement, shareSkill } from "./utils/shareUtils";
-import { supabase } from "./utils/supabase";
+import { Session } from '@supabase/supabase-js';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import DatenschutzModal from './components/DatenschutzModal';
+import GlobalStyle from './components/GlobalStyle';
+import HomeScreen from './components/HomeScreen';
+import NotFound from './components/NotFound';
+import OnboardingModal from './components/OnboardingModal';
+import Sidebar from './components/Sidebar';
+import SmartLoading from './components/SmartLoading';
+import WelcomeScreen from './components/WelcomeScreen';
+import { emojiList } from './data/emojis';
+import { helpResources } from './data/helpResources';
+import { sidebarItems } from './data/navigation';
+import { templates } from './data/templates';
+import { usePageTitle } from './hooks/usePageTitle';
+import { useTheme } from './hooks/useTheme';
+import { useUI } from './hooks/useUI';
+import { useUserData } from './hooks/useUserData';
+import { shareAchievement, shareSkill } from './utils/shareUtils';
+import { supabase } from './utils/supabase';
 
 // Lazy load components for better performance
-const Chatbot = lazy(() => import("./components/Chatbot"));
-const DeinWeg = lazy(() => import("./components/DeinWeg"));
-const Designs = lazy(() => import("./components/Designs"));
-const Guide = lazy(() => import("./components/Guide"));
-const Notfall = lazy(() => import("./components/Notfall"));
-const QuickEdit = lazy(() => import("./components/QuickEdit"));
-const Skills = lazy(() => import("./components/Skills"));
+const Chatbot = lazy(() => import('./components/Chatbot'));
+const DeinWeg = lazy(() => import('./components/DeinWeg'));
+const Designs = lazy(() => import('./components/Designs'));
+const Guide = lazy(() => import('./components/Guide'));
+const Notfall = lazy(() => import('./components/Notfall'));
+const QuickEdit = lazy(() => import('./components/QuickEdit'));
+const Skills = lazy(() => import('./components/Skills'));
 
-export default function App(): React.ReactElement {
-  usePageTitle()
-
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  // 🔐 Supabase-Initialisierungsprüfung
-  if (!supabase) {
-    return <SmartLoading message="Initialisierung fehlgeschlagen. Bitte App neu laden." />
-  }
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setLoading(false)
-    })
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  const { theme, background } = useTheme()
+function AuthenticatedApp() {
+  usePageTitle();
+  const { theme, background } = useTheme();
   const {
     username,
     setUsername,
@@ -72,31 +47,12 @@ export default function App(): React.ReactElement {
     setFavorites,
     wordFiles,
     setWordFiles,
+    skillsList,
+    setSkillsList,
     hasGoalsReminder,
-  } = useUserData()
+  } = useUserData();
 
-  const {
-    showWelcome,
-    setShowWelcome,
-    isSidebarOpen,
-    setIsSidebarOpen,
-    showDS,
-    setShowDS,
-    onboarding,
-    setOnboarding,
-  } = useUI()
-
-  if (loading) {
-    return <SmartLoading message="Verbindung wird hergestellt..." />
-  }
-
-  if (!session) {
-    return <WelcomeScreen />
-  }
-
-  if (showWelcome) {
-    setShowWelcome(false)
-  }
+  const { isSidebarOpen, setIsSidebarOpen, showDS, setShowDS, onboarding, setOnboarding } = useUI();
 
   return (
     <div>
@@ -116,18 +72,18 @@ export default function App(): React.ReactElement {
       >
         <Suspense fallback={<SmartLoading message="Seite wird geladen..." />}>
           <Routes>
-<Route
-  path="/"
-  element={
-    <HomeScreen
-      username={username}
-      setUsername={setUsername}
-      quickItems={favorites}
-      allItems={sidebarItems}
-      setFavorites={setFavorites}  // ✅ HIER ergänzen
-    />
-  }
-/>
+            <Route
+              path="/"
+              element={
+                <HomeScreen
+                  username={username}
+                  setUsername={setUsername}
+                  quickItems={favorites}
+                  allItems={sidebarItems}
+                  setFavorites={setFavorites}
+                />
+              }
+            />
 
             <Route
               path="/deinweg"
@@ -156,14 +112,12 @@ export default function App(): React.ReactElement {
                   wordFiles={wordFiles}
                   setWordFiles={setWordFiles}
                   skillsList={skillsList}
+                  setSkillsList={setSkillsList}
                 />
               }
             />
 
-            <Route
-              path="/notfall"
-              element={<Notfall helpResources={helpResources} />}
-            />
+            <Route path="/notfall" element={<Notfall helpResources={helpResources} />} />
             <Route path="/designs" element={<Designs />} />
             <Route path="/guide" element={<Guide />} />
             <Route path="/chat" element={<Chatbot />} />
@@ -189,5 +143,49 @@ export default function App(): React.ReactElement {
         />
       )}
     </div>
-  )
+  );
+}
+
+export default function App(): React.ReactElement {
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { setShowWelcome } = useUI();
+
+  useEffect(() => {
+    if (!supabase) {
+      console.error('Supabase client is not initialized.');
+      setLoading(false);
+      return;
+    }
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Update showWelcome state based on session
+  useEffect(() => {
+    if (session) {
+      setShowWelcome(false);
+    }
+  }, [session, setShowWelcome]);
+
+  if (loading) {
+    return <SmartLoading message="Verbindung wird hergestellt..." />;
+  }
+
+  if (!session) {
+    return <WelcomeScreen />;
+  }
+
+  return <AuthenticatedApp />;
 }

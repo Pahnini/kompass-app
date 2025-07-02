@@ -1,8 +1,8 @@
-import React, { createContext, ReactNode, useEffect, useState, useContext } from 'react';
+import React, { createContext, ReactNode, useEffect, useState } from 'react';
 import type { BackgroundOptions } from '../data/backgrounds';
-import type { Theme } from '../data/themes';
-import { themes, modernBlueGrey } from '../data/themes';
 import { backgrounds } from '../data/backgrounds';
+import type { Theme } from '../data/themes';
+import { modernBlueGrey, themes } from '../data/themes';
 
 export interface ThemeContextType {
   theme: Theme;
@@ -14,14 +14,6 @@ export interface ThemeContextType {
 }
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
-
-export const useTheme = (): ThemeContextType => {
-  const ctx = useContext(ThemeContext);
-  if (!ctx) throw new Error('useTheme must be used within ThemeProvider');
-  return ctx;
-};
-
-// 🔁 ❗️ Wichtig: ThemeContext exportieren
 export { ThemeContext };
 
 export function ThemeProvider({ children }: { children: ReactNode }): React.ReactElement {
@@ -31,12 +23,17 @@ export function ThemeProvider({ children }: { children: ReactNode }): React.Reac
     return found || modernBlueGrey;
   });
 
-  const setTheme = (newTheme: Theme): void => {
+  // Use useCallback to ensure stable reference for setTheme
+  const setTheme = React.useCallback((newTheme: Theme): void => {
     setThemeState(newTheme);
     localStorage.setItem('kompass_theme', newTheme.name);
-  };
+  }, []);
 
-  const [background, setBackground] = useState<BackgroundOptions>(() => backgrounds[0]);
+  const [background, setBackgroundState] = useState<BackgroundOptions>(() => backgrounds[0]);
+  // Use useCallback to ensure stable reference for setBackground
+  const setBackground = React.useCallback((bg: BackgroundOptions): void => {
+    setBackgroundState(bg);
+  }, []);
 
   useEffect(() => {
     document.body.style.background = theme.bg;
@@ -45,18 +42,18 @@ export function ThemeProvider({ children }: { children: ReactNode }): React.Reac
     document.body.className = theme.dark ? 'night' : '';
   }, [theme]);
 
-  return (
-    <ThemeContext.Provider
-      value={{
-        theme,
-        setTheme,
-        background,
-        setBackground,
-        availableThemes: themes,
-        availableBackgrounds: backgrounds,
-      }}
-    >
-      {children}
-    </ThemeContext.Provider>
+  // Memoize the context value to prevent unnecessary re-renders
+  const value = React.useMemo<ThemeContextType>(
+    () => ({
+      theme,
+      setTheme,
+      background,
+      setBackground,
+      availableThemes: themes,
+      availableBackgrounds: backgrounds,
+    }),
+    [theme, background, setTheme, setBackground]
   );
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }

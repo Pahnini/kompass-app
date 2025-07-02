@@ -39,7 +39,9 @@ export default function QuickEdit({
                   onChange={() => toggleQuick(item.key)}
                 />
                 <span className="text-content">
-                  <span style={{ marginRight: '8px', fontSize: '18px' }}>{item.icon}</span>
+                  <span style={{ marginRight: '8px', fontSize: '18px' }}>
+                    {item.icon as React.ReactNode}
+                  </span>
                   {item.label}
                 </span>
               </li>

@@ -1,0 +1,27 @@
+---
+name: 🐞 Bug Report
+about: Fehler gefunden? Dann her damit!
+title: "[Bug] "
+labels: bug
+assignees: ''
+
+---
+
+### 🧩 Was ist das Problem?
+
+_Beschreibe den Fehler klar und deutlich._
+
+### 🔁 Schritte zur Reproduktion
+
+1. Gehe zu '...'
+2. Klicke auf '...'
+3. Fehler tritt auf: '...'
+
+### 📱 Gerät & Umgebung
+
+- Browser / Gerät:
+- Version:
+
+### 🖼️ Screenshots
+
+_Füge hier ggf. Screenshots hinzu_

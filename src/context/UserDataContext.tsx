@@ -2,6 +2,7 @@ import React, { createContext, ReactNode, useState } from 'react'
 import * as storageService from '../services/storageService'
 import type { Achievement, CalendarNotes, Goal, Symptoms, WordFile } from '../types'
 import pointSound from '../assets/sounds/point.wav'
+import { achievementList } from '../data/achievementList'
 
 export interface UserDataContextType {
   username: string
@@ -21,6 +22,8 @@ export interface UserDataContextType {
   hasGoalsReminder: boolean
   points: number
   addPoints: (amount: number) => void
+  level: number
+levelProgress: number
 }
 
 const UserDataContext = createContext<UserDataContextType | undefined>(undefined)
@@ -54,7 +57,15 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
   const [points, setPoints] = useState<number>(
     storageService.get<number>('points') ?? 0
   )
+const getLevel = (points: number): { level: number; progress: number } => {
+  if (points < 10) return { level: 1, progress: (points / 10) * 100 }
+  if (points < 25) return { level: 2, progress: ((points - 10) / 15) * 100 }
+  if (points < 50) return { level: 3, progress: ((points - 25) / 25) * 100 }
+  if (points < 100) return { level: 4, progress: ((points - 50) / 50) * 100 }
+  return { level: 5, progress: 100 }
+}
 
+const { level, progress } = getLevel(points)
   const setUsername = (value: string) => {
     setUsernameState(value)
     storageService.set('username', value)
@@ -91,14 +102,38 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
   }
 
   const addPoints = (amount: number) => {
-    const newPoints = points + amount
-    const audio = new Audio(pointSound)
-    audio.play().catch(() => {}) // Falls Browser blockiert, kein Fehler
-    setPoints(newPoints)
-    storageService.set('points', newPoints)
+  const newPoints = points + amount
+  const audio = new Audio(pointSound)
+  audio.play().catch(() => {})
+  setPoints(newPoints)
+  storageService.set('points', newPoints)
+
+  // Achievement-Logik
+
+const unlocked: Achievement[] = []
+
+achievementList.forEach(a => {
+  const alreadyUnlocked = achievements.some(existing => existing.id === a.id)
+  const match = a.id.startsWith('points-')
+  const targetPoints = parseInt(a.id.split('-')[1])
+  if (match && newPoints >= targetPoints && !alreadyUnlocked) {
+    unlocked.push({
+      ...a,
+      date: new Date().toISOString(),
+    })
   }
+})
+
+  if (unlocked.length > 0) {
+    const newAchievements = [...achievements, ...unlocked]
+    setAchievements(newAchievements)
+    storageService.set('achievements', newAchievements)
+  }
+}
+
 
   const value: UserDataContextType = {
+    
     username,
     setUsername,
     goals,
@@ -116,6 +151,8 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
     hasGoalsReminder: goals.length > 0 && !goals.some(g => g.completed),
     points,
     addPoints,
+    level,
+  levelProgress: progress,
   }
 
   return <UserDataContext.Provider value={value}>{children}</UserDataContext.Provider>

@@ -18,8 +18,11 @@ import { usePageTitle } from "./hooks/usePageTitle";
 import { useTheme } from "./hooks/useTheme";
 import { useUI } from "./hooks/useUI";
 import { useUserData } from "./context/UserDataContext"
-import { shareAchievement, shareSkill } from "./utils/shareUtils";
+import { shareSkill } from "./utils/shareUtils";
 import { supabase } from "./utils/supabase";
+import AchievementsScreen from './screens/AchievementsScreen'
+import { Achievement } from "./types";
+import AchievementPopup from './components/AchievementPopup'
 
 // Lazy load components for better performance
 const Chatbot = lazy(() => import("./components/Chatbot"));
@@ -30,12 +33,14 @@ const Notfall = lazy(() => import("./components/Notfall"));
 const QuickEdit = lazy(() => import("./components/QuickEdit"));
 const Skills = lazy(() => import("./components/Skills"));
 
+
 export default function App(): React.ReactElement {
   usePageTitle()
 
   const [session, setSession] = useState<Session | null>(null)
   const [loading, setLoading] = useState(true)
 
+  const [latestAchievement, setLatestAchievement] = useState<string | null>(null)
   // 🔐 Supabase-Initialisierungsprüfung
   if (!supabase) {
     return <SmartLoading message="Initialisierung fehlgeschlagen. Bitte App neu laden." />
@@ -46,8 +51,8 @@ export default function App(): React.ReactElement {
       setSession(session)
       setLoading(false)
     })
-
-    const {
+    
+   const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
       setSession(session)
@@ -74,6 +79,23 @@ export default function App(): React.ReactElement {
     setWordFiles,
     hasGoalsReminder,
   } = useUserData()
+
+useEffect(() => {
+
+  if (achievements.length === 0) return
+
+  const sorted = [...achievements].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  )
+
+  const newest = sorted[0]
+  const lastShown = localStorage.getItem('lastAchievementShown')
+
+  if (newest && newest.date !== lastShown) {
+    setLatestAchievement(newest.label)
+    localStorage.setItem('lastAchievementShown', newest.date)
+  }
+}, [achievements])
 
   const {
     showWelcome,
@@ -128,6 +150,7 @@ export default function App(): React.ReactElement {
     />
   }
 />
+<Route path="/achievements" element={<AchievementsScreen />} />
 
             <Route
               path="/deinweg"
@@ -135,17 +158,18 @@ export default function App(): React.ReactElement {
                 <DeinWeg
                   goals={goals}
                   setGoals={setGoals}
-                  achievements={achievements}
+
                   setAchievements={setAchievements}
                   calendarNotes={calendarNotes}
                   setCalendarNotes={setCalendarNotes}
                   symptoms={symptoms}
                   setSymptoms={setSymptoms}
-                  shareAchievement={shareAchievement}
+
                   showReminder={hasGoalsReminder}
                   emojiList={emojiList}
-                  templates={templates}
-                />
+                  templates={templates} achievements={[]} shareAchievement={function (achievement: Achievement): void {
+                    throw new Error("Function not implemented.");
+                  } }                />
               }
             />
             <Route
@@ -186,6 +210,12 @@ export default function App(): React.ReactElement {
         <DatenschutzModal
           onClose={() => setShowDS(false)}
           dsHinweis="Diese App speichert deine Daten lokal in deinem Browser. Es werden keine Daten an externe Server übertragen. Durch die Nutzung stimmst du der lokalen Speicherung zu."
+        />
+      )}
+      {latestAchievement && (
+        <AchievementPopup
+          label={latestAchievement}
+          onClose={() => setLatestAchievement(null)}
         />
       )}
     </div>

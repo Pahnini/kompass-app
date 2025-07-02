@@ -38,6 +38,7 @@ export default function HomeScreen({
   const sensors = useSensors(useSensor(PointerSensor))
   const { addPoints } = useUserData()
   const [animatingKey, setAnimatingKey] = useState<string | null>(null)
+   const { level, levelProgress } = useUserData()
 
   const handleDragEnd = (event: any) => {
     const { active, over } = event
@@ -59,7 +60,6 @@ export default function HomeScreen({
     setTimeout(() => setAnimatingKey(null), 300)
     navigate(getPath(key))
   }
-
   return (
     <div className="card">
       <div className="welcome-section">
@@ -96,6 +96,23 @@ export default function HomeScreen({
           </div>
         )}
       </div>
+      <div style={{ marginTop: '16px' }}>
+  <div style={{ fontSize: '14px', marginBottom: '4px' }}>
+    Level {level} – {Math.round(levelProgress)} %
+  </div>
+  <div style={{ background: '#ddd', height: '10px', borderRadius: '5px' }}>
+    <div
+      style={{
+        width: `${levelProgress}%`,
+        height: '100%',
+        background: '#0b9444',
+        borderRadius: '5px',
+        transition: 'width 0.3s ease',
+      }}
+    />
+  </div>
+</div>
+
 
       <div className="section">
         <h3>Deine Schnellzugriffe</h3>

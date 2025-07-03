@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import type { Skill } from 'src/types/index';
+import type { Skill } from '../types/index';
 
 interface WordFilePreviewProps {
   parsedLines: string[];

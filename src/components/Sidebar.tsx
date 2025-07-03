@@ -1,8 +1,9 @@
+import { Award } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import type { SidebarItem } from '../types';
-import { supabase } from '../utils/supabase';
 import { useUserData } from '../hooks/useUserData';
+import type { SidebarItem } from '../types/index';
+import { supabase } from '../utils/supabase';
 
 interface SidebarProps {
   items: SidebarItem[];
@@ -71,6 +72,17 @@ export default function Sidebar({
               <span className="label">{item.label}</span>
             </Link>
           ))}
+
+          <Link
+            to="/achievements"
+            className={`sidebar-item ${location.pathname === '/achievements' ? 'active' : ''}`}
+            onClick={handleClick}
+          >
+            <span className="icon">
+              <Award size={18} />
+            </span>
+            <span className="label">Erfolge</span>
+          </Link>
         </div>
 
         <button className="sidebar-item logout-button" onClick={handleLogout}>

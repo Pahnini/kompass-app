@@ -12,7 +12,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUserData } from '../hooks/useUserData';
 import * as storageService from '../services/storageService';
-import type { SidebarItem } from '../types';
+import type { SidebarItem } from '../types/index';
 import './HomeScreen.css';
 import SortableQuickItem from './SortableQuickItem';
 
@@ -35,6 +35,7 @@ export default function HomeScreen({
   const sensors = useSensors(useSensor(PointerSensor));
   const { addPoints } = useUserData();
   const [animatingKey, setAnimatingKey] = useState<string | null>(null);
+  const { level, levelProgress } = useUserData();
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
@@ -92,6 +93,22 @@ export default function HomeScreen({
             </button>
           </div>
         )}
+      </div>
+      <div style={{ marginTop: '16px' }}>
+        <div style={{ fontSize: '14px', marginBottom: '4px' }}>
+          Level {level} - {Math.round(levelProgress)}%
+        </div>
+        <div style={{ background: '#ddd', height: '10px', borderRadius: '5px' }}>
+          <div
+            style={{
+              width: `${levelProgress}%`,
+              height: '100%',
+              background: '#0b9444',
+              borderRadius: '5px',
+              transition: 'width 0.3s ease',
+            }}
+          />
+        </div>
       </div>
 
       <div className="section">

@@ -1,5 +1,5 @@
 import React from 'react';
-import type { SidebarItem } from '../types';
+import type { SidebarItem } from '../types/index';
 import BackButton from './BackButton';
 
 interface QuickEditProps {

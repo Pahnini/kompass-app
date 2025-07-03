@@ -1,6 +1,7 @@
 import { Session } from '@supabase/supabase-js';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
+import AchievementPopup from './components/AchievementPopup';
 import DatenschutzModal from './components/DatenschutzModal';
 import GlobalStyle from './components/GlobalStyle';
 import HomeScreen from './components/HomeScreen';
@@ -17,6 +18,7 @@ import { usePageTitle } from './hooks/usePageTitle';
 import { useTheme } from './hooks/useTheme';
 import { useUI } from './hooks/useUI';
 import { useUserData } from './hooks/useUserData';
+import AchievementsScreen from './screens/AchievementsScreen';
 import { shareAchievement, shareSkill } from './utils/shareUtils';
 import { supabase } from './utils/supabase';
 
@@ -32,6 +34,7 @@ const Skills = lazy(() => import('./components/Skills'));
 function AuthenticatedApp() {
   usePageTitle();
   const { theme, background } = useTheme();
+  const [latestAchievement, setLatestAchievement] = useState<string | null>(null);
   const {
     username,
     setUsername,
@@ -53,6 +56,26 @@ function AuthenticatedApp() {
   } = useUserData();
 
   const { isSidebarOpen, setIsSidebarOpen, showDS, setShowDS, onboarding, setOnboarding } = useUI();
+
+  // Handle achievements
+  useEffect(() => {
+    // Only process if we have achievements
+    if (achievements && achievements.length > 0) {
+      const sorted = [...achievements].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+
+      const newest = sorted[0];
+      const lastShown = localStorage.getItem('lastAchievementShown');
+
+      if (newest && newest.date !== lastShown) {
+        // Use label property from the Achievement type
+        const achievementText = newest.label || 'New Achievement';
+        setLatestAchievement(achievementText);
+        localStorage.setItem('lastAchievementShown', newest.date);
+      }
+    }
+  }, [achievements]);
 
   return (
     <div>
@@ -84,6 +107,7 @@ function AuthenticatedApp() {
                 />
               }
             />
+            <Route path="/achievements" element={<AchievementsScreen />} />
 
             <Route
               path="/deinweg"
@@ -141,6 +165,9 @@ function AuthenticatedApp() {
           onClose={() => setShowDS(false)}
           dsHinweis="Diese App speichert deine Daten lokal in deinem Browser. Es werden keine Daten an externe Server übertragen. Durch die Nutzung stimmst du der lokalen Speicherung zu."
         />
+      )}
+      {latestAchievement && (
+        <AchievementPopup label={latestAchievement} onClose={() => setLatestAchievement(null)} />
       )}
     </div>
   );

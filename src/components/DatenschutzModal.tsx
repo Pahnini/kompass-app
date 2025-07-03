@@ -1,4 +1,5 @@
 import { JSX } from 'react';
+import { useTranslation } from '../hooks/useTranslation';
 
 type DatenschutzModalProps = {
   onClose: () => void;

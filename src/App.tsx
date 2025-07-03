@@ -2,6 +2,7 @@ import { Session } from '@supabase/supabase-js';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import DatenschutzModal from './components/DatenschutzModal';
+import { LanguageProvider } from './context/LanguageContext';
 import GlobalStyle from './components/GlobalStyle';
 import HomeScreen from './components/HomeScreen';
 import NotFound from './components/NotFound';
@@ -184,8 +185,16 @@ export default function App(): React.ReactElement {
   }
 
   if (!session) {
-    return <WelcomeScreen />;
+    return (
+      <LanguageProvider>
+        <WelcomeScreen />
+      </LanguageProvider>
+    );
   }
 
-  return <AuthenticatedApp />;
+  return (
+    <LanguageProvider>
+      <AuthenticatedApp />
+    </LanguageProvider>
+  );
 }

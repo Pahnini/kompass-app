@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import { useTranslation } from '../hooks/useTranslation';
 import type { Skill, WordFile } from '../types';
 import { showSuccessToast } from '../utils/toastUtils';
 import { parseWordDocument } from '../utils/wordParser';
@@ -101,7 +102,7 @@ export default function Skills({
   return (
     <div className="card">
       <BackButton />
-      <h2>Skills & Achtsamkeit</h2>
+      <h2>{useTranslation().t('skills.title')}</h2>
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {skillsList.map((skill, i) => (
           <li
@@ -180,7 +181,7 @@ export default function Skills({
             <input
               ref={inputRef}
               type="text"
-              placeholder="Neuer Skill"
+              placeholder={useTranslation().t('skills.new.placeholder')}
               value={newSkill}
               onChange={e => setNewSkill(e.target.value)}
               onKeyDown={e => {

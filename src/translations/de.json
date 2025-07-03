@@ -1,0 +1,18 @@
+{
+  "navigation": {
+    "home": "Startseite",
+    "skills": "Skills & Achtsamkeit",
+    "deinweg": "Mein Kompass"
+  },
+  "buttons": {
+    "back": "Zurück",
+    "save": "Speichern",
+    "share": "Teilen"
+  },
+  "forms": {
+    "placeholders": {
+      "newGoal": "Neues Ziel...",
+      "achievement": "Erfolg heute?"
+    }
+  }
+}

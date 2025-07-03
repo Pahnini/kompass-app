@@ -1,0 +1,18 @@
+{
+  "navigation": {
+    "home": "Home",
+    "skills": "Skills & Mindfulness",
+    "deinweg": "My Compass"
+  },
+  "buttons": {
+    "back": "Back",
+    "save": "Save",
+    "share": "Share"
+  },
+  "forms": {
+    "placeholders": {
+      "newGoal": "New Goal...",
+      "achievement": "Achievement today?"
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface OnboardingModalProps {
   onClose: () => void;
@@ -36,7 +37,7 @@ export default function OnboardingModal({ onClose }: OnboardingModalProps): Reac
             auf den Homescreen holen.
           </li>
         </ul>
-        <button onClick={onClose}>Los geht’s!</button>
+        <button onClick={onClose}>{useTranslation().t('onboarding.start')}</button>
       </div>
     </div>
   );

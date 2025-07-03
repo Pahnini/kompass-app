@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from '../hooks/useTranslation';
 import { Emoji } from '../data/emojis';
 import { Achievement, CalendarNotes, Goal, Symptoms } from '../types';
 import { showErrorToast, showSuccessToast } from '../utils/toastUtils';
@@ -128,7 +129,7 @@ export default function DeinWeg({
   return (
     <div className="card">
       <BackButton />
-      <h2>Mein Kompass</h2>
+      <h2>{useTranslation().t('deinweg.title')}</h2>
       {showReminder && <div className="reminder">Ziel für heute: Was möchtest du schaffen? 🚩</div>}
       <div className="stat-banner">
         🎯 Diese Woche geschafft: <b>{goals.filter(g => g.completed).length}</b> Ziel
@@ -211,10 +212,10 @@ export default function DeinWeg({
       <textarea
         value={noteText}
         onChange={e => setNoteText(e.target.value)}
-        placeholder="Wie ging es dir heute? Was war auffällig?"
+        placeholder={useTranslation().t('deinweg.note.placeholder')}
       />
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <button onClick={saveNote}>Speichern</button>
+        <button onClick={saveNote}>{useTranslation().t('common.buttons.save')}</button>
       </div>
       <div className="section">
         <h3>Ziele</h3>
@@ -222,7 +223,7 @@ export default function DeinWeg({
           <input
             value={goalInput}
             onChange={e => setGoalInput(e.target.value)}
-            placeholder="Neues Ziel..."
+            placeholder={useTranslation().t('deinweg.goals.placeholder')}
           />
           <button aria-label="Ziel hinzufügen" onClick={addGoal}>
             +
@@ -258,7 +259,7 @@ export default function DeinWeg({
           <input
             value={achievementInput}
             onChange={e => setAchievementInput(e.target.value)}
-            placeholder="Erfolg heute?"
+            placeholder={useTranslation().t('deinweg.achievement.placeholder')}
           />
           <button onClick={addAchievement}>+</button>
         </div>

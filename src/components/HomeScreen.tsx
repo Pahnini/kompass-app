@@ -9,6 +9,7 @@ import {
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Compass } from 'lucide-react';
 import React, { useState } from 'react';
+import { useTranslation } from '../hooks/useTranslation';
 import { useNavigate } from 'react-router-dom';
 import { useUserData } from '../hooks/useUserData';
 import * as storageService from '../services/storageService';
@@ -63,7 +64,7 @@ export default function HomeScreen({
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>
           <Compass size={64} color="#5dade2" />
         </div>
-        <h1>Willkommen beim Kompass{username ? `, ${username}` : ''}!</h1>
+        <h1>{useTranslation().t('home.welcome')}</h1>
         <p>Deine App für den Alltag nach der Klinik.</p>
         <p>Skills, Pläne, Chatbot & Hilfe bei Krisen – immer für dich da.</p>
 
@@ -71,7 +72,7 @@ export default function HomeScreen({
           <div className="form-row" style={{ marginTop: '20px' }}>
             <input
               type="text"
-              placeholder="Wie soll ich dich nennen?"
+              placeholder={useTranslation().t('home.username.placeholder')}
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 const input = e.currentTarget;
                 if (e.key === 'Enter' && input.value.trim()) {

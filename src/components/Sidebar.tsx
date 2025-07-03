@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from '../hooks/useTranslation';
 import { Link, useLocation } from 'react-router-dom';
 import type { SidebarItem } from '../types';
 import { supabase } from '../utils/supabase';
@@ -47,6 +48,8 @@ export default function Sidebar({
 
   const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
 
+  const { currentLanguage, setLanguage } = useTranslation();
+
   return (
     <>
       {!isDesktop && (
@@ -68,9 +71,41 @@ export default function Sidebar({
               onClick={handleClick}
             >
               <span className="icon">{item.icon as React.ReactNode}</span>
-              <span className="label">{item.label}</span>
+              <span className="label">{useTranslation().t(item.label)}</span>
             </Link>
           ))}
+        </div>
+
+        <div
+          className="sidebar-language-toggle"
+          style={{ display: 'flex', gap: 8, justifyContent: 'center', margin: '12px 0' }}
+        >
+          <button
+            aria-label="Deutsch"
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: 24,
+              opacity: currentLanguage === 'de' ? 1 : 0.5,
+              cursor: 'pointer',
+            }}
+            onClick={() => setLanguage('de')}
+          >
+            🇩🇪
+          </button>
+          <button
+            aria-label="English"
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: 24,
+              opacity: currentLanguage === 'en' ? 1 : 0.5,
+              cursor: 'pointer',
+            }}
+            onClick={() => setLanguage('en')}
+          >
+            🇬🇧
+          </button>
         </div>
 
         <button className="sidebar-item logout-button" onClick={handleLogout}>

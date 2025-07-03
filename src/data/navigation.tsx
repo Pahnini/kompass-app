@@ -13,20 +13,20 @@ import {
 import type { SidebarItem } from '../types';
 
 export const sidebarItems: SidebarItem[] = [
-  { key: 'home', label: 'Home', icon: <Home size={18} /> },
-  { key: 'deinweg', label: 'Mein Kompass', icon: <Compass size={18} /> },
+  { key: 'home', label: 'navigation.home', icon: <Home size={18} /> },
+  { key: 'deinweg', label: 'navigation.deinweg', icon: <Compass size={18} /> },
   {
     key: 'skills',
-    label: 'Skills & Achtsamkeit',
+    label: 'navigation.skills',
     icon: <Sparkles size={18} />,
   },
-  { key: 'designs', label: 'Designs', icon: <Paintbrush size={18} /> },
-  { key: 'notfall', label: 'Notfall', icon: <AlertCircle size={18} /> },
-  { key: 'guide', label: 'Guide', icon: <Info size={18} /> },
-  { key: 'chat', label: 'Chatbot', icon: <MessageCircle size={18} /> },
+  { key: 'designs', label: 'navigation.designs', icon: <Paintbrush size={18} /> },
+  { key: 'notfall', label: 'navigation.notfall', icon: <AlertCircle size={18} /> },
+  { key: 'guide', label: 'navigation.guide', icon: <Info size={18} /> },
+  { key: 'chat', label: 'navigation.chat', icon: <MessageCircle size={18} /> },
   {
     key: 'quickedit',
-    label: 'Homescreen anpassen',
+    label: 'navigation.quickedit',
     icon: <Settings size={18} />,
   },
 ];

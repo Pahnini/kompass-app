@@ -1,5 +1,5 @@
 export interface Achievement {
-  id: string
-  label: string
-  date: string
+  id: string;
+  label: string;
+  date: string;
 }

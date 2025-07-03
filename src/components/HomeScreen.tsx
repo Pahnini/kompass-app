@@ -1,11 +1,18 @@
-import { closestCenter, DndContext, PointerSensor, useSensor, useSensors } from '@dnd-kit/core';
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core';
 import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Compass } from 'lucide-react';
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import type { SidebarItem } from 'src/types/index';
-import { useUserData } from '../context/UserDataContext';
+import { useUserData } from '../hooks/useUserData';
 import * as storageService from '../services/storageService';
+import type { SidebarItem } from '../types/index';
 import './HomeScreen.css';
 import SortableQuickItem from './SortableQuickItem';
 
@@ -30,11 +37,11 @@ export default function HomeScreen({
   const [animatingKey, setAnimatingKey] = useState<string | null>(null);
   const { level, levelProgress } = useUserData();
 
-  const handleDragEnd = (event: any) => {
+  const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (active.id !== over?.id) {
-      const oldIndex = quickItems.indexOf(active.id);
-      const newIndex = quickItems.indexOf(over.id);
+    if (over && active.id !== over.id) {
+      const oldIndex = quickItems.indexOf(active.id as string);
+      const newIndex = quickItems.indexOf(over.id as string);
       const newOrder = arrayMove(quickItems, oldIndex, newIndex);
 
       setFavorites(newOrder);
@@ -50,6 +57,7 @@ export default function HomeScreen({
     setTimeout(() => setAnimatingKey(null), 300);
     navigate(getPath(key));
   };
+
   return (
     <div className="card">
       <div className="welcome-section">

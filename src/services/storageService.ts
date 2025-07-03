@@ -7,10 +7,10 @@
  */
 export function set<T = unknown>(key: string, value: T): void {
   try {
-    const json = JSON.stringify(value)
-    localStorage.setItem(key, json)
+    const json = JSON.stringify(value);
+    localStorage.setItem(key, json);
   } catch (error) {
-    console.error(`[storageService] Fehler beim Speichern von "${key}":`, error)
+    console.error(`[storageService] Fehler beim Speichern von "${key}":`, error);
   }
 }
 
@@ -21,12 +21,12 @@ export function set<T = unknown>(key: string, value: T): void {
  */
 export function get<T = unknown>(key: string): T | null {
   try {
-    const raw = localStorage.getItem(key)
-    if (!raw) return null
-    return JSON.parse(raw) as T
+    const raw = localStorage.getItem(key);
+    if (!raw) return null;
+    return JSON.parse(raw) as T;
   } catch (error) {
-    console.error(`[storageService] Fehler beim Laden von "${key}":`, error)
-    return null
+    console.error(`[storageService] Fehler beim Laden von "${key}":`, error);
+    return null;
   }
 }
 
@@ -36,8 +36,8 @@ export function get<T = unknown>(key: string): T | null {
  */
 export function remove(key: string): void {
   try {
-    localStorage.removeItem(key)
+    localStorage.removeItem(key);
   } catch (error) {
-    console.error(`[storageService] Fehler beim Entfernen von "${key}":`, error)
+    console.error(`[storageService] Fehler beim Entfernen von "${key}":`, error);
   }
 }

@@ -25,7 +25,7 @@ export default function QuickAccess({
             onClick={() => setCurrentPage(item.key)}
             aria-label={item.label}
           >
-            <span className="icon-gradient">{item.icon}</span>
+            <span className="icon-gradient">{item.icon as React.ReactNode}</span>
             <span>{item.label}</span>
           </button>
         );

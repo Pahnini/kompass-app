@@ -1,25 +1,29 @@
-import React from 'react'
-import ReactDOM from 'react-dom/client'
-import { BrowserRouter } from 'react-router-dom'
-import App from './App'
-import ErrorBoundary from './components/ErrorBoundary'
-import { ThemeProvider } from './context/ThemeContext'
-import { UIProvider } from './context/UIContext'
-import { UserDataProvider } from './context/UserDataContext'
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import { BrowserRouter } from 'react-router-dom';
+import App from './App';
+import ErrorBoundary from './components/ErrorBoundary';
+import { ThemeProvider } from './context/ThemeContext';
+import { UIProvider } from './context/UIContext';
+import { UserDataProvider } from './context/UserDataContext';
 
-const rootElement = document.getElementById('root')
+const rootElement = document.getElementById('root');
 
 if (!rootElement) {
-  throw new Error('Failed to find the root element')
+  throw new Error('Failed to find the root element');
 }
 
 ReactDOM.createRoot(rootElement).render(
   <React.StrictMode>
     <ErrorBoundary>
-      <UserDataProvider>           {/* ✅ GANZ außen */}
+      <UserDataProvider>
+        {' '}
+        {/* ✅ GANZ außen */}
         <BrowserRouter>
           <UIProvider>
-            <ThemeProvider>       {/* ✅ jetzt darf es useUserData verwenden */}
+            <ThemeProvider>
+              {' '}
+              {/* ✅ jetzt darf es useUserData verwenden */}
               <App />
             </ThemeProvider>
           </UIProvider>
@@ -27,4 +31,4 @@ ReactDOM.createRoot(rootElement).render(
       </UserDataProvider>
     </ErrorBoundary>
   </React.StrictMode>
-)
+);

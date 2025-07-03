@@ -1,12 +1,5 @@
-import React from 'react';
-import { Trophy, Medal, Star, Shield, Award } from 'lucide-react'
-
-export interface Achievement {
-  id: string
-  label: string
-  icon?: React.ReactNode
-  date: string
-}
+import { Award, Medal, Shield, Star, Trophy } from 'lucide-react';
+import { Achievement } from '../types/index';
 export const achievementList: Achievement[] = [
   {
     id: 'points-10',

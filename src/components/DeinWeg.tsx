@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Achievement, CalendarNotes, Goal, Symptoms } from 'src/types/index';
 import { Emoji } from '../data/emojis';
+import { Achievement, CalendarNotes, Goal, Symptoms } from '../types/index';
 import { showErrorToast, showSuccessToast } from '../utils/toastUtils';
 import BackButton from './BackButton';
 import DeleteButton from './DeleteButton';
@@ -64,6 +64,7 @@ export default function DeinWeg({
     if (achievementInput.trim())
       setAchievements([
         {
+          type: 'achievement',
           id: Date.now().toString(),
           text: achievementInput,
           date: new Date().toISOString().split('T')[0],

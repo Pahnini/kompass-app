@@ -1,6 +1,6 @@
 import React from 'react';
-import { useUserData } from '../context/UserDataContext';
 import { achievementList } from '../data/achievementList';
+import { useUserData } from '../hooks/useUserData';
 
 export default function AchievementsScreen(): React.ReactElement {
   const { achievements } = useUserData();
@@ -32,7 +32,7 @@ export default function AchievementsScreen(): React.ReactElement {
               }}
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span>{unlocked ? a.icon : '🔒'}</span>
+                <span>{unlocked ? (a.icon as React.ReactNode) : '🔒'}</span>
                 <span>{a.label}</span>
               </div>
               {unlocked && date && (

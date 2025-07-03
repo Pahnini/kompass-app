@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
-// import type { SidebarItem } from "../types";
-import { supabase } from "../utils/supabase";
-import { useUserData } from "../context/UserDataContext";
-// Define SidebarItem here if not exported from ../types
-export interface SidebarItem {
-  key: string;
-  label: string;
-  icon?: React.ReactNode;
-}
+import { Award } from 'lucide-react';
+import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { useUserData } from '../hooks/useUserData';
+import type { SidebarItem } from '../types/index';
+import { supabase } from '../utils/supabase';
 
 interface SidebarProps {
   items: SidebarItem[];
@@ -53,8 +48,6 @@ export default function Sidebar({
 
   const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
 
-
-
   return (
     <>
       {!isDesktop && (
@@ -65,11 +58,8 @@ export default function Sidebar({
 
       <aside className={`sidebar ${isOpen || isDesktop ? 'open' : ''}`}>
         <div className="sidebar-content">
-
           {/* Punktestand anzeigen */}
-          <div className="sidebar-points">
-            🌟 {points} Punkte
-          </div>
+          <div className="sidebar-points">🌟 {points} Punkte</div>
 
           {filteredItems.map(item => (
             <Link
@@ -83,11 +73,16 @@ export default function Sidebar({
             </Link>
           ))}
 
-            <Link to="/achievements" className="sidebar-item">
-  <span className="icon">🏆</span>
-  <span className="label">Erfolge</span>
-</Link>
-
+          <Link
+            to="/achievements"
+            className={`sidebar-item ${location.pathname === '/achievements' ? 'active' : ''}`}
+            onClick={handleClick}
+          >
+            <span className="icon">
+              <Award size={18} />
+            </span>
+            <span className="label">Erfolge</span>
+          </Link>
         </div>
 
         <button className="sidebar-item logout-button" onClick={handleLogout}>

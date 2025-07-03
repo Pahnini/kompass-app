@@ -10,18 +10,16 @@ import OnboardingModal from './components/OnboardingModal';
 import Sidebar from './components/Sidebar';
 import SmartLoading from './components/SmartLoading';
 import WelcomeScreen from './components/WelcomeScreen';
-import { useUserData } from './context/UserDataContext';
 import { emojiList } from './data/emojis';
 import { helpResources } from './data/helpResources';
 import { sidebarItems } from './data/navigation';
-import { skillsList } from './data/skills';
 import { templates } from './data/templates';
 import { usePageTitle } from './hooks/usePageTitle';
 import { useTheme } from './hooks/useTheme';
 import { useUI } from './hooks/useUI';
+import { useUserData } from './hooks/useUserData';
 import AchievementsScreen from './screens/AchievementsScreen';
-import { Achievement } from './types';
-import { shareSkill } from './utils/shareUtils';
+import { shareAchievement, shareSkill } from './utils/shareUtils';
 import { supabase } from './utils/supabase';
 
 // Lazy load components for better performance
@@ -33,18 +31,10 @@ const Notfall = lazy(() => import('./components/Notfall'));
 const QuickEdit = lazy(() => import('./components/QuickEdit'));
 const Skills = lazy(() => import('./components/Skills'));
 
-export default function App(): React.ReactElement {
-  // Call all hooks at the top level, before any conditional logic
+function AuthenticatedApp() {
   usePageTitle();
-
-  // State hooks
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [latestAchievement, setLatestAchievement] = useState<string | null>(null);
-  const [supabaseInitialized] = useState<boolean>(!!supabase);
-
-  // Custom hooks
   const { theme, background } = useTheme();
+  const [latestAchievement, setLatestAchievement] = useState<string | null>(null);
   const {
     username,
     setUsername,
@@ -60,37 +50,12 @@ export default function App(): React.ReactElement {
     setFavorites,
     wordFiles,
     setWordFiles,
+    skillsList,
+    setSkillsList,
     hasGoalsReminder,
   } = useUserData();
 
-  const {
-    showWelcome,
-    setShowWelcome,
-    isSidebarOpen,
-    setIsSidebarOpen,
-    showDS,
-    setShowDS,
-    onboarding,
-    setOnboarding,
-  } = useUI();
-
-  // Initialize Supabase session
-  useEffect(() => {
-    if (!supabase) return; // Safe early return inside the effect
-
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+  const { isSidebarOpen, setIsSidebarOpen, showDS, setShowDS, onboarding, setOnboarding } = useUI();
 
   // Handle achievements
   useEffect(() => {
@@ -104,31 +69,13 @@ export default function App(): React.ReactElement {
       const lastShown = localStorage.getItem('lastAchievementShown');
 
       if (newest && newest.date !== lastShown) {
-        setLatestAchievement(newest.label);
+        // Use label property from the Achievement type
+        const achievementText = newest.label || 'New Achievement';
+        setLatestAchievement(achievementText);
         localStorage.setItem('lastAchievementShown', newest.date);
       }
     }
   }, [achievements]);
-
-  // Handle welcome screen state
-  useEffect(() => {
-    if (session && showWelcome) {
-      setShowWelcome(false);
-    }
-  }, [session, showWelcome, setShowWelcome]);
-
-  // Render loading state
-  if (!supabaseInitialized) {
-    return <SmartLoading message="Initialisierung fehlgeschlagen. Bitte App neu laden." />;
-  }
-
-  if (loading) {
-    return <SmartLoading message="Verbindung wird hergestellt..." />;
-  }
-
-  if (!session) {
-    return <WelcomeScreen />;
-  }
 
   return (
     <div>
@@ -168,18 +115,16 @@ export default function App(): React.ReactElement {
                 <DeinWeg
                   goals={goals}
                   setGoals={setGoals}
+                  achievements={achievements}
                   setAchievements={setAchievements}
                   calendarNotes={calendarNotes}
                   setCalendarNotes={setCalendarNotes}
                   symptoms={symptoms}
                   setSymptoms={setSymptoms}
+                  shareAchievement={shareAchievement}
                   showReminder={hasGoalsReminder}
                   emojiList={emojiList}
                   templates={templates}
-                  achievements={[]}
-                  shareAchievement={(achievement: Achievement) => {
-                    console.log('Achievement shared:', achievement);
-                  }}
                 />
               }
             />
@@ -191,6 +136,7 @@ export default function App(): React.ReactElement {
                   wordFiles={wordFiles}
                   setWordFiles={setWordFiles}
                   skillsList={skillsList}
+                  setSkillsList={setSkillsList}
                 />
               }
             />
@@ -225,4 +171,48 @@ export default function App(): React.ReactElement {
       )}
     </div>
   );
+}
+
+export default function App(): React.ReactElement {
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+  const { setShowWelcome } = useUI();
+
+  useEffect(() => {
+    if (!supabase) {
+      console.error('Supabase client is not initialized.');
+      setLoading(false);
+      return;
+    }
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Update showWelcome state based on session
+  useEffect(() => {
+    if (session) {
+      setShowWelcome(false);
+    }
+  }, [session, setShowWelcome]);
+
+  if (loading) {
+    return <SmartLoading message="Verbindung wird hergestellt..." />;
+  }
+
+  if (!session) {
+    return <WelcomeScreen />;
+  }
+
+  return <AuthenticatedApp />;
 }

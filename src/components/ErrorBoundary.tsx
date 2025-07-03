@@ -7,7 +7,7 @@ declare global {
       DEV: boolean;
       PROD: boolean;
       MODE: string;
-      [key: string]: any;
+      [key: string]: string | boolean | undefined;
     };
   }
 }

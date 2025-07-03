@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
+import { Achievement, CalendarNotes, Goal, Symptoms } from 'src/types/index';
 import { Emoji } from '../data/emojis';
-import { Achievement, CalendarNotes, Goal, Symptoms } from '../types';
 import { showErrorToast, showSuccessToast } from '../utils/toastUtils';
 import BackButton from './BackButton';
 import DeleteButton from './DeleteButton';

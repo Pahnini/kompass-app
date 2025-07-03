@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react'
+import React, { useEffect } from 'react';
 
 interface AchievementPopupProps {
-  label: string
-  onClose: () => void
+  label: string;
+  onClose: () => void;
 }
 
 export default function AchievementPopup({
@@ -10,9 +10,9 @@ export default function AchievementPopup({
   onClose,
 }: AchievementPopupProps): React.ReactElement {
   useEffect(() => {
-    const timer = setTimeout(onClose, 4000)
-    return () => clearTimeout(timer)
-  }, [onClose])
+    const timer = setTimeout(onClose, 4000);
+    return () => clearTimeout(timer);
+  }, [onClose]);
 
   return (
     <div
@@ -32,5 +32,5 @@ export default function AchievementPopup({
     >
       🎉 Neues Achievement: {label}
     </div>
-  )
+  );
 }

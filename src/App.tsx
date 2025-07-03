@@ -1,67 +1,50 @@
-import { Session } from "@supabase/supabase-js";
-import React, { lazy, Suspense, useEffect, useState } from "react";
-import { Route, Routes } from "react-router-dom";
-import DatenschutzModal from "./components/DatenschutzModal";
-import GlobalStyle from "./components/GlobalStyle";
-import HomeScreen from "./components/HomeScreen";
-import NotFound from "./components/NotFound";
-import OnboardingModal from "./components/OnboardingModal";
-import Sidebar from "./components/Sidebar";
-import SmartLoading from "./components/SmartLoading";
-import WelcomeScreen from "./components/WelcomeScreen";
-import { emojiList } from "./data/emojis";
-import { helpResources } from "./data/helpResources";
-import { sidebarItems } from "./data/navigation";
-import { skillsList } from "./data/skills";
-import { templates } from "./data/templates";
-import { usePageTitle } from "./hooks/usePageTitle";
-import { useTheme } from "./hooks/useTheme";
-import { useUI } from "./hooks/useUI";
-import { useUserData } from "./context/UserDataContext"
-import { shareSkill } from "./utils/shareUtils";
-import { supabase } from "./utils/supabase";
-import AchievementsScreen from './screens/AchievementsScreen'
-import { Achievement } from "./types";
-import AchievementPopup from './components/AchievementPopup'
+import { Session } from '@supabase/supabase-js';
+import React, { lazy, Suspense, useEffect, useState } from 'react';
+import { Route, Routes } from 'react-router-dom';
+import AchievementPopup from './components/AchievementPopup';
+import DatenschutzModal from './components/DatenschutzModal';
+import GlobalStyle from './components/GlobalStyle';
+import HomeScreen from './components/HomeScreen';
+import NotFound from './components/NotFound';
+import OnboardingModal from './components/OnboardingModal';
+import Sidebar from './components/Sidebar';
+import SmartLoading from './components/SmartLoading';
+import WelcomeScreen from './components/WelcomeScreen';
+import { useUserData } from './context/UserDataContext';
+import { emojiList } from './data/emojis';
+import { helpResources } from './data/helpResources';
+import { sidebarItems } from './data/navigation';
+import { skillsList } from './data/skills';
+import { templates } from './data/templates';
+import { usePageTitle } from './hooks/usePageTitle';
+import { useTheme } from './hooks/useTheme';
+import { useUI } from './hooks/useUI';
+import AchievementsScreen from './screens/AchievementsScreen';
+import { Achievement } from './types';
+import { shareSkill } from './utils/shareUtils';
+import { supabase } from './utils/supabase';
 
 // Lazy load components for better performance
-const Chatbot = lazy(() => import("./components/Chatbot"));
-const DeinWeg = lazy(() => import("./components/DeinWeg"));
-const Designs = lazy(() => import("./components/Designs"));
-const Guide = lazy(() => import("./components/Guide"));
-const Notfall = lazy(() => import("./components/Notfall"));
-const QuickEdit = lazy(() => import("./components/QuickEdit"));
-const Skills = lazy(() => import("./components/Skills"));
-
+const Chatbot = lazy(() => import('./components/Chatbot'));
+const DeinWeg = lazy(() => import('./components/DeinWeg'));
+const Designs = lazy(() => import('./components/Designs'));
+const Guide = lazy(() => import('./components/Guide'));
+const Notfall = lazy(() => import('./components/Notfall'));
+const QuickEdit = lazy(() => import('./components/QuickEdit'));
+const Skills = lazy(() => import('./components/Skills'));
 
 export default function App(): React.ReactElement {
-  usePageTitle()
+  // Call all hooks at the top level, before any conditional logic
+  usePageTitle();
 
-  const [session, setSession] = useState<Session | null>(null)
-  const [loading, setLoading] = useState(true)
+  // State hooks
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [latestAchievement, setLatestAchievement] = useState<string | null>(null);
+  const [supabaseInitialized] = useState<boolean>(!!supabase);
 
-  const [latestAchievement, setLatestAchievement] = useState<string | null>(null)
-  // 🔐 Supabase-Initialisierungsprüfung
-  if (!supabase) {
-    return <SmartLoading message="Initialisierung fehlgeschlagen. Bitte App neu laden." />
-  }
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session)
-      setLoading(false)
-    })
-    
-   const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session)
-    })
-
-    return () => subscription.unsubscribe()
-  }, [])
-
-  const { theme, background } = useTheme()
+  // Custom hooks
+  const { theme, background } = useTheme();
   const {
     username,
     setUsername,
@@ -78,24 +61,7 @@ export default function App(): React.ReactElement {
     wordFiles,
     setWordFiles,
     hasGoalsReminder,
-  } = useUserData()
-
-useEffect(() => {
-
-  if (achievements.length === 0) return
-
-  const sorted = [...achievements].sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  )
-
-  const newest = sorted[0]
-  const lastShown = localStorage.getItem('lastAchievementShown')
-
-  if (newest && newest.date !== lastShown) {
-    setLatestAchievement(newest.label)
-    localStorage.setItem('lastAchievementShown', newest.date)
-  }
-}, [achievements])
+  } = useUserData();
 
   const {
     showWelcome,
@@ -106,18 +72,62 @@ useEffect(() => {
     setShowDS,
     onboarding,
     setOnboarding,
-  } = useUI()
+  } = useUI();
+
+  // Initialize Supabase session
+  useEffect(() => {
+    if (!supabase) return; // Safe early return inside the effect
+
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session);
+      setLoading(false);
+    });
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
+
+  // Handle achievements
+  useEffect(() => {
+    // Only process if we have achievements
+    if (achievements && achievements.length > 0) {
+      const sorted = [...achievements].sort(
+        (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+      );
+
+      const newest = sorted[0];
+      const lastShown = localStorage.getItem('lastAchievementShown');
+
+      if (newest && newest.date !== lastShown) {
+        setLatestAchievement(newest.label);
+        localStorage.setItem('lastAchievementShown', newest.date);
+      }
+    }
+  }, [achievements]);
+
+  // Handle welcome screen state
+  useEffect(() => {
+    if (session && showWelcome) {
+      setShowWelcome(false);
+    }
+  }, [session, showWelcome, setShowWelcome]);
+
+  // Render loading state
+  if (!supabaseInitialized) {
+    return <SmartLoading message="Initialisierung fehlgeschlagen. Bitte App neu laden." />;
+  }
 
   if (loading) {
-    return <SmartLoading message="Verbindung wird hergestellt..." />
+    return <SmartLoading message="Verbindung wird hergestellt..." />;
   }
 
   if (!session) {
-    return <WelcomeScreen />
-  }
-
-  if (showWelcome) {
-    setShowWelcome(false)
+    return <WelcomeScreen />;
   }
 
   return (
@@ -138,19 +148,19 @@ useEffect(() => {
       >
         <Suspense fallback={<SmartLoading message="Seite wird geladen..." />}>
           <Routes>
-<Route
-  path="/"
-  element={
-    <HomeScreen
-      username={username}
-      setUsername={setUsername}
-      quickItems={favorites}
-      allItems={sidebarItems}
-      setFavorites={setFavorites}  // ✅ HIER ergänzen
-    />
-  }
-/>
-<Route path="/achievements" element={<AchievementsScreen />} />
+            <Route
+              path="/"
+              element={
+                <HomeScreen
+                  username={username}
+                  setUsername={setUsername}
+                  quickItems={favorites}
+                  allItems={sidebarItems}
+                  setFavorites={setFavorites}
+                />
+              }
+            />
+            <Route path="/achievements" element={<AchievementsScreen />} />
 
             <Route
               path="/deinweg"
@@ -158,18 +168,19 @@ useEffect(() => {
                 <DeinWeg
                   goals={goals}
                   setGoals={setGoals}
-
                   setAchievements={setAchievements}
                   calendarNotes={calendarNotes}
                   setCalendarNotes={setCalendarNotes}
                   symptoms={symptoms}
                   setSymptoms={setSymptoms}
-
                   showReminder={hasGoalsReminder}
                   emojiList={emojiList}
-                  templates={templates} achievements={[]} shareAchievement={function (achievement: Achievement): void {
-                    throw new Error("Function not implemented.");
-                  } }                />
+                  templates={templates}
+                  achievements={[]}
+                  shareAchievement={(achievement: Achievement) => {
+                    console.log('Achievement shared:', achievement);
+                  }}
+                />
               }
             />
             <Route
@@ -184,10 +195,7 @@ useEffect(() => {
               }
             />
 
-            <Route
-              path="/notfall"
-              element={<Notfall helpResources={helpResources} />}
-            />
+            <Route path="/notfall" element={<Notfall helpResources={helpResources} />} />
             <Route path="/designs" element={<Designs />} />
             <Route path="/guide" element={<Guide />} />
             <Route path="/chat" element={<Chatbot />} />
@@ -213,11 +221,8 @@ useEffect(() => {
         />
       )}
       {latestAchievement && (
-        <AchievementPopup
-          label={latestAchievement}
-          onClose={() => setLatestAchievement(null)}
-        />
+        <AchievementPopup label={latestAchievement} onClose={() => setLatestAchievement(null)} />
       )}
     </div>
-  )
+  );
 }

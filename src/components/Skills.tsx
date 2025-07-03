@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import type { Skill, WordFile } from '../types';
+import type { Skill, WordFile } from 'src/types/index';
 import { showSuccessToast } from '../utils/toastUtils';
 import BackButton from './BackButton';
 import DeleteButton from './DeleteButton';

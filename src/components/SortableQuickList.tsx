@@ -13,7 +13,11 @@ import {
 import SortableQuickItem from './SortableQuickItem';
 import { sensors } from './dndConfig';
 import * as storageService from './../services/storageService';
-import type { SidebarItem } from './../types';
+// Make sure SidebarItem is exported from './../types', or import the correct type name
+// For example, if the type is named 'ISidebarItem' in './../types', use:
+import type { ISidebarItem as SidebarItem } from './../types';
+// Or, if you need to export it, add this to './../types.ts':
+// export type SidebarItem = { key: string; icon: React.ReactNode; label: string; ... };
 
 interface SortableQuickListProps {
   items: SidebarItem[];
@@ -46,6 +50,7 @@ export default function SortableQuickList({
   };
 
   const sortedItems = order
+    .filter((key) => key !== 'home')
     .map((key) => items.find((item) => item.key === key))
     .filter(Boolean) as SidebarItem[];
 
@@ -55,7 +60,7 @@ export default function SortableQuickList({
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext items={order} strategy={verticalListSortingStrategy}>
+      <SortableContext items={order.filter((key) => key !== 'home')} strategy={verticalListSortingStrategy}>
         <div className="quick-items-grid">
           {sortedItems.map((item) => (
             <SortableQuickItem

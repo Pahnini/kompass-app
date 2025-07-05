@@ -15,6 +15,7 @@ import * as storageService from '../services/storageService';
 import type { SidebarItem } from '../types/index';
 import './HomeScreen.css';
 import SortableQuickItem from './SortableQuickItem';
+import { Link } from "react-router-dom";
 
 interface HomeScreenProps {
   username: string;
@@ -94,6 +95,25 @@ export default function HomeScreen({
           </div>
         )}
       </div>
+      <div style={{ textAlign: "center", marginTop: "2rem" }}>
+  <Link to="/mood">
+    <button
+      style={{
+        background: "#2f4f4f",
+        color: "white",
+        padding: "0.6rem 1.2rem",
+        fontSize: "1rem",
+        borderRadius: "0.75rem",
+        border: "none",
+        cursor: "pointer",
+        transition: "background 0.3s ease",
+      }}
+    >
+      🧭 Stimmung erfassen
+    </button>
+  </Link>
+</div>
+
       <div style={{ marginTop: '16px' }}>
         <div style={{ fontSize: '14px', marginBottom: '4px' }}>
           Level {level} - {Math.round(levelProgress)}%

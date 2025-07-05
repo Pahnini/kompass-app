@@ -14,8 +14,8 @@ import { useUserData } from '../hooks/useUserData';
 import * as storageService from '../services/storageService';
 import type { SidebarItem } from '../types/index';
 import './HomeScreen.css';
-import SortableQuickItem from './SortableQuickItem';
 import { Link } from "react-router-dom";
+import SortableQuickList from './SortableQuickList';
 
 interface HomeScreenProps {
   username: string;
@@ -134,27 +134,14 @@ export default function HomeScreen({
 
       <div className="section">
         <h3>Deine Schnellzugriffe</h3>
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={quickItems} strategy={verticalListSortingStrategy}>
-            <div className="quick-items-grid">
-              {quickItems.map(key => {
-                const item = allItems.find(i => i.key === key);
-                return (
-                  item && (
-                    <SortableQuickItem
-                      key={item.key}
-                      id={item.key}
-                      icon={item.icon as React.ReactNode}
-                      label={item.label}
-                      onClick={() => handleQuickClick(item.key)}
-                      className={animatingKey === item.key ? 'bounce' : ''}
-                    />
-                  )
-                );
-              })}
-            </div>
-          </SortableContext>
-        </DndContext>
+    <SortableQuickList
+  items={allItems}
+  quickItemKeys={quickItems}
+  onOrderChange={setFavorites}
+  onItemClick={handleQuickClick}
+  animatingKey={animatingKey}
+/>
+
       </div>
     </div>
   );

@@ -106,10 +106,11 @@ export default function HomeScreen({
         borderRadius: "0.75rem",
         border: "none",
         cursor: "pointer",
+        boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
         transition: "background 0.3s ease",
       }}
     >
-      🧭 Stimmung erfassen
+      🧭 Mood
     </button>
   </Link>
 </div>

@@ -1,14 +1,10 @@
-export const getMockResponse = (mood: string): string => {
-  switch (mood) {
-    case "focus":
-      return "Mach weiter so – ein kleiner Spaziergang könnte dir helfen, fokussiert zu bleiben.";
-    case "hopeful":
-      return "Nutze den Schwung und starte etwas Neues – vielleicht ein kleiner Wochenplan?";
-    case "overwhelmed":
-      return "3 Minuten tiefe Atmung. Dann: eine To-Do-Pause. Du musst nicht alles heute schaffen.";
-    case "tired":
-      return "Schließ kurz die Augen, atme durch. Vielleicht hilft ein Powernap oder Musik.";
-    default:
-      return "Bleib bei dir. Jeder Tag ist anders – du darfst fühlen, was du fühlst.";
-  }
+export const moodMockResponses: Record<string, string> = {
+  focus: "Mach eine kleine To-Do-Liste mit maximal 3 Punkten. Fokus durch Klarheit!",
+  hopeful: "Erinnere dich daran: Auch kleine Schritte führen voran.",
+  overwhelmed: "Atme tief durch und versuche nur EINE Sache anzugehen.",
+  tired: "Gönn dir bewusst 10 Minuten Pause – ohne Bildschirm.",
+  angry: "Geh kurz raus oder bewege dich – das hilft beim Druckablassen.",
+  empty: "Etwas Einfaches tun – Musik hören, duschen, etwas Warmes trinken.",
+  anxious: "Sprich laut aus, was dir Angst macht. Das entlastet sofort.",
+  proud: "Super gemacht! Schreib auf, was dich heute stolz macht.",
 };

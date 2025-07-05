@@ -1,13 +1,11 @@
-let lastCall = 0;
+import { moodMockResponses } from "../data/moodMockResponses";
 
 export async function fetchGPTResponse(mood: string): Promise<string> {
-  const now = Date.now();
-  if (now - lastCall < 2000) {
-    return "Bitte warte kurz, bevor du erneut klickst.";
-  }
-  lastCall = now;
+  const useMock = !import.meta.env.VITE_OPENAI_API_KEY;
 
-  const prompt = `Ich bin ein Jugendlicher und fühle mich ${mood}. Gib mir einen konkreten Skill-Tipp, der mir in dieser Stimmung helfen könnte. Kurz, freundlich und machbar.`;
+  if (useMock) {
+    return moodMockResponses[mood] || "Mach etwas Kleines für dich – es zählt.";
+  }
 
   try {
     const response = await fetch("https://api.openai.com/v1/chat/completions", {
@@ -21,11 +19,12 @@ export async function fetchGPTResponse(mood: string): Promise<string> {
         messages: [
           {
             role: "system",
-            content: "Du bist ein motivierender Coach für Jugendliche. Gib praktische, einfache Skill-Tipps in 1–2 Sätzen.",
+            content:
+              "Du bist ein motivierender Coach für Jugendliche. Gib praktische, einfache Skill-Tipps in 1–2 Sätzen.",
           },
           {
             role: "user",
-            content: prompt,
+            content: `Ich fühle mich ${mood}. Was kann ich tun?`,
           },
         ],
         temperature: 0.7,
@@ -35,19 +34,14 @@ export async function fetchGPTResponse(mood: string): Promise<string> {
 
     const data = await response.json();
 
-    if (response.status === 429) {
-      console.warn("Rate Limit erreicht (429).");
-      return "GPT ist gerade überlastet. Versuch es in ein paar Sekunden nochmal.";
-    }
-
     if (!data.choices || !data.choices[0]?.message?.content) {
       console.warn("Unvollständige Antwort von GPT:", data);
-      return "Ich konnte gerade keinen Tipp finden. Versuch es später nochmal.";
+      return moodMockResponses[mood] || "Ich konnte gerade keinen Tipp finden.";
     }
 
     return data.choices[0].message.content.trim();
   } catch (err) {
-    console.error("Fehler beim Abrufen des GPT-Tipps:", err);
-    return "Es gab ein technisches Problem mit dem Skill-Tipp.";
+    console.error("GPT-Fehler:", err);
+    return moodMockResponses[mood] || "Technischer Fehler. Versuch es später nochmal.";
   }
 }

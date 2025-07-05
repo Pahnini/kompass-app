@@ -13,14 +13,18 @@ const directions = [
   { label: "🥳 Stolz", value: "proud" },
 ];
 
-const MoodCompass: React.FC = () => {
-  const [selected, setSelected] = useState<string | null>(null);
+interface Props {
+  selected: string | null;
+  onSelectMood: (value: string) => void;
+}
+
+const MoodCompass: React.FC<Props> = ({ selected, onSelectMood }) => {
   const [response, setResponse] = useState("");
 
-  const radius = 120;
+  const radius = 100;
 
   const handleSelect = async (value: string) => {
-    setSelected(value);
+    onSelectMood(value);
     setResponse("Lade Skill-Tipp...");
     const gpt = await fetchGPTResponse(value);
     setResponse(gpt);
@@ -28,28 +32,16 @@ const MoodCompass: React.FC = () => {
   };
 
   return (
-    <div
-      style={{
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        alignItems: "center",
-        padding: "2rem",
-        background: "#2f4f4f",
-        boxSizing: "border-box",
-        color: "#fff",
-      }}
-    >
+    <div style={{ textAlign: "center", padding: "1rem" }}>
       <div
         style={{
           width: radius * 2 + 40,
           height: radius * 2 + 40,
           position: "relative",
-          background: "radial-gradient(circle, #b7ffd0 0%, #2f4f4f 100%)",
+          background: "radial-gradient(circle, #b7ffd0 0%, #ffffff 100%)",
           borderRadius: "50%",
-          border: "8px solid #2f4f4f",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.3)",
+          border: "4px solid #2f4f4f",
+          margin: "0 auto",
         }}
       >
         {directions.map((dir, i) => {
@@ -110,15 +102,15 @@ const MoodCompass: React.FC = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.4 }}
           style={{
-            background: "#eafff0",
+            background: "#f0fdf4",
             color: "#2f4f4f",
-            border: "2px solid #2f4f4f",
-            padding: "1rem 1.5rem",
-            borderRadius: "1rem",
+            border: "1px solid #0b9444",
+            padding: "1rem",
+            borderRadius: "0.75rem",
             maxWidth: "90%",
-            marginTop: "2rem",
-            fontSize: "1.1rem",
-            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+            margin: "1.5rem auto 0 auto",
+            fontSize: "1rem",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
           }}
         >
           <strong>Skill-Tipp:</strong> {response}

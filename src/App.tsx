@@ -23,6 +23,7 @@ import { shareAchievement, shareSkill } from './utils/shareUtils';
 import { supabase } from './utils/supabase';
 import MoodCompassView from "./views/MoodCompassView";
 
+
 // Lazy load components for better performance
 const Chatbot = lazy(() => import('./components/Chatbot'));
 const DeinWeg = lazy(() => import('./components/DeinWeg'));
@@ -110,6 +111,9 @@ function AuthenticatedApp() {
             />
             <Route path="/achievements" element={<AchievementsScreen />} />
 <Route path="/mood" element={<MoodCompassView />} />
+
+
+
             <Route
               path="/deinweg"
               element={

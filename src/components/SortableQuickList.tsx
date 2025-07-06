@@ -1,21 +1,13 @@
 // 📁 components/DragAndDrop/SortableQuickList.tsx
+import { DndContext, DragEndEvent, closestCenter } from '@dnd-kit/core';
+import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import React, { useState } from 'react';
-import {
-  DndContext,
-  DragEndEvent,
-  closestCenter,
-} from '@dnd-kit/core';
-import {
-  SortableContext,
-  verticalListSortingStrategy,
-  arrayMove,
-} from '@dnd-kit/sortable';
-import SortableQuickItem from './SortableQuickItem';
-import { sensors } from './dndConfig';
+import { useDndSensors } from '../hooks/useDndSensors';
 import * as storageService from './../services/storageService';
+import SortableQuickItem from './SortableQuickItem';
 // Make sure SidebarItem is exported from './../types', or import the correct type name
 // For example, if the type is named 'ISidebarItem' in './../types', use:
-import type { ISidebarItem as SidebarItem } from './../types';
+import type { SidebarItem } from './../types/index';
 // Or, if you need to export it, add this to './../types.ts':
 // export type SidebarItem = { key: string; icon: React.ReactNode; label: string; ... };
 
@@ -50,19 +42,22 @@ export default function SortableQuickList({
   };
 
   const sortedItems = order
-    .filter((key) => key !== 'home')
-    .map((key) => items.find((item) => item.key === key))
+    .filter(key => key !== 'home')
+    .map(key => items.find(item => item.key === key))
     .filter(Boolean) as SidebarItem[];
 
   return (
     <DndContext
-      sensors={sensors()}
+      sensors={useDndSensors()}
       collisionDetection={closestCenter}
       onDragEnd={handleDragEnd}
     >
-      <SortableContext items={order.filter((key) => key !== 'home')} strategy={verticalListSortingStrategy}>
+      <SortableContext
+        items={order.filter(key => key !== 'home')}
+        strategy={verticalListSortingStrategy}
+      >
         <div className="quick-items-grid">
-          {sortedItems.map((item) => (
+          {sortedItems.map(item => (
             <SortableQuickItem
               key={item.key}
               id={item.key}

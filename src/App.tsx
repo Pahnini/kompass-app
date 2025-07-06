@@ -21,8 +21,7 @@ import { useUserData } from './hooks/useUserData';
 import AchievementsScreen from './screens/AchievementsScreen';
 import { shareAchievement, shareSkill } from './utils/shareUtils';
 import { supabase } from './utils/supabase';
-import MoodCompassView from "./views/MoodCompassView";
-
+import MoodCompassView from './views/MoodCompassView';
 
 // Lazy load components for better performance
 const Chatbot = lazy(() => import('./components/Chatbot'));
@@ -110,9 +109,7 @@ function AuthenticatedApp() {
               }
             />
             <Route path="/achievements" element={<AchievementsScreen />} />
-<Route path="/mood" element={<MoodCompassView />} />
-
-
+            <Route path="/mood" element={<MoodCompassView />} />
 
             <Route
               path="/deinweg"

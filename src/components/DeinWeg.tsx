@@ -129,15 +129,17 @@ export default function DeinWeg({
     <div className="card">
       <BackButton />
       <h2>Mein Kompass</h2>
- <div style={{
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-  margin: "2rem 0",
-  transform: "scale(0.95)"
-}}>
-  <MoodCompass onSelectMood={setSelectedMood} selected={selectedMood} />
-</div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: '2rem 0',
+          transform: 'scale(0.95)',
+        }}
+      >
+        <MoodCompass onSelectMood={setSelectedMood} selected={selectedMood} />
+      </div>
       {showReminder && <div className="reminder">Ziel für heute: Was möchtest du schaffen? 🚩</div>}
 
       <div className="stat-banner">
@@ -151,7 +153,6 @@ export default function DeinWeg({
           Datum:
           <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} />
         </label>
-
         {hasCurrentNote && (
           <div
             style={{
@@ -167,9 +168,7 @@ export default function DeinWeg({
             </h4>
             {emoji && <div style={{ fontSize: '24px', marginBottom: '5px' }}>{emoji}</div>}
             {currentNote.text && (
-              <div style={{ fontStyle: 'italic', color: '#555' }}>
-                "{currentNote.text}"
-              </div>
+              <div style={{ fontStyle: 'italic', color: '#555' }}>"{currentNote.text}"</div>
             )}
             {symptoms[selectedDate] && symptoms[selectedDate].length > 0 && (
               <div style={{ marginTop: '5px', color: '#666' }}>
@@ -178,7 +177,6 @@ export default function DeinWeg({
             )}
           </div>
         )}
-
         <label>Wie stark waren deine Symptome heute? (0=gar nicht, 10=sehr stark)</label>
         <br />
         <input
@@ -239,7 +237,9 @@ export default function DeinWeg({
             onChange={e => setGoalInput(e.target.value)}
             placeholder="Neues Ziel..."
           />
-          <button aria-label="Ziel hinzufügen" onClick={addGoal}>+</button>
+          <button aria-label="Ziel hinzufügen" onClick={addGoal}>
+            +
+          </button>
         </div>
         <ul>
           {goals.map((g, i) => (

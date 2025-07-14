@@ -1,4 +1,4 @@
-import { Award } from 'lucide-react';
+import { Award, GraduationCap } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useUserData } from '../hooks/useUserData';
@@ -73,6 +73,19 @@ export default function Sidebar({
             </Link>
           ))}
 
+          {/* Klinikschule */}
+          <Link
+            to="/school"
+            className={`sidebar-item ${location.pathname === '/school' ? 'active' : ''}`}
+            onClick={handleClick}
+          >
+            <span className="icon">
+              <GraduationCap size={18} />
+            </span>
+            <span className="label">Klinikschule</span>
+          </Link>
+
+          {/* Erfolge */}
           <Link
             to="/achievements"
             className={`sidebar-item ${location.pathname === '/achievements' ? 'active' : ''}`}

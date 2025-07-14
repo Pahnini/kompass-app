@@ -1,17 +1,19 @@
-import { motion } from 'framer-motion';
-import React, { useState } from 'react';
-import { fetchGPTResponse } from '../services/gptService';
+import React, { useState } from "react";
+import { motion } from "framer-motion";
+import { Compass } from "lucide-react";
+import { moodMockResponses } from "../data/moodMockResponses";
 
-const directions = [
-  { label: '🧠 Fokus', value: 'focus' },
-  { label: '🌞 Hoffnung', value: 'hopeful' },
-  { label: '😖 Überfordert', value: 'overwhelmed' },
-  { label: '😴 Erschöpft', value: 'tired' },
-  { label: '😡 Wütend', value: 'angry' },
-  { label: '🥶 Leer', value: 'empty' },
-  { label: '😰 Ängstlich', value: 'anxious' },
-  { label: '🥳 Stolz', value: 'proud' },
+const moods = [
+  { label: "🥳 Stolz", value: "proud", color: "#00bfa5", group: "positive" },
+  { label: "🌞 Hoffnung", value: "hopeful", color: "#4caf50", group: "positive" },
+  { label: "🧠 Fokus", value: "focus", color: "#2f4f4f", group: "neutral" },
+  { label: "😴 Erschöpft", value: "tired", color: "#757575", group: "neutral" },
+  { label: "😖 Überfordert", value: "overwhelmed", color: "#ff7043", group: "negative" },
+  { label: "😡 Wütend", value: "angry", color: "#e53935", group: "negative" },
+  { label: "😰 Ängstlich", value: "anxious", color: "#5c6bc0", group: "negative" },
+  { label: "🥶 Leer", value: "empty", color: "#90a4ae", group: "negative" },
 ];
+
 
 interface Props {
   selected: string | null;
@@ -19,96 +21,82 @@ interface Props {
 }
 
 const MoodCompass: React.FC<Props> = ({ selected, onSelectMood }) => {
-  const [response, setResponse] = useState('');
+  const [response, setResponse] = useState("");
 
-  const radius = 100;
-
-  const handleSelect = async (value: string) => {
-    onSelectMood(value);
-    setResponse('Lade Skill-Tipp...');
-    const gpt = await fetchGPTResponse(value);
-    setResponse(gpt);
-    localStorage.setItem('moodToday', value);
+  const handleClick = (moodValue: string) => {
+    onSelectMood(moodValue);
+    setResponse(moodMockResponses[moodValue] || "Heute zählt jeder kleine Schritt.");
   };
 
   return (
-    <div style={{ textAlign: 'center', padding: '1rem' }}>
-      <div
+    <div style={{ textAlign: "center", color: "#fff" }}>
+      {/* Kompass-Icon zentriert */}
+      <motion.div
+        animate={{ rotate: 360 }}
+        transition={{ repeat: Infinity, duration: 60, ease: "linear" }}
         style={{
-          width: radius * 2 + 40,
-          height: radius * 2 + 40,
-          position: 'relative',
-          background: 'radial-gradient(circle, #b7ffd0 0%, #ffffff 100%)',
-          borderRadius: '50%',
-          border: '4px solid #2f4f4f',
-          margin: '0 auto',
+          margin: "0 auto 2rem auto",
+          width: 72,
+          height: 72,
+          borderRadius: "50%",
+          border: "3px solid #66b2ff",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
-        {directions.map((dir, i) => {
-          const angle = (i / directions.length) * 2 * Math.PI;
-          const x = radius * Math.cos(angle);
-          const y = radius * Math.sin(angle);
-          const isActive = selected === dir.value;
+        <Compass size={32} stroke="#66b2ff" />
+      </motion.div>
 
+      {/* Mood-Grid */}
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
+          gap: "1rem",
+          marginBottom: "2rem",
+        }}
+      >
+        {moods.map((mood) => {
+          const isActive = selected === mood.value;
           return (
             <motion.button
-              key={dir.value}
-              whileTap={{ scale: 1.05 }}
-              animate={
-                isActive
-                  ? {
-                      scale: [1, 1.07, 1],
-                      boxShadow: [
-                        '0 0 0px rgba(11, 148, 68, 0.0)',
-                        '0 0 14px rgba(11, 148, 68, 0.6)',
-                        '0 0 0px rgba(11, 148, 68, 0.0)',
-                      ],
-                    }
-                  : { scale: 1, boxShadow: 'none' }
-              }
-              transition={
-                isActive
-                  ? { duration: 1.5, repeat: Infinity, ease: 'easeInOut' }
-                  : { duration: 0.3 }
-              }
-              onClick={() => handleSelect(dir.value)}
+              key={mood.value}
+              whileTap={{ scale: 0.95 }}
+              onClick={() => handleClick(mood.value)}
               style={{
-                position: 'absolute',
-                left: `calc(50% + ${x}px)`,
-                top: `calc(50% + ${y}px)`,
-                transform: 'translate(-50%, -50%)',
-                background: isActive ? 'linear-gradient(135deg, #2f4f4f, #0b9444)' : '#ffffff',
-                color: isActive ? 'white' : '#2f4f4f',
-                border: '2px solid #2f4f4f',
-                borderRadius: '999px',
-                padding: '0.4rem 0.8rem',
-                whiteSpace: 'nowrap',
-                fontSize: '1rem',
-                cursor: 'pointer',
-                zIndex: 2,
+                padding: "0.75rem 1rem",
+                fontSize: "1rem",
+                borderRadius: "999px",
+                border: `2px solid ${isActive ? mood.color : "#2f4f4f"}`,
+                background: isActive ? mood.color : "#fff",
+                color: isActive ? "#fff" : "#2f4f4f",
+                cursor: "pointer",
+                boxShadow: isActive ? `0 0 8px ${mood.color}` : "none",
               }}
             >
-              {dir.label}
+              {mood.label}
             </motion.button>
           );
         })}
       </div>
 
+      {/* Skill-Tipp */}
       {response && (
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+          transition={{ delay: 0.3 }}
           style={{
-            background: '#f0fdf4',
-            color: '#2f4f4f',
-            border: '1px solid #0b9444',
-            padding: '1rem',
-            borderRadius: '0.75rem',
-            maxWidth: '90%',
-            margin: '1.5rem auto 0 auto',
-            fontSize: '1rem',
-            boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
+            background: "#f0fdf4",
+            color: "#2f4f4f",
+            border: "1px solid #0b9444",
+            padding: "1rem",
+            borderRadius: "0.75rem",
+            fontSize: "0.95rem",
+            boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
+            maxWidth: "90%",
+            margin: "0 auto",
           }}
         >
           <strong>Skill-Tipp:</strong> {response}

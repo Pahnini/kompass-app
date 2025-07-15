@@ -1,7 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import MoodCompass from '../components/MoodCompass';
 
 const MoodCompassView: React.FC = () => {
+  const [selectedMood, setSelectedMood] = useState<string | null>(null);
+
+  const handleMoodSelect = (mood: string) => {
+    setSelectedMood(mood);
+  };
+
   return (
     <div
       style={{
@@ -24,13 +30,13 @@ const MoodCompassView: React.FC = () => {
           maxWidth: '600px',
           width: '100%',
           margin: '0 auto',
+          padding: '0 1rem',
+          boxSizing: 'border-box',
         }}
       >
         <MoodCompass
-          selected={null}
-          onSelectMood={function (): void {
-            throw new Error('Function not implemented.');
-          }}
+          selected={selectedMood}
+          onSelectMood={handleMoodSelect}
         />
       </div>
     </div>

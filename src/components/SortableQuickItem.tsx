@@ -1,7 +1,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import React from 'react';
 import { GripVertical } from 'lucide-react';
+import React from 'react';
 
 interface SortableQuickItemProps {
   id: string;
@@ -16,6 +16,7 @@ export default function SortableQuickItem({
   icon,
   label,
   onClick,
+  className = '',
 }: SortableQuickItemProps): React.ReactElement {
   const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id });
 
@@ -28,7 +29,7 @@ export default function SortableQuickItem({
     <div
       ref={setNodeRef}
       style={style}
-      className="quick-item flex items-center justify-between gap-2 px-2 py-1 rounded bg-white shadow"
+      className={`quick-item flex items-center justify-between gap-2 px-2 py-1 rounded bg-white shadow ${className}`}
     >
       {/* Linker Bereich – klickbar */}
       <div className="flex items-center gap-2 cursor-pointer flex-grow" onClick={onClick}>

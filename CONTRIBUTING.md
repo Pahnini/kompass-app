@@ -17,21 +17,7 @@ Danke, dass du helfen willst! Jede Unterstützung ist willkommen – egal ob Bug
 
 ## 🎨 Code-Stil und Formatierung
 
-Wir verwenden ESLint und Prettier für konsistente Formatierung:
-
-```bash
-# Linting ausführen
-npm run lint
-
-# Linting-Probleme automatisch beheben
-npm run lint:fix
-
-# Code formatieren
-npm run format
-
-# Formatierung überprüfen
-npm run format:check
-```
+Wir verwenden ESLint und Prettier für konsistente Formatierung. Detaillierte Informationen findest du in unserem [Style Guide](./STYLE_GUIDE.md):
 
 ### Editor-Einrichtung
 

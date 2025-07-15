@@ -1,21 +1,11 @@
-import {
-  closestCenter,
-  DndContext,
-  DragEndEvent,
-  PointerSensor,
-  useSensor,
-  useSensors,
-} from '@dnd-kit/core';
-import { arrayMove, SortableContext, verticalListSortingStrategy } from '@dnd-kit/sortable';
 import { Compass } from 'lucide-react';
 import React, { useState } from 'react';
 import { useTranslation } from '../hooks/useTranslation';
 import { useNavigate } from 'react-router-dom';
 import { useUserData } from '../hooks/useUserData';
-import * as storageService from '../services/storageService';
-import type { SidebarItem } from '../types';
+import type { SidebarItem } from '../types/index';
 import './HomeScreen.css';
-import SortableQuickItem from './SortableQuickItem';
+import SortableQuickList from './SortableQuickList';
 
 interface HomeScreenProps {
   username: string;
@@ -33,33 +23,21 @@ export default function HomeScreen({
   setFavorites,
 }: HomeScreenProps): React.ReactElement {
   const navigate = useNavigate();
-  const sensors = useSensors(useSensor(PointerSensor));
-  const { addPoints } = useUserData();
-  const [animatingKey, setAnimatingKey] = useState<string | null>(null);
-
-  const handleDragEnd = (event: DragEndEvent) => {
-    const { active, over } = event;
-    if (over && active.id !== over.id) {
-      const oldIndex = quickItems.indexOf(active.id as string);
-      const newIndex = quickItems.indexOf(over.id as string);
-      const newOrder = arrayMove(quickItems, oldIndex, newIndex);
-
-      setFavorites(newOrder);
-      storageService.set('favorites', newOrder);
-    }
-  };
+  const { addPoints, level, levelProgress } = useUserData();
+  const [animatingKey, setAnimatingKey] = useState<string | undefined>(undefined);
 
   const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
 
   const handleQuickClick = (key: string) => {
     setAnimatingKey(key);
     addPoints(1);
-    setTimeout(() => setAnimatingKey(null), 300);
+    setTimeout(() => setAnimatingKey(undefined), 300);
     navigate(getPath(key));
   };
 
   return (
     <div className="card">
+      {/* Begrüßung */}
       <div className="welcome-section">
         <div style={{ fontSize: '48px', marginBottom: '16px' }}>
           <Compass size={64} color="#5dade2" />
@@ -72,7 +50,7 @@ export default function HomeScreen({
           <div className="form-row" style={{ marginTop: '20px' }}>
             <input
               type="text"
-              placeholder={useTranslation().t('home.username.placeholder')}
+              placeholder={useTranslation().t('home.username.placeholder') || "Wie kann ich dich nennen?"}
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 const input = e.currentTarget;
                 if (e.key === 'Enter' && input.value.trim()) {
@@ -81,10 +59,9 @@ export default function HomeScreen({
               }}
             />
             <button
-              onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
-                const button = e.currentTarget;
-                const input = button.previousElementSibling as HTMLInputElement;
-                if (input.value.trim()) {
+              onClick={() => {
+                const input = document.querySelector<HTMLInputElement>('input');
+                if (input?.value.trim()) {
                   setUsername(input.value.trim());
                 }
               }}
@@ -95,29 +72,37 @@ export default function HomeScreen({
         )}
       </div>
 
+      {/* Mood & Journal */}
+      <div style={{ textAlign: 'center', marginTop: '2rem' }}></div>
+
+      {/* XP-Level */}
+      <div style={{ marginTop: '16px' }}>
+        <div style={{ fontSize: '14px', marginBottom: '4px' }}>
+          Level {level} – {Math.round(levelProgress)}%
+        </div>
+        <div style={{ background: '#ddd', height: '10px', borderRadius: '5px' }}>
+          <div
+            style={{
+              width: `${levelProgress}%`,
+              height: '100%',
+              background: '#0b9444',
+              borderRadius: '5px',
+              transition: 'width 0.3s ease',
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Schnellzugriffe */}
       <div className="section">
         <h3>Deine Schnellzugriffe</h3>
-        <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={quickItems} strategy={verticalListSortingStrategy}>
-            <div className="quick-items-grid">
-              {quickItems.map(key => {
-                const item = allItems.find(i => i.key === key);
-                return (
-                  item && (
-                    <SortableQuickItem
-                      key={item.key}
-                      id={item.key}
-                      icon={item.icon as React.ReactNode}
-                      label={item.label}
-                      onClick={() => handleQuickClick(item.key)}
-                      className={animatingKey === item.key ? 'bounce' : ''}
-                    />
-                  )
-                );
-              })}
-            </div>
-          </SortableContext>
-        </DndContext>
+        <SortableQuickList
+          items={allItems}
+          quickItemKeys={quickItems}
+          onOrderChange={setFavorites}
+          onItemClick={handleQuickClick}
+          animatingKey={animatingKey}
+        />
       </div>
     </div>
   );

@@ -1,8 +1,9 @@
 import React, { ReactNode, useState } from 'react';
 import pointSound from '../assets/sounds/point.wav';
+import { achievementList } from '../data/achievementList';
 import { skillsList as defaultSkills } from '../data/skills';
 import * as storageService from '../services/storageService';
-import type { Achievement, CalendarNotes, Goal, Skill, Symptoms, WordFile } from '../types';
+import type { Achievement, CalendarNotes, Goal, Skill, Symptoms, WordFile } from '../types/index';
 
 export const UserDataContext = React.createContext<UserDataContextType | undefined>(undefined);
 
@@ -26,11 +27,22 @@ export interface UserDataContextType {
   hasGoalsReminder: boolean;
   points: number;
   addPoints: (amount: number) => void;
+  level: number;
+  levelProgress: number;
 }
 
 interface UserDataProviderProps {
   children: ReactNode;
 }
+
+// Calculate level and progress based on points
+const getLevel = (points: number): { level: number; progress: number } => {
+  if (points < 10) return { level: 1, progress: (points / 10) * 100 };
+  if (points < 25) return { level: 2, progress: ((points - 10) / 15) * 100 };
+  if (points < 50) return { level: 3, progress: ((points - 25) / 25) * 100 };
+  if (points < 100) return { level: 4, progress: ((points - 50) / 50) * 100 };
+  return { level: 5, progress: 100 };
+};
 
 export function UserDataProvider({ children }: UserDataProviderProps): React.ReactElement {
   // Use lazy initialization for all state to avoid unnecessary localStorage access on re-renders
@@ -57,6 +69,9 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
     () => storageService.get<Skill[]>('skillsList') ?? defaultSkills
   );
   const [points, setPoints] = useState<number>(() => storageService.get<number>('points') ?? 0);
+
+  // Calculate level and progress
+  const { level, progress } = getLevel(points);
 
   const setUsername = React.useCallback((value: string) => {
     setUsernameState(value);
@@ -105,10 +120,31 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
         const audio = new Audio(pointSound);
         audio.play().catch(() => {}); // Falls Browser blockiert, kein Fehler
         storageService.set('points', newPoints);
+
+        // Achievement logic
+        const unlocked: Achievement[] = [];
+
+        achievementList.forEach(a => {
+          const alreadyUnlocked = achievements.some(existing => existing.id === a.id);
+          const match = a.id.startsWith('points-');
+          const targetPoints = parseInt(a.id.split('-')[1]);
+          if (match && newPoints >= targetPoints && !alreadyUnlocked) {
+            unlocked.push({
+              ...a,
+              date: new Date().toISOString(),
+            });
+          }
+        });
+
+        if (unlocked.length > 0) {
+          const newAchievements = [...achievements, ...unlocked];
+          setAchievements(newAchievements);
+        }
+
         return newPoints;
       });
     },
-    [] // No dependencies needed with functional updates
+    [achievements, setAchievements]
   );
 
   // Compute derived state separately to keep the dependency array smaller
@@ -140,6 +176,8 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       hasGoalsReminder,
       points,
       addPoints,
+      level,
+      levelProgress: progress,
     }),
     [
       username,
@@ -152,6 +190,8 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       skillsList,
       hasGoalsReminder,
       points,
+      level,
+      progress,
       // Setter functions are stable and don't need to be in the dependency array
       setUsername,
       setGoals,

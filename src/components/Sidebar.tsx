@@ -1,9 +1,10 @@
+import { Award, GraduationCap } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from '../hooks/useTranslation';
 import { Link, useLocation } from 'react-router-dom';
-import type { SidebarItem } from '../types';
-import { supabase } from '../utils/supabase';
 import { useUserData } from '../hooks/useUserData';
+import type { SidebarItem } from '../types/index';
+import { supabase } from '../utils/supabase';
 
 interface SidebarProps {
   items: SidebarItem[];
@@ -74,6 +75,30 @@ export default function Sidebar({
               <span className="label">{useTranslation().t(item.label)}</span>
             </Link>
           ))}
+
+          {/* Klinikschule */}
+          <Link
+            to="/school"
+            className={`sidebar-item ${location.pathname === '/school' ? 'active' : ''}`}
+            onClick={handleClick}
+          >
+            <span className="icon">
+              <GraduationCap size={18} />
+            </span>
+            <span className="label">Klinikschule</span>
+          </Link>
+
+          {/* Erfolge */}
+          <Link
+            to="/achievements"
+            className={`sidebar-item ${location.pathname === '/achievements' ? 'active' : ''}`}
+            onClick={handleClick}
+          >
+            <span className="icon">
+              <Award size={18} />
+            </span>
+            <span className="label">Erfolge</span>
+          </Link>
         </div>
 
         <div

@@ -2,10 +2,12 @@
 
 export type Goal = { id: string; title: string; text: string; completed: boolean };
 export type Achievement = {
-  type: string;
+  type?: string;
   id: string;
-  title: string;
-  text: string;
+  title?: string;
+  text?: string;
+  label?: string;
+  icon?: React.ReactNode;
   date: string;
 };
 export type CalendarNote = { title: string; text: string };

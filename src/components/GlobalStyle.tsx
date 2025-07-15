@@ -94,6 +94,24 @@ export default function GlobalStyle(): React.ReactElement | null {
         border-color: #5dade2;
         outline: none;
       }
+@keyframes fadeInOut {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  10% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  90% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+}
 
       .sidebar {
         background: #2f4f4f;

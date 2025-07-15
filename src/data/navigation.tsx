@@ -10,7 +10,7 @@ import {
   Sparkles,
 } from 'lucide-react';
 
-import type { SidebarItem } from '../types';
+import type { SidebarItem } from '../types/index';
 
 export const sidebarItems: SidebarItem[] = [
   { key: 'home', label: 'navigation.home', icon: <Home size={18} /> },

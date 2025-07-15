@@ -3,9 +3,31 @@
  */
 import { showErrorToast, showInfoToast, showSuccessToast } from './toastUtils';
 
-export interface Achievement {
+import { Achievement } from '../types/index';
+
+// Interface for shareable achievements
+export interface ShareableAchievement {
   text: string;
   date: string;
+}
+
+// Function to adapt Achievement to ShareableAchievement
+function adaptAchievement(achievement: Achievement): ShareableAchievement {
+  // Handle both Achievement types
+  let text = 'Achievement';
+
+  if ('label' in achievement && achievement.label) {
+    text = achievement.label;
+  } else if ('title' in achievement && achievement.title) {
+    text = achievement.title;
+  } else if ('text' in achievement && achievement.text) {
+    text = achievement.text;
+  }
+
+  return {
+    text,
+    date: achievement.date,
+  };
 }
 
 /**
@@ -13,11 +35,13 @@ export interface Achievement {
  * @param achievement - The achievement to share
  */
 export function shareAchievement(achievement: Achievement): void {
+  // Adapt the achievement to a shareable format
+  const adaptedAchievement = adaptAchievement(achievement);
   if (navigator.share) {
     navigator
       .share({
         title: 'Erfolg',
-        text: `${achievement.text} (${achievement.date})`,
+        text: `${adaptedAchievement.text} (${adaptedAchievement.date})`,
         url: window.location.href,
       })
       .then(() => {

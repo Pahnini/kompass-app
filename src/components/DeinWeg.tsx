@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from '../hooks/useTranslation';
+import MoodCompass from '../components/MoodCompass';
 import { Emoji } from '../data/emojis';
-import { Achievement, CalendarNotes, Goal, Symptoms } from '../types';
+import { useTranslation } from '../hooks/useTranslation';
+import { Achievement, CalendarNotes, Goal, Symptoms } from '../types/index';
 import { showErrorToast, showSuccessToast } from '../utils/toastUtils';
 import BackButton from './BackButton';
 import DeleteButton from './DeleteButton';
@@ -21,6 +22,7 @@ interface DeinWegProps {
   emojiList: Emoji[];
   templates?: string[];
 }
+
 export default function DeinWeg({
   goals,
   setGoals,
@@ -45,6 +47,7 @@ export default function DeinWeg({
     return dateSymptoms && dateSymptoms.length > 0 ? dateSymptoms[0].intensity : 0;
   });
   const [justSelectedEmoji, setJustSelectedEmoji] = useState('');
+  const [selectedMood, setSelectedMood] = useState<string | null>(null);
 
   const addGoal = () => {
     if (goalInput.trim())
@@ -59,8 +62,10 @@ export default function DeinWeg({
       ]);
     setGoalInput('');
   };
+
   const toggleGoal = (i: number): void =>
     setGoals(goals.map((g, idx) => (idx === i ? { ...g, completed: !g.completed } : g)));
+
   const addAchievement = () => {
     if (achievementInput.trim())
       setAchievements([
@@ -88,25 +93,22 @@ export default function DeinWeg({
   }, [selectedDate, calendarNotes, symptoms]);
 
   const saveNote = () => {
-    // Validation: Check if there's any meaningful content
     if (!noteText.trim() && symptomScore === 0) {
       showErrorToast('Bitte füge eine Notiz oder einen Symptom-Score hinzu');
       return;
     }
 
-    // Update calendar notes
     const updatedCalendarNotes = {
       ...calendarNotes,
-      [selectedDate]: { text: noteText, title: '' /* or provide a title if needed */ },
+      [selectedDate]: { text: noteText, title: '' },
     };
     setCalendarNotes(updatedCalendarNotes);
 
-    // Update symptoms
     const updatedSymptoms = {
       ...symptoms,
       [selectedDate]: [
         {
-          title: 'Allgemein',
+          title: selectedMood || 'Allgemein',
           intensity: symptomScore,
         },
       ],
@@ -116,13 +118,11 @@ export default function DeinWeg({
     showSuccessToast('Tagebucheintrag gespeichert! 📝');
   };
 
-  // Helper function to format date in German format (DD.MM.YYYY)
   const formatDateGerman = (dateString: string): string => {
     const [year, month, day] = dateString.split('-');
     return `${day}.${month}.${year}`;
   };
 
-  // Get current note for display
   const currentNote = calendarNotes[selectedDate];
   const hasCurrentNote = currentNote && currentNote.text;
 
@@ -130,18 +130,30 @@ export default function DeinWeg({
     <div className="card">
       <BackButton />
       <h2>{useTranslation().t('deinweg.title')}</h2>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: '2rem 0',
+          transform: 'scale(0.95)',
+        }}
+      >
+        <MoodCompass onSelectMood={setSelectedMood} selected={selectedMood} />
+      </div>
       {showReminder && <div className="reminder">Ziel für heute: Was möchtest du schaffen? 🚩</div>}
+
       <div className="stat-banner">
         🎯 Diese Woche geschafft: <b>{goals.filter(g => g.completed).length}</b> Ziel
         {goals.filter(g => g.completed).length !== 1 && 'e'}!
       </div>
+
       <div className="section">
         <h3>Symptom-Tagebuch</h3>
         <label>
           Datum:
           <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} />
         </label>
-        {/* Display existing note if available */}
         {hasCurrentNote && (
           <div
             style={{
@@ -178,18 +190,16 @@ export default function DeinWeg({
         />{' '}
         <span style={{ minWidth: 30, display: 'inline-block' }}>{symptomScore}</span>
       </div>
+
       {emojiList && (
         <div className="emoji-row">
           {emojiList.map(em => (
             <span
               key={em.emoji}
-              className={`emoji-selector ${
-                emoji === em.emoji ? 'active' : ''
-              } ${justSelectedEmoji === em.emoji ? 'just-selected' : ''}`}
+              className={`emoji-selector ${emoji === em.emoji ? 'active' : ''} ${justSelectedEmoji === em.emoji ? 'just-selected' : ''}`}
               onClick={() => {
                 setEmoji(em.emoji);
                 setJustSelectedEmoji(em.emoji);
-                // Remove animation class after animation completes
                 setTimeout(() => setJustSelectedEmoji(''), 300);
               }}
               title={em.label}
@@ -209,14 +219,17 @@ export default function DeinWeg({
           ))}
         </div>
       )}
+
       <textarea
         value={noteText}
         onChange={e => setNoteText(e.target.value)}
         placeholder={useTranslation().t('deinweg.note.placeholder')}
       />
+
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
         <button onClick={saveNote}>{useTranslation().t('common.buttons.save')}</button>
       </div>
+
       <div className="section">
         <h3>Ziele</h3>
         <div className="form-row">
@@ -244,6 +257,7 @@ export default function DeinWeg({
           ))}
         </ul>
       </div>
+
       <div className="section">
         <h3>Erfolge</h3>
         {templates && (

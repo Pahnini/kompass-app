@@ -29,7 +29,16 @@ const MoodCompass: React.FC<Props> = ({ selected, onSelectMood }) => {
   };
 
   return (
-    <div style={{ textAlign: "center", color: "#fff" }}>
+    <div 
+      style={{ 
+        textAlign: "center", 
+        color: "#fff", 
+        width: "100%",
+        maxWidth: "100%",
+        overflow: "hidden",
+        boxSizing: "border-box",
+      }}
+    >
       {/* Kompass-Icon zentriert */}
       <motion.div
         animate={{ rotate: 360 }}
@@ -52,9 +61,12 @@ const MoodCompass: React.FC<Props> = ({ selected, onSelectMood }) => {
       <div
         style={{
           display: "grid",
-          gridTemplateColumns: "repeat(auto-fit, minmax(120px, 1fr))",
-          gap: "1rem",
+          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+          gap: "1.2rem",
           marginBottom: "2rem",
+          maxWidth: "100%",
+          width: "100%",
+          boxSizing: "border-box",
         }}
       >
         {moods.map((mood) => {
@@ -65,14 +77,20 @@ const MoodCompass: React.FC<Props> = ({ selected, onSelectMood }) => {
               whileTap={{ scale: 0.95 }}
               onClick={() => handleClick(mood.value)}
               style={{
-                padding: "0.75rem 1rem",
+                padding: "1rem 1.2rem",
                 fontSize: "1rem",
-                borderRadius: "999px",
-                border: `2px solid ${isActive ? mood.color : "#2f4f4f"}`,
-                background: isActive ? mood.color : "#fff",
-                color: isActive ? "#fff" : "#2f4f4f",
+                borderRadius: "12px",
+                border: `2px solid ${isActive ? mood.color : "rgba(255, 255, 255, 0.2)"}`,
+                background: isActive ? mood.color : "rgba(255, 255, 255, 0.1)",
+                color: isActive ? "#fff" : "#fff",
                 cursor: "pointer",
-                boxShadow: isActive ? `0 0 8px ${mood.color}` : "none",
+                boxShadow: isActive ? `0 0 12px ${mood.color}` : "0 2px 8px rgba(0, 0, 0, 0.1)",
+                transition: "all 0.2s ease",
+                minHeight: "60px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontWeight: "500",
               }}
             >
               {mood.label}
@@ -95,8 +113,15 @@ const MoodCompass: React.FC<Props> = ({ selected, onSelectMood }) => {
             borderRadius: "0.75rem",
             fontSize: "0.95rem",
             boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-            maxWidth: "90%",
-            margin: "0 auto",
+            maxWidth: "100%",
+            width: "100%",
+            margin: "1.5rem 0 0 0",
+            boxSizing: "border-box",
+            wordWrap: "break-word",
+            overflowWrap: "break-word",
+            hyphens: "auto",
+            lineHeight: "1.5",
+            textAlign: "left",
           }}
         >
           <strong>Skill-Tipp:</strong> {response}

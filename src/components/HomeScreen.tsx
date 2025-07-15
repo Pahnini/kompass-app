@@ -1,7 +1,7 @@
 import { Compass } from 'lucide-react';
 import React, { useState } from 'react';
-import { useTranslation } from '../hooks/useTranslation';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../hooks/useTranslation';
 import { useUserData } from '../hooks/useUserData';
 import type { SidebarItem } from '../types/index';
 import './HomeScreen.css';
@@ -28,6 +28,15 @@ export default function HomeScreen({
 
   const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
 
+  const t = useTranslation().t;
+  const translatedItems = quickItems
+    .map(key => allItems.find(item => item.key === key))
+    .filter((item): item is SidebarItem => !!item)
+    .map(item => ({
+      ...item,
+      label: t(item.label),
+    }));
+
   const handleQuickClick = (key: string) => {
     setAnimatingKey(key);
     addPoints(1);
@@ -43,14 +52,16 @@ export default function HomeScreen({
           <Compass size={64} color="#5dade2" />
         </div>
         <h1>{useTranslation().t('home.welcome')}</h1>
-        <p>Deine App für den Alltag nach der Klinik.</p>
-        <p>Skills, Pläne, Chatbot & Hilfe bei Krisen – immer für dich da.</p>
+        <p>{useTranslation().t('home.appDescription')}</p>
+        <p>{useTranslation().t('home.featuresDescription')}</p>
 
         {!username && (
           <div className="form-row" style={{ marginTop: '20px' }}>
             <input
               type="text"
-              placeholder={useTranslation().t('home.username.placeholder') || "Wie kann ich dich nennen?"}
+              placeholder={
+                useTranslation().t('home.username.placeholder') || 'Wie kann ich dich nennen?'
+              }
               onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
                 const input = e.currentTarget;
                 if (e.key === 'Enter' && input.value.trim()) {
@@ -95,9 +106,9 @@ export default function HomeScreen({
 
       {/* Schnellzugriffe */}
       <div className="section">
-        <h3>Deine Schnellzugriffe</h3>
+        <h3>{useTranslation().t('home.quickAccessTitle')}</h3>
         <SortableQuickList
-          items={allItems}
+          items={translatedItems}
           quickItemKeys={quickItems}
           onOrderChange={setFavorites}
           onItemClick={handleQuickClick}

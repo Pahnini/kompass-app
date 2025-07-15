@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import MoodCompass from '../components/MoodCompass';
+import { useTranslation } from '../hooks/useTranslation';
 
 const MoodCompassView: React.FC = () => {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
+  const { t } = useTranslation();
 
   const handleMoodSelect = (mood: string) => {
     setSelectedMood(mood);
@@ -19,9 +21,9 @@ const MoodCompassView: React.FC = () => {
         alignItems: 'center',
       }}
     >
-      <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>🧭 Dein Stimmungs-Kompass</h1>
+      <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>{t("moodCompass.title")}</h1>
       <p style={{ marginBottom: '2rem', fontSize: '1rem', maxWidth: '600px' }}>
-        Wie fühlst du dich heute? Wähle eine Richtung.
+        {t("moodCompass.subtitle")}
       </p>
 
       {/* Zentrierender Wrapper */}

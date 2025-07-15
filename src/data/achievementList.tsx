@@ -3,31 +3,31 @@ import { Achievement } from '../types/index';
 export const achievementList: Achievement[] = [
   {
     id: 'points-10',
-    label: '10 Punkte erreicht',
+    label: 'achievements.points10',
     icon: <Star size={20} />,
     date: '',
   },
   {
     id: 'points-25',
-    label: '25 Punkte erreicht',
+    label: 'achievements.points25',
     icon: <Medal size={20} />,
     date: '',
   },
   {
     id: 'points-50',
-    label: '50 Punkte erreicht',
+    label: 'achievements.points50',
     icon: <Shield size={20} />,
     date: '',
   },
   {
     id: 'points-100',
-    label: '100 Punkte erreicht',
+    label: 'achievements.points100',
     icon: <Trophy size={20} />,
     date: '',
   },
   {
     id: 'points-200',
-    label: '200 Punkte - unaufhaltbar!',
+    label: 'achievements.points200',
     icon: <Award size={20} />,
     date: '',
   },

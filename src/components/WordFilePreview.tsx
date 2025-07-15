@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { Skill } from '../types/index';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface WordFilePreviewProps {
   parsedLines: string[];
@@ -12,6 +13,7 @@ export default function WordFilePreview({
   onAddSkills,
   onCancel,
 }: WordFilePreviewProps): React.ReactElement {
+  const { t } = useTranslation();
   const [selectedLines, setSelectedLines] = useState<string[]>([]);
 
   const handleToggleLine = (line: string) => {
@@ -26,8 +28,8 @@ export default function WordFilePreview({
 
   return (
     <div className="card">
-      <h3>Gefundene Skills aus dem Dokument</h3>
-      <p>Wähle die Skills aus, die du hinzufügen möchtest:</p>
+      <h3>{t('skills.foundSkills')}</h3>
+      <p>{t('skills.selectSkills')}</p>
       <ul>
         {parsedLines.map((line, index) => (
           <li key={index}>
@@ -41,10 +43,10 @@ export default function WordFilePreview({
         ))}
       </ul>
       <button onClick={handleAddSkills} disabled={selectedLines.length === 0}>
-        Ausgewählte Skills hinzufügen
+        {t('buttons.addSelectedSkills')}
       </button>
       <button onClick={onCancel} style={{ marginLeft: '10px' }}>
-        Abbrechen
+        {t('buttons.cancel')}
       </button>
     </div>
   );

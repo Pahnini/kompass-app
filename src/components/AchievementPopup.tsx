@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface AchievementPopupProps {
   label: string;
@@ -9,6 +10,8 @@ export default function AchievementPopup({
   label,
   onClose,
 }: AchievementPopupProps): React.ReactElement {
+  const { t } = useTranslation();
+  
   useEffect(() => {
     const timer = setTimeout(onClose, 4000);
     return () => clearTimeout(timer);
@@ -30,7 +33,7 @@ export default function AchievementPopup({
         animation: 'fadeInOut 4s ease-in-out',
       }}
     >
-      🎉 Neues Achievement: {label}
+      {t('success.achievement').replace('{label}', label)}
     </div>
   );
 }

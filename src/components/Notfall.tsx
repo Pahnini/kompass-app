@@ -1,25 +1,28 @@
 import React from 'react';
 import { HelpResource } from '../data/helpResources';
 import BackButton from './BackButton';
+import { useTranslation } from '../hooks/useTranslation';
 
 interface NotfallProps {
   helpResources: HelpResource[];
 }
 
 export default function Notfall({ helpResources }: NotfallProps): React.ReactElement {
+  const { t } = useTranslation();
+  
   return (
     <div className="card notfall-card">
       <BackButton />
-      <h2>Notfall / Hilfe</h2>
+      <h2>{t('emergency.title')}</h2>
       <div className="contact-list">
         <a href="tel:116111" style={{ color: '#abebc6' }}>
-          📞 116111 Jugendtelefon
+          {t('emergency.youthHotline')}
         </a>
         <a href="tel:08001110111" style={{ color: '#abebc6' }}>
-          📞 0800 111 0 111 Telefonseelsorge
+          {t('emergency.crisisHotline')}
         </a>
         <a href="tel:112" style={{ color: '#abebc6' }}>
-          🚑 112 Notruf
+          {t('emergency.emergencyNumber')}
         </a>
       </div>
       <div
@@ -29,20 +32,20 @@ export default function Notfall({ helpResources }: NotfallProps): React.ReactEle
           color: '#fff',
         }}
       >
-        Websites & Hilfe:
+        {t('emergency.websitesHelp')}
       </div>
       <ul>
         {helpResources.map(h => (
           <li key={h.url}>
             <a href={h.url} target="_blank" rel="noopener noreferrer" style={{ color: '#abebc6' }}>
-              {h.name}
+              {t(h.nameKey) || h.name}
             </a>
           </li>
         ))}
       </ul>
       <div className="invite-friends">
         <p>
-          Freunde einladen:{' '}
+          {t('emergency.inviteFriends')}
           <input
             readOnly
             value={window.location.href}

@@ -28,6 +28,7 @@ export default function Skills({
   skillsList,
   setSkillsList,
 }: SkillsProps): React.ReactElement {
+  const { t } = useTranslation();
   const [done, setDone] = useState<SkillsDoneState>(
     () => JSON.parse(localStorage.getItem('kompass_skills_done') || '{}') || {}
   );
@@ -49,7 +50,7 @@ export default function Skills({
 
     setIsUploading(true);
     if (!file.name.match(/\.(doc|docx)$/)) {
-      showSuccessToast('Bitte eine Word-Datei hochladen! 📄');
+      showSuccessToast(t('errors.wordFileRequired'));
       setIsUploading(false);
       return;
     }
@@ -59,7 +60,7 @@ export default function Skills({
       setParsedLines(lines);
     } catch (error) {
       console.error('Error parsing document:', error);
-      showSuccessToast('Fehler beim Parsen des Dokuments. 📄');
+      showSuccessToast(t('errors.documentParsingError'));
     } finally {
       setIsUploading(false);
     }
@@ -70,14 +71,14 @@ export default function Skills({
     setSkillsList(updatedSkills);
     setParsedLines([]);
 
-    showSuccessToast('Skills erfolgreich hinzugefügt! 🎉');
+    showSuccessToast(t('success.skillsAdded'));
   }
 
   function handleAddSingleSkill(): void {
     if (newSkill.trim()) {
       setSkillsList([...skillsList, newSkill.trim()]);
       setNewSkill('');
-      showSuccessToast(`Skill "${newSkill.trim()}" hinzugefügt! 🎉`);
+      showSuccessToast(t('success.skillAdded').replace('{skill}', newSkill.trim()));
       // Focus the input field after adding
       if (inputRef.current) {
         inputRef.current.focus();
@@ -86,7 +87,7 @@ export default function Skills({
   }
 
   if (isUploading) {
-    return <Loading message="Datei wird hochgeladen und verarbeitet..." />;
+    return <Loading message={t('loading.fileUploading')} />;
   }
 
   if (parsedLines.length > 0) {
@@ -102,7 +103,7 @@ export default function Skills({
   return (
     <div className="card">
       <BackButton />
-      <h2>{useTranslation().t('skills.title')}</h2>
+      <h2>{t('skills.title')}</h2>
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {skillsList.map((skill, i) => (
           <li
@@ -136,7 +137,7 @@ export default function Skills({
                 color: done[i] ? '#888' : 'inherit',
               }}
             >
-              {skill}
+              {skill.startsWith('skills.defaultSkills.') ? t(skill) : skill}
             </span>
             <div style={{ display: 'flex', alignItems: 'center' }}>
               <DeleteButton
@@ -158,10 +159,10 @@ export default function Skills({
                   });
                   setDone(newDone);
                 }}
-                ariaLabel="Skill löschen"
+                ariaLabel={t('ariaLabels.deleteSkill')}
               />
               <div className="actions" style={{ marginRight: '8px', marginLeft: '8px' }}>
-                <ShareButton onClick={() => shareSkill(skill)} ariaLabel="Skill teilen" />
+                <ShareButton onClick={() => shareSkill(skill)} ariaLabel={t('ariaLabels.shareSkill')} />
               </div>
             </div>
           </li>
@@ -169,7 +170,7 @@ export default function Skills({
       </ul>
       <div style={{ marginTop: 14 }}>
         <label>
-          Neuen Skill hinzufügen:
+          {t('skills.addNewSkill')}
           <div
             style={{
               position: 'relative',
@@ -181,7 +182,7 @@ export default function Skills({
             <input
               ref={inputRef}
               type="text"
-              placeholder={useTranslation().t('skills.new.placeholder')}
+              placeholder={t('skills.new.placeholder')}
               value={newSkill}
               onChange={e => setNewSkill(e.target.value)}
               onKeyDown={e => {
@@ -227,7 +228,7 @@ export default function Skills({
                 zIndex: 2,
                 padding: 0,
               }}
-              aria-label="Skill hinzufügen"
+              aria-label={t('ariaLabels.addSkill')}
               onMouseEnter={e => {
                 e.currentTarget.style.backgroundColor = '#4a9fd1';
               }}
@@ -261,10 +262,10 @@ export default function Skills({
         </label>
       </div>
       {/* File upload section */}
-      <h3>Persönliche Skills/Pläne</h3>
+      <h3>{t('skills.personalSkills')}</h3>
       <div style={{ marginTop: 14 }}>
         <label>
-          Persönliche Skills/Pläne als Word-Dokument hochladen:
+          {t('skills.uploadPersonalSkills')}
           <input
             type="file"
             accept=".doc,.docx,application/msword"
@@ -303,7 +304,7 @@ export default function Skills({
               <div className="actions" style={{ marginRight: '8px' }}>
                 <DeleteButton
                   onDelete={() => setWordFiles(wordFiles.filter((_, idx) => idx !== i))}
-                  ariaLabel="Datei löschen"
+                  ariaLabel={t('ariaLabels.deleteFile')}
                 />
               </div>
             </li>

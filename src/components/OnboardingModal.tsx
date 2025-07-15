@@ -6,38 +6,36 @@ interface OnboardingModalProps {
 }
 
 export default function OnboardingModal({ onClose }: OnboardingModalProps): React.ReactElement {
+  const { t } = useTranslation();
+  
   return (
     <div className="ds-modal">
       <div className="ds-box" style={{ maxWidth: 500, textAlign: 'left' }}>
-        <h2>Willkommen bei Kompass!</h2>
+        <h2>{t('onboarding.title')}</h2>
         <ul style={{ lineHeight: 1.6 }}>
           <li>
-            <b>„Mein Kompass“:</b> Digitales Tagebuch, Ziele, Erfolge, Symptomtagebuch &
-            Stimmungskalender.
+            <b>{t('onboarding.features.compass.title')}</b> {t('onboarding.features.compass.description')}
           </li>
           <li>
-            <b>Skills:</b> Viele Ideen, wie du dich beruhigen oder stärken kannst – du kannst eigene
-            Word-Dateien hochladen.
+            <b>{t('onboarding.features.skills.title')}</b> {t('onboarding.features.skills.description')}
           </li>
           <li>
-            <b>Designs:</b> Passe Farben & Aussehen an, wie du willst.
+            <b>{t('onboarding.features.designs.title')}</b> {t('onboarding.features.designs.description')}
           </li>
           <li>
-            <b>Notfall:</b> Soforthilfe, Telefonnummern & Links – du bist nie allein.
+            <b>{t('onboarding.features.emergency.title')}</b> {t('onboarding.features.emergency.description')}
           </li>
           <li>
-            <b>Guide:</b> Tipps, wie du nach der Klinik eine:n Psychotherapeut:in findest.
+            <b>{t('onboarding.features.guide.title')}</b> {t('onboarding.features.guide.description')}
           </li>
           <li>
-            <b>Chatbot:</b> Hier kannst du anonym schreiben & ausprobieren (Demo – kein echter
-            Mensch!)
+            <b>{t('onboarding.features.chatbot.title')}</b> {t('onboarding.features.chatbot.description')}
           </li>
           <li>
-            Über die Sidebar wechselst du Funktionen. Du kannst die wichtigsten als „Kachel“ direkt
-            auf den Homescreen holen.
+            {t('onboarding.sidebarExplanation')}
           </li>
         </ul>
-        <button onClick={onClose}>{useTranslation().t('onboarding.start')}</button>
+        <button onClick={onClose}>{t('buttons.ok')}</button>
       </div>
     </div>
   );

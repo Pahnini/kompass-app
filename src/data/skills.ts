@@ -3,15 +3,15 @@
 export type Skill = string;
 
 export const skillsList: Skill[] = [
-  'Atemübung: 4-7-8',
-  'Dankbarkeitstagebuch',
-  'Achtsamkeitsübung (Bodyscan)',
-  'Stretch & Move',
-  '10min Handy aus',
-  'Meditation',
-  'Kreativ zeichnen',
-  'Self-Care Snack',
-  'Online-Freundschaft pflegen',
+  'skills.defaultSkills.breathing',
+  'skills.defaultSkills.gratitude',
+  'skills.defaultSkills.mindfulness',
+  'skills.defaultSkills.stretch',
+  'skills.defaultSkills.digitalDetox',
+  'skills.defaultSkills.meditation',
+  'skills.defaultSkills.creative',
+  'skills.defaultSkills.selfCare',
+  'skills.defaultSkills.friendship',
 ];
 
 export default skillsList;

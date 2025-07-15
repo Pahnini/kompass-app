@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../utils/supabase';
 import { useUser } from '@supabase/auth-helpers-react';
+import { useTranslation } from '../../hooks/useTranslation';
 
 type TransitionGoal = {
   id: string;
@@ -12,6 +13,7 @@ type TransitionGoal = {
 };
 
 export default function TransitionTab() {
+  const { t } = useTranslation();
   const user = useUser();
   const [goals, setGoals] = useState<TransitionGoal[]>([]);
   const [loading, setLoading] = useState(true);
@@ -49,23 +51,23 @@ export default function TransitionTab() {
   return (
     <div className="p-4">
       <h2 className="text-2xl font-bold mb-4 text-[#2f4f4f] dark:text-white">
-        🎯 Übergangsplanung
+        {t('schoolSupport.transitionPlanning')}
       </h2>
 
       {totalCount > 0 && (
         <div className="mb-4 text-sm text-gray-800 dark:text-gray-200">
-          Fortschritt:{' '}
+          {t('schoolSupport.progress')}{' '}
           <strong>
-            {doneCount} von {totalCount}
+            {doneCount} {t('schoolSupport.of')} {totalCount}
           </strong>{' '}
-          Zielen erledigt
+          {t('schoolSupport.goalsCompleted')}
         </div>
       )}
 
       {loading ? (
-        <p>Lade Ziele...</p>
+        <p>{t('loading.loadingGoals')}</p>
       ) : goals.length === 0 ? (
-        <p>Keine Ziele vorhanden.</p>
+        <p>{t('schoolSupport.noGoals')}</p>
       ) : (
         <ul className="space-y-4">
           {goals.map(goal => (
@@ -79,20 +81,20 @@ export default function TransitionTab() {
 
               {goal.due_date && (
                 <p className="text-xs text-gray-500">
-                  Fällig bis: {new Date(goal.due_date).toLocaleDateString()}
+                  {t('schoolSupport.dueDate')} {new Date(goal.due_date).toLocaleDateString()}
                 </p>
               )}
               {goal.comment && (
                 <p className="text-sm mt-1 text-gray-600 italic dark:text-gray-300">
-                  Hinweis: {goal.comment}
+                  {t('schoolSupport.note')} {goal.comment}
                 </p>
               )}
               {goal.responsible_person && (
-                <p className="text-xs text-gray-400">Zuständig: {goal.responsible_person}</p>
+                <p className="text-xs text-gray-400">{t('schoolSupport.responsible')} {goal.responsible_person}</p>
               )}
 
               <p className="text-sm mt-2">
-                Status: <strong>{goal.status}</strong>
+                {t('schoolSupport.status')} <strong>{goal.status}</strong>
               </p>
 
               {goal.status !== 'done' && (
@@ -100,7 +102,7 @@ export default function TransitionTab() {
                   onClick={() => markAsDone(goal.id)}
                   className="mt-3 inline-block bg-[#2f4f4f] text-white text-sm px-4 py-1.5 rounded-lg hover:bg-[#0b9444] transition"
                 >
-                  Als erreicht markieren
+                  {t('buttons.markAchieved')}
                 </button>
               )}
             </li>

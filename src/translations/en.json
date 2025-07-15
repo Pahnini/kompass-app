@@ -2,17 +2,335 @@
   "navigation": {
     "home": "Home",
     "skills": "Skills & Mindfulness",
-    "deinweg": "My Compass"
+    "deinweg": "My Compass",
+    "achievements": "Achievements",
+    "designs": "Designs",
+    "emergency": "Emergency",
+    "notfall": "Emergency",
+    "guide": "Guide",
+    "chatbot": "Chatbot",
+    "chat": "Chatbot",
+    "schoolSupport": "School Support",
+    "quickedit": "Edit Quick Access"
   },
   "buttons": {
     "back": "Back",
     "save": "Save",
-    "share": "Share"
+    "share": "Share",
+    "delete": "Delete",
+    "cancel": "Cancel",
+    "ok": "Got it 👍",
+    "reload": "🔄 Reload Page",
+    "home": "🏠 Go to Home",
+    "signin": "Sign In",
+    "signup": "Sign Up",
+    "sendMagicLink": "Send Login Link",
+    "addSkill": "Add Skill",
+    "addGoal": "Add Goal",
+    "markAchieved": "Mark as Achieved",
+    "uploadFile": "Upload File",
+    "addSelectedSkills": "Add Selected Skills"
   },
   "forms": {
     "placeholders": {
       "newGoal": "New Goal...",
-      "achievement": "Achievement today?"
+      "achievement": "Achievement today?",
+      "username": "What can I call you?",
+      "email": "Email",
+      "password": "Password",
+      "title": "Title",
+      "description": "Description (optional)",
+      "newSkill": "Add new skill:"
     }
+  },
+  "home": {
+    "welcome": "Welcome back!",
+    "appDescription": "Your app for daily life after the clinic.",
+    "featuresDescription": "Skills, plans, chatbot & crisis help – always there for you.",
+    "quickAccessTitle": "Your Quick Access",
+    "subtitle": "Your digital compass for mindfulness, skills & self-help",
+    "promise": "Always there for you – skills, plans & crisis help",
+    "username": {
+      "placeholder": "What can I call you?"
+    }
+  },
+  "welcome": {
+    "title": "Welcome back!",
+    "subtitle": "Your digital compass for mindfulness, skills & self-help",
+    "promise": "Always there for you – skills, plans & crisis help",
+    "features": {
+      "skills": "Skills & Mindfulness",
+      "journal": "Journal & Goals",
+      "chatbot": "Chatbot Support",
+      "emergency": "Emergency Help"
+    },
+    "auth": {
+      "signin": "Sign In",
+      "signup": "Sign Up",
+      "signinLoading": "Signing in...",
+      "signupLoading": "Signing up...",
+      "magicLinkLoading": "Sending link...",
+      "hasAccount": "Already have an account? Sign in",
+      "noAccount": "No account? Sign up",
+      "useMagicLink": "Login with Magic Link",
+      "switchToMagicLink": "Sign in with Magic Link instead",
+      "switchToPassword": "Sign in with Password instead"
+    }
+  },
+  "loading": {
+    "default": "Loading...",
+    "subtitle": "Just a moment please...",
+    "page": "Page is loading...",
+    "connecting": "Connecting...",
+    "fileUploading": "File is being uploaded and processed...",
+    "saving": "Saving...",
+    "sendingLink": "Sending link...",
+    "loadingGoals": "Loading goals..."
+  },
+  "errors": {
+    "somethingWrong": "Something went wrong",
+    "unexpectedError": "An unexpected error occurred. Please reload the page or return to the home screen.",
+    "pageNotFound": "Page not found",
+    "pageNotFoundMessage": "The requested page does not exist or has been moved.",
+    "navigationHint": "Use the navigation on the top left to go to other areas.",
+    "wordFileRequired": "Please upload a Word file! 📄",
+    "documentParsingError": "Error parsing document. 📄",
+    "saveError": "Error saving.",
+    "uploadError": "Upload error:",
+    "dbError": "Database error:",
+    "addNoteOrSymptom": "Please add a note or symptom score"
+  },
+  "success": {
+    "skillsAdded": "Skills successfully added! 🎉",
+    "skillAdded": "Skill \"{skill}\" added! 🎉",
+    "journalSaved": "Journal entry saved! 📝",
+    "achievement": "🎉 New Achievement: {label}"
+  },
+  "sidebar": {
+    "openMenu": "Open menu",
+    "points": "🌟 {points} Points",
+    "logout": "Logout",
+    "languages": {
+      "de": "German",
+      "en": "English"
+    }
+  },
+  "moodCompass": {
+    "title": "🧭 Your Mood Compass",
+    "subtitle": "How are you feeling today? Choose a direction.",
+    "moods": {
+      "proud": "🥳 Proud",
+      "hopeful": "🌞 Hopeful",
+      "focus": "🧠 Focused",
+      "tired": "😴 Exhausted",
+      "overwhelmed": "😖 Overwhelmed",
+      "angry": "😡 Angry",
+      "anxious": "😰 Anxious",
+      "empty": "🥶 Empty"
+    },
+    "skillTip": "Skill Tip:",
+    "defaultResponse": "Today, every small step counts."
+  },
+  "moodResponses": {
+    "focus": "Make a small to-do list with maximum 3 points. Focus through clarity!",
+    "hopeful": "Remember: Even small steps lead forward.",
+    "overwhelmed": "Take a deep breath and try to tackle just ONE thing.",
+    "tired": "Consciously give yourself 10 minutes break – without screen.",
+    "angry": "Go outside briefly or move around – it helps release pressure.",
+    "empty": "Do something simple – listen to music, shower, drink something warm.",
+    "anxious": "Say out loud what scares you. It relieves immediately.",
+    "proud": "Well done! Write down what makes you proud today."
+  },
+  "journal": {
+    "title": "Symptom Journal",
+    "dateLabel": "Date:",
+    "savedEntry": "Saved entry for {date}:",
+    "symptomQuestion": "How strong were your symptoms today? (0=not at all, 10=very strong)",
+    "goalReminder": "Goal for today: What do you want to achieve? 🚩",
+    "weeklyProgress": "🎯 This week completed: {count} goal{plural}!",
+    "symptomScore": "Symptom Score: {score}/10",
+    "sections": {
+      "goals": "Goals",
+      "achievements": "Achievements"
+    },
+    "categories": {
+      "general": "General"
+    }
+  },
+  "deinweg": {
+    "title": "My Compass",
+    "note": {
+      "placeholder": "What's on your mind today? How are you feeling? Write your thoughts here..."
+    },
+    "goals": {
+      "placeholder": "New goal..."
+    },
+    "achievement": {
+      "placeholder": "Achievement today?"
+    },
+    "templates": {
+      "proud": "I am proud of myself today because...",
+      "newThing": "Today I tried something new: ...",
+      "selfTime": "I took time for myself by...",
+      "helped": "I helped someone and felt good about it."
+    }
+  },
+  "common": {
+    "buttons": {
+      "save": "Save"
+    },
+    "errorDetails": "Error details (only visible in development)"
+  },
+  "skills": {
+    "title": "Skills & Mindfulness",
+    "personalSkills": "Personal Skills/Plans",
+    "uploadPersonalSkills": "Upload personal skills/plans as Word document:",
+    "foundSkills": "Found skills from the document",
+    "selectSkills": "Select the skills you want to add:",
+    "addNewSkill": "Add new skill:",
+    "new": {
+      "placeholder": "New skill..."
+    },
+    "defaultSkills": {
+      "breathing": "Breathing exercise: 4-7-8",
+      "gratitude": "Gratitude journal",
+      "mindfulness": "Mindfulness exercise (Body scan)",
+      "stretch": "Stretch & Move",
+      "digitalDetox": "10min phone off",
+      "meditation": "Meditation",
+      "creative": "Creative drawing",
+      "selfCare": "Self-Care Snack",
+      "friendship": "Nurture online friendship"
+    }
+  },
+  "emergency": {
+    "title": "Emergency / Help",
+    "youthHotline": "📞 116111 Youth Hotline",
+    "crisisHotline": "📞 0800 111 0 111 Crisis Helpline",
+    "emergencyNumber": "🚑 112 Emergency",
+    "websitesHelp": "Websites & Help:",
+    "inviteFriends": "Invite friends:",
+    "resources": {
+      "nummerGegenKummer": "Number Against Worry",
+      "kjpHarburg": "Child & Youth Psychiatry Harburg (Asklepios)",
+      "jugendNotmail": "Youth Emergency Mail",
+      "krisenchat": "Crisis Chat"
+    }
+  },
+  "guide": {
+    "title": "Find Psychotherapist 🧭",
+    "onlineSearch": "Online Search:",
+    "insuranceMethod": "Ask your health insurance (hotline, lists, consultation).",
+    "directCallMethod": "Call practices directly and ask about available spots & waiting lists.",
+    "clinicSocialService": "Ask the clinic's social service for recommendations.",
+    "emergencyServices": "Use emergency services when quick help is needed!",
+    "trustPersonNote": "Always talk to trusted people – and use the emergency numbers in the menu when in doubt 🚨."
+  },
+  "chatbot": {
+    "title": "Chatbot (Demo)",
+    "description": "Here you could write anonymously or get skills/tips in a real app.",
+    "demoExplanation": "In this demo, the chat is just a placeholder function.",
+    "crisisNote": "(For real crises always talk to real people!)"
+  },
+  "designs": {
+    "title": "Designs",
+    "chooseTheme": "🎨 Choose theme:",
+    "chooseBackground": "🖼️ Choose background:",
+    "themes": {
+      "modernbluegrey": "Modern Blue-Grey",
+      "gruen": "Green",
+      "classic": "Classic",
+      "night": "Night"
+    },
+    "backgrounds": {
+      "clean": "Clean",
+      "green-gradient": "Green Gradient"
+    }
+  },
+  "quickEdit": {
+    "title": "Edit Quick Access",
+    "description": "Select the functions to be displayed on the home screen:"
+  },
+  "onboarding": {
+    "title": "Welcome to Compass!",
+    "features": {
+      "compass": {
+        "title": "\"My Compass\":",
+        "description": "Digital journal, goals, achievements, symptom diary & mood calendar."
+      },
+      "skills": {
+        "title": "Skills:",
+        "description": "Many ideas on how to calm or strengthen yourself – you can upload your own Word files."
+      },
+      "designs": {
+        "title": "Designs:",
+        "description": "Customize colors & appearance as you like."
+      },
+      "emergency": {
+        "title": "Emergency:",
+        "description": "Immediate help, phone numbers & links – you're never alone."
+      },
+      "guide": {
+        "title": "Guide:",
+        "description": "Tips on how to find a psychotherapist after the clinic."
+      },
+      "chatbot": {
+        "title": "Chatbot:",
+        "description": "Here you can write anonymously & try out (Demo – not a real person!)"
+      }
+    },
+    "sidebarExplanation": "Use the sidebar to switch functions. You can put the most important ones as \"tiles\" directly on the homescreen."
+  },
+  "schoolSupport": {
+    "title": "🏫 School Support",
+    "pageTitle": "🏫 School Support",
+    "learningMaterials": "📁 Learning Materials",
+    "uploadFile": "Upload file:",
+    "noFiles": "No files available.",
+    "uploadedOn": "Uploaded on {date}",
+    "transitionPlanning": "🎯 Transition Planning",
+    "progress": "Progress:",
+    "of": "of",
+    "goalsCompleted": "goals completed",
+    "noGoals": "No goals available.",
+    "dueDate": "Due by:",
+    "note": "Note:",
+    "responsible": "Responsible:",
+    "status": "Status:",
+    "createPlan": "📝 Create New Learning Plan",
+    "communicationComingSoon": "Communication coming soon...",
+    "myLearningPlans": "📘 My Learning Plans",
+    "loadingPlans": "Loading learning plans...",
+    "noPlans": "You don't have any learning plans yet.",
+    "errorLoadingPlans": "Error loading learning plans",
+    "errorUpdating": "Error updating:",
+    "dueOn": "Due on:",
+    "tabs": {
+      "plans": "Learning Plans",
+      "transition": "Transition Planning",
+      "files": "Files",
+      "communication": "Communication",
+      "guide": "Guide"
+    }
+  },
+  "ariaLabels": {
+    "removeGoal": "Remove goal",
+    "addGoal": "Add goal",
+    "addSkill": "Add skill",
+    "shareAchievement": "Share achievement",
+    "removeAchievement": "Remove achievement",
+    "deleteSkill": "Delete skill",
+    "shareSkill": "Share skill",
+    "deleteFile": "Delete file",
+    "languageGerman": "German",
+    "languageEnglish": "English"
+  },
+  "achievements": {
+    "title": "🏆 Your Achievements",
+    "points10": "10 Points Reached",
+    "points25": "25 Points Reached",
+    "points50": "50 Points Reached",
+    "points100": "100 Points Reached",
+    "points200": "200 Points - Unstoppable!"
   }
 }

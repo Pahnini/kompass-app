@@ -2,16 +2,17 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { Compass } from "lucide-react";
 import { moodMockResponses } from "../data/moodMockResponses";
+import { useTranslation } from "../hooks/useTranslation";
 
-const moods = [
-  { label: "🥳 Stolz", value: "proud", color: "#00bfa5", group: "positive" },
-  { label: "🌞 Hoffnung", value: "hopeful", color: "#4caf50", group: "positive" },
-  { label: "🧠 Fokus", value: "focus", color: "#2f4f4f", group: "neutral" },
-  { label: "😴 Erschöpft", value: "tired", color: "#757575", group: "neutral" },
-  { label: "😖 Überfordert", value: "overwhelmed", color: "#ff7043", group: "negative" },
-  { label: "😡 Wütend", value: "angry", color: "#e53935", group: "negative" },
-  { label: "😰 Ängstlich", value: "anxious", color: "#5c6bc0", group: "negative" },
-  { label: "🥶 Leer", value: "empty", color: "#90a4ae", group: "negative" },
+const getMoods = (t: (key: string) => string) => [
+  { label: t("moodCompass.moods.proud"), value: "proud", color: "#00bfa5", group: "positive" },
+  { label: t("moodCompass.moods.hopeful"), value: "hopeful", color: "#4caf50", group: "positive" },
+  { label: t("moodCompass.moods.focus"), value: "focus", color: "#2f4f4f", group: "neutral" },
+  { label: t("moodCompass.moods.tired"), value: "tired", color: "#757575", group: "neutral" },
+  { label: t("moodCompass.moods.overwhelmed"), value: "overwhelmed", color: "#ff7043", group: "negative" },
+  { label: t("moodCompass.moods.angry"), value: "angry", color: "#e53935", group: "negative" },
+  { label: t("moodCompass.moods.anxious"), value: "anxious", color: "#5c6bc0", group: "negative" },
+  { label: t("moodCompass.moods.empty"), value: "empty", color: "#90a4ae", group: "negative" },
 ];
 
 
@@ -22,10 +23,13 @@ interface Props {
 
 const MoodCompass: React.FC<Props> = ({ selected, onSelectMood }) => {
   const [response, setResponse] = useState("");
+  const { t } = useTranslation();
+  const moods = getMoods(t);
 
   const handleClick = (moodValue: string) => {
     onSelectMood(moodValue);
-    setResponse(moodMockResponses[moodValue] || "Heute zählt jeder kleine Schritt.");
+    const responseKey = moodMockResponses[moodValue];
+    setResponse(responseKey ? t(responseKey) : t("moodCompass.defaultResponse"));
   };
 
   return (
@@ -124,7 +128,7 @@ const MoodCompass: React.FC<Props> = ({ selected, onSelectMood }) => {
             textAlign: "left",
           }}
         >
-          <strong>Skill-Tipp:</strong> {response}
+          <strong>{t("moodCompass.skillTip")}</strong> {response}
         </motion.div>
       )}
     </div>

@@ -1,15 +1,17 @@
 import { JSX } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function NotFound(): JSX.Element {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   return (
     <div className="card" style={{ textAlign: 'center', padding: '40px 20px' }}>
       <div style={{ fontSize: '72px', marginBottom: '20px' }}>🧭</div>
-      <h2>Seite nicht gefunden</h2>
+      <h2>{t('errors.pageNotFound')}</h2>
       <p style={{ marginBottom: '30px', color: '#d0d0d0' }}>
-        Die angeforderte Seite existiert nicht oder wurde verschoben.
+        {t('errors.pageNotFoundMessage')}
       </p>
       <div
         style={{
@@ -31,7 +33,7 @@ export default function NotFound(): JSX.Element {
             fontWeight: '600',
           }}
         >
-          🏠 Zur Startseite
+          {t('buttons.home')}
         </button>
         <button
           onClick={() => navigate(-1)}
@@ -45,11 +47,11 @@ export default function NotFound(): JSX.Element {
             fontWeight: '600',
           }}
         >
-          ← Zurück
+          {t('buttons.back')}
         </button>
       </div>
       <div style={{ marginTop: '30px', fontSize: '14px', color: '#888' }}>
-        <p>Nutze die Navigation oben links, um zu anderen Bereichen zu gelangen.</p>
+        <p>{t('errors.navigationHint')}</p>
       </div>
     </div>
   );

@@ -1,15 +1,17 @@
 import React from 'react';
 import { achievementList } from '../data/achievementList';
 import { useUserData } from '../hooks/useUserData';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function AchievementsScreen(): React.ReactElement {
+  const { t } = useTranslation();
   const { achievements } = useUserData();
 
   const unlockedIds = new Set(achievements.map(a => a.id));
 
   return (
     <div className="card" style={{ padding: '2rem' }}>
-      <h2>🏆 Deine Erfolge</h2>
+      <h2>{t('achievements.title')}</h2>
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {achievementList.map(a => {
           const unlocked = unlockedIds.has(a.id);
@@ -33,7 +35,7 @@ export default function AchievementsScreen(): React.ReactElement {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span>{unlocked ? (a.icon as React.ReactNode) : '🔒'}</span>
-                <span>{a.label}</span>
+                <span>{t(a.label)}</span>
               </div>
               {unlocked && date && (
                 <span style={{ fontSize: '12px', color: '#555' }}>

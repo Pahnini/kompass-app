@@ -10,11 +10,13 @@ export default function DatenschutzModal({
   onClose,
   dsHinweis,
 }: DatenschutzModalProps): JSX.Element {
+  const { t } = useTranslation();
+  
   return (
     <div className="ds-modal">
       <div className="ds-box">
         <p>{dsHinweis}</p>
-        <button onClick={onClose}>Alles klar 👍</button>
+        <button onClick={onClose}>{t('buttons.ok')}</button>
       </div>
     </div>
   );

@@ -37,6 +37,7 @@ export default function DeinWeg({
   emojiList,
   templates,
 }: DeinWegProps): React.ReactElement {
+  const { t } = useTranslation();
   const [goalInput, setGoalInput] = useState('');
   const [achievementInput, setAchievementInput] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -94,7 +95,7 @@ export default function DeinWeg({
 
   const saveNote = () => {
     if (!noteText.trim() && symptomScore === 0) {
-      showErrorToast('Bitte füge eine Notiz oder einen Symptom-Score hinzu');
+      showErrorToast(t('errors.addNoteOrSymptom'));
       return;
     }
 
@@ -108,14 +109,14 @@ export default function DeinWeg({
       ...symptoms,
       [selectedDate]: [
         {
-          title: selectedMood || 'Allgemein',
+          title: selectedMood || t('journal.categories.general'),
           intensity: symptomScore,
         },
       ],
     };
     setSymptoms(updatedSymptoms);
 
-    showSuccessToast('Tagebucheintrag gespeichert! 📝');
+    showSuccessToast(t('success.journalSaved'));
   };
 
   const formatDateGerman = (dateString: string): string => {
@@ -129,7 +130,7 @@ export default function DeinWeg({
   return (
     <div className="card">
       <BackButton />
-      <h2>{useTranslation().t('deinweg.title')}</h2>
+      <h2>{t('deinweg.title')}</h2>
       <div
         style={{
           display: 'flex',
@@ -141,17 +142,18 @@ export default function DeinWeg({
       >
         <MoodCompass onSelectMood={setSelectedMood} selected={selectedMood} />
       </div>
-      {showReminder && <div className="reminder">Ziel für heute: Was möchtest du schaffen? 🚩</div>}
+      {showReminder && <div className="reminder">{t('journal.goalReminder')}</div>}
 
       <div className="stat-banner">
-        🎯 Diese Woche geschafft: <b>{goals.filter(g => g.completed).length}</b> Ziel
-        {goals.filter(g => g.completed).length !== 1 && 'e'}!
+        {t('journal.weeklyProgress')
+          .replace('{count}', goals.filter(g => g.completed).length.toString())
+          .replace('{plural}', goals.filter(g => g.completed).length !== 1 ? 'e' : '')}
       </div>
 
       <div className="section">
-        <h3>Symptom-Tagebuch</h3>
+        <h3>{t('journal.title')}</h3>
         <label>
-          Datum:
+          {t('journal.dateLabel')}
           <input type="date" value={selectedDate} onChange={e => setSelectedDate(e.target.value)} />
         </label>
         {hasCurrentNote && (
@@ -165,7 +167,7 @@ export default function DeinWeg({
             }}
           >
             <h4 style={{ margin: '0 0 8px 0', color: '#2c5aa0' }}>
-              Gespeicherter Eintrag für {formatDateGerman(selectedDate)}:
+              {t('journal.savedEntry').replace('{date}', formatDateGerman(selectedDate))}
             </h4>
             {emoji && <div style={{ fontSize: '24px', marginBottom: '5px' }}>{emoji}</div>}
             {currentNote.text && (
@@ -173,12 +175,12 @@ export default function DeinWeg({
             )}
             {symptoms[selectedDate] && symptoms[selectedDate].length > 0 && (
               <div style={{ marginTop: '5px', color: '#666' }}>
-                Symptom-Score: {symptoms[selectedDate][0].intensity}/10
+                {t('journal.symptomScore').replace('{score}', symptoms[selectedDate][0].intensity.toString())}
               </div>
             )}
           </div>
         )}
-        <label>Wie stark waren deine Symptome heute? (0=gar nicht, 10=sehr stark)</label>
+        <label>{t('journal.symptomQuestion')}</label>
         <br />
         <input
           type="range"
@@ -223,22 +225,22 @@ export default function DeinWeg({
       <textarea
         value={noteText}
         onChange={e => setNoteText(e.target.value)}
-        placeholder={useTranslation().t('deinweg.note.placeholder')}
+        placeholder={t('deinweg.note.placeholder')}
       />
 
       <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-        <button onClick={saveNote}>{useTranslation().t('common.buttons.save')}</button>
+        <button onClick={saveNote}>{t('common.buttons.save')}</button>
       </div>
 
       <div className="section">
-        <h3>Ziele</h3>
+        <h3>{t('journal.sections.goals')}</h3>
         <div className="form-row">
           <input
             value={goalInput}
             onChange={e => setGoalInput(e.target.value)}
-            placeholder={useTranslation().t('deinweg.goals.placeholder')}
+            placeholder={t('deinweg.goals.placeholder')}
           />
-          <button aria-label="Ziel hinzufügen" onClick={addGoal}>
+          <button aria-label={t('ariaLabels.addGoal')} onClick={addGoal}>
             +
           </button>
         </div>
@@ -250,7 +252,7 @@ export default function DeinWeg({
               <div className="actions">
                 <DeleteButton
                   onDelete={() => setGoals(goals.filter((_, idx) => idx !== i))}
-                  ariaLabel="Ziel entfernen"
+                  ariaLabel={t('ariaLabels.removeGoal')}
                 />
               </div>
             </li>
@@ -259,12 +261,12 @@ export default function DeinWeg({
       </div>
 
       <div className="section">
-        <h3>Erfolge</h3>
+        <h3>{t('journal.sections.achievements')}</h3>
         {templates && (
           <div className="templates">
             {templates.map((value, i) => (
-              <button key={i} className="template-btn" onClick={() => setAchievementInput(value)}>
-                {value}
+              <button key={i} className="template-btn" onClick={() => setAchievementInput(t(value))}>
+                {t(value)}
               </button>
             ))}
           </div>
@@ -273,7 +275,7 @@ export default function DeinWeg({
           <input
             value={achievementInput}
             onChange={e => setAchievementInput(e.target.value)}
-            placeholder={useTranslation().t('deinweg.achievement.placeholder')}
+            placeholder={t('deinweg.achievement.placeholder')}
           />
           <button onClick={addAchievement}>+</button>
         </div>
@@ -286,11 +288,11 @@ export default function DeinWeg({
               <div className="actions">
                 <ShareButton
                   onClick={() => shareAchievement(achievement)}
-                  ariaLabel="Erfolg teilen"
+                  ariaLabel={t('ariaLabels.shareAchievement')}
                 />
                 <DeleteButton
                   onDelete={() => setAchievements(achievements.filter((_, idx) => idx !== i))}
-                  ariaLabel="Erfolg entfernen"
+                  ariaLabel={t('ariaLabels.removeAchievement')}
                 />
               </div>
             </li>

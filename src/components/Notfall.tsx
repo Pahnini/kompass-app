@@ -9,7 +9,7 @@ interface NotfallProps {
 
 export default function Notfall({ helpResources }: NotfallProps): React.ReactElement {
   const { t } = useTranslation();
-  
+
   return (
     <div className="card notfall-card">
       <BackButton />

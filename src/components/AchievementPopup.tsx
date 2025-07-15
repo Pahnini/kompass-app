@@ -11,7 +11,7 @@ export default function AchievementPopup({
   onClose,
 }: AchievementPopupProps): React.ReactElement {
   const { t } = useTranslation();
-  
+
   useEffect(() => {
     const timer = setTimeout(onClose, 4000);
     return () => clearTimeout(timer);

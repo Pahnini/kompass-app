@@ -162,7 +162,10 @@ export default function Skills({
                 ariaLabel={t('ariaLabels.deleteSkill')}
               />
               <div className="actions" style={{ marginRight: '8px', marginLeft: '8px' }}>
-                <ShareButton onClick={() => shareSkill(skill)} ariaLabel={t('ariaLabels.shareSkill')} />
+                <ShareButton
+                  onClick={() => shareSkill(skill)}
+                  ariaLabel={t('ariaLabels.shareSkill')}
+                />
               </div>
             </div>
           </li>

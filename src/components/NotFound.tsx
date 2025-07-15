@@ -10,9 +10,7 @@ export default function NotFound(): JSX.Element {
     <div className="card" style={{ textAlign: 'center', padding: '40px 20px' }}>
       <div style={{ fontSize: '72px', marginBottom: '20px' }}>🧭</div>
       <h2>{t('errors.pageNotFound')}</h2>
-      <p style={{ marginBottom: '30px', color: '#d0d0d0' }}>
-        {t('errors.pageNotFoundMessage')}
-      </p>
+      <p style={{ marginBottom: '30px', color: '#d0d0d0' }}>{t('errors.pageNotFoundMessage')}</p>
       <div
         style={{
           display: 'flex',

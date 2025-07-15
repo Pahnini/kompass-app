@@ -21,9 +21,9 @@ const MoodCompassView: React.FC = () => {
         alignItems: 'center',
       }}
     >
-      <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>{t("moodCompass.title")}</h1>
+      <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>{t('moodCompass.title')}</h1>
       <p style={{ marginBottom: '2rem', fontSize: '1rem', maxWidth: '600px' }}>
-        {t("moodCompass.subtitle")}
+        {t('moodCompass.subtitle')}
       </p>
 
       {/* Zentrierender Wrapper */}
@@ -36,10 +36,7 @@ const MoodCompassView: React.FC = () => {
           boxSizing: 'border-box',
         }}
       >
-        <MoodCompass
-          selected={selectedMood}
-          onSelectMood={handleMoodSelect}
-        />
+        <MoodCompass selected={selectedMood} onSelectMood={handleMoodSelect} />
       </div>
     </div>
   );

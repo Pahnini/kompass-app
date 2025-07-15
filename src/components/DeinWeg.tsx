@@ -175,7 +175,10 @@ export default function DeinWeg({
             )}
             {symptoms[selectedDate] && symptoms[selectedDate].length > 0 && (
               <div style={{ marginTop: '5px', color: '#666' }}>
-                {t('journal.symptomScore').replace('{score}', symptoms[selectedDate][0].intensity.toString())}
+                {t('journal.symptomScore').replace(
+                  '{score}',
+                  symptoms[selectedDate][0].intensity.toString()
+                )}
               </div>
             )}
           </div>
@@ -265,7 +268,11 @@ export default function DeinWeg({
         {templates && (
           <div className="templates">
             {templates.map((value, i) => (
-              <button key={i} className="template-btn" onClick={() => setAchievementInput(t(value))}>
+              <button
+                key={i}
+                className="template-btn"
+                onClick={() => setAchievementInput(t(value))}
+              >
                 {t(value)}
               </button>
             ))}

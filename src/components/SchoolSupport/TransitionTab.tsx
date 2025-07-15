@@ -90,7 +90,9 @@ export default function TransitionTab() {
                 </p>
               )}
               {goal.responsible_person && (
-                <p className="text-xs text-gray-400">{t('schoolSupport.responsible')} {goal.responsible_person}</p>
+                <p className="text-xs text-gray-400">
+                  {t('schoolSupport.responsible')} {goal.responsible_person}
+                </p>
               )}
 
               <p className="text-sm mt-2">

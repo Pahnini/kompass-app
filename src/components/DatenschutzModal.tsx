@@ -11,7 +11,7 @@ export default function DatenschutzModal({
   dsHinweis,
 }: DatenschutzModalProps): JSX.Element {
   const { t } = useTranslation();
-  
+
   return (
     <div className="ds-modal">
       <div className="ds-box">

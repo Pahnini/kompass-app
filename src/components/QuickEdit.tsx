@@ -15,7 +15,7 @@ export default function QuickEdit({
   allItems,
 }: QuickEditProps): React.ReactElement {
   const { t } = useTranslation();
-  
+
   function toggleQuick(key: string): void {
     setQuickItems(
       quickItems.includes(key) ? quickItems.filter(f => f !== key) : [...quickItems, key]
@@ -27,9 +27,7 @@ export default function QuickEdit({
       <BackButton />
       <div className="section">
         <h2>{t('quickEdit.title')}</h2>
-        <p style={{ color: '#d0d0d0', marginBottom: '20px' }}>
-          {t('quickEdit.description')}
-        </p>
+        <p style={{ color: '#d0d0d0', marginBottom: '20px' }}>{t('quickEdit.description')}</p>
 
         <ul>
           {allItems

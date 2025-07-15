@@ -23,7 +23,7 @@ import AchievementsScreen from './screens/AchievementsScreen';
 import { shareAchievement, shareSkill } from './utils/shareUtils';
 import { supabase } from './utils/supabase';
 import MoodCompassView from './views/MoodCompassView';
-import SchoolSupportView from './views/SchoolSupport/SchoolSupportView'
+import SchoolSupportView from './views/SchoolSupport/SchoolSupportView';
 
 // Lazy load components for better performance
 const Chatbot = lazy(() => import('./components/Chatbot'));

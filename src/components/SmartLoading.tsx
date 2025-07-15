@@ -13,9 +13,9 @@ export default function SmartLoading({
 }: SmartLoadingProps): JSX.Element | null {
   const languageContext = useContext(LanguageContext);
   const [showLoading, setShowLoading] = useState(false);
-  
+
   // Fallback to default message if no context available
-  const loadingMessage = message || (languageContext?.t('loading.page')) || 'Loading page...';
+  const loadingMessage = message || languageContext?.t('loading.page') || 'Loading page...';
 
   useEffect(() => {
     // Only show loading if it takes longer than the delay

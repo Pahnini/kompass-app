@@ -6,8 +6,14 @@ import BackButton from './BackButton';
 
 export default function Designs(): React.ReactElement {
   const { t: translate } = useTranslation();
-  const { theme: currentTheme, setTheme, background, setBackground, availableThemes, availableBackgrounds } =
-    useTheme();
+  const {
+    theme: currentTheme,
+    setTheme,
+    background,
+    setBackground,
+    availableThemes,
+    availableBackgrounds,
+  } = useTheme();
 
   return (
     <div className="card">
@@ -25,10 +31,12 @@ export default function Designs(): React.ReactElement {
                 backgroundColor: theme.bg,
                 fontFamily: theme.font,
                 color: theme.dark ? '#fff' : '#000',
-                border: currentTheme.name === theme.name ? `3px solid ${theme.accent}` : '1px solid #ccc',
+                border:
+                  currentTheme.name === theme.name ? `3px solid ${theme.accent}` : '1px solid #ccc',
               }}
             >
-              {translate(`designs.themes.${theme.name.toLowerCase().replace(/[^a-z]/g, '')}`) || theme.name}
+              {translate(`designs.themes.${theme.name.toLowerCase().replace(/[^a-z]/g, '')}`) ||
+                theme.name}
             </button>
           ))}
         </div>

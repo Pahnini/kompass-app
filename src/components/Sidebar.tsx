@@ -54,7 +54,11 @@ export default function Sidebar({
   return (
     <>
       {!isDesktop && (
-        <button className="sidebar-toggle-mobile" onClick={toggleSidebar} aria-label={useTranslation().t('sidebar.openMenu')}>
+        <button
+          className="sidebar-toggle-mobile"
+          onClick={toggleSidebar}
+          aria-label={useTranslation().t('sidebar.openMenu')}
+        >
           ☰
         </button>
       )}
@@ -62,7 +66,11 @@ export default function Sidebar({
       <aside className={`sidebar ${isOpen || isDesktop ? 'open' : ''}`}>
         <div className="sidebar-content">
           {/* Punktestand anzeigen */}
-          <div className="sidebar-points">{useTranslation().t('sidebar.points', '🌟 {points} Points').replace('{points}', points.toString())}</div>
+          <div className="sidebar-points">
+            {useTranslation()
+              .t('sidebar.points', '🌟 {points} Points')
+              .replace('{points}', points.toString())}
+          </div>
 
           {filteredItems.map(item => (
             <Link

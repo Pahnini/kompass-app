@@ -4,7 +4,7 @@ import { useTranslation } from '../hooks/useTranslation';
 
 export default function Chatbot(): React.ReactElement {
   const { t } = useTranslation();
-  
+
   return (
     <div className="card info-card">
       <BackButton />

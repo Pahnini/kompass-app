@@ -6,10 +6,10 @@ type LoadingProps = {
 };
 export default function Loading({ message }: LoadingProps): JSX.Element {
   const languageContext = useContext(LanguageContext);
-  
+
   // Fallback to English if no context available
-  const loadingMessage = message || (languageContext?.t('loading.default')) || 'Loading...';
-  const subtitleMessage = (languageContext?.t('loading.subtitle')) || 'Just a moment please...';
+  const loadingMessage = message || languageContext?.t('loading.default') || 'Loading...';
+  const subtitleMessage = languageContext?.t('loading.subtitle') || 'Just a moment please...';
   return (
     <div className="card" style={{ textAlign: 'center', padding: '40px 20px' }}>
       <div className="loading-spinner">🧭</div>

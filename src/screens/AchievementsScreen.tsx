@@ -1,7 +1,7 @@
 import React from 'react';
 import { achievementList } from '../data/achievementList';
-import { useUserData } from '../hooks/useUserData';
 import { useTranslation } from '../hooks/useTranslation';
+import { useUserData } from '../hooks/useUserData';
 
 export default function AchievementsScreen(): React.ReactElement {
   const { t } = useTranslation();
@@ -35,7 +35,7 @@ export default function AchievementsScreen(): React.ReactElement {
             >
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <span>{unlocked ? (a.icon as React.ReactNode) : '🔒'}</span>
-                <span>{t(a.label)}</span>
+                <span>{t(a.label ?? '')}</span>
               </div>
               {unlocked && date && (
                 <span style={{ fontSize: '12px', color: '#555' }}>

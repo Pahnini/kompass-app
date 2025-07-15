@@ -1,0 +1,336 @@
+{
+  "navigation": {
+    "home": "Startseite",
+    "skills": "Skills & Achtsamkeit",
+    "deinweg": "Mein Kompass",
+    "achievements": "Erfolge",
+    "designs": "Designs",
+    "emergency": "Notfall",
+    "notfall": "Notfall",
+    "guide": "Guide",
+    "chatbot": "Chatbot",
+    "chat": "Chatbot",
+    "schoolSupport": "Klinikschule",
+    "quickedit": "Schnellzugriff bearbeiten"
+  },
+  "buttons": {
+    "back": "Zurück",
+    "save": "Speichern",
+    "share": "Teilen",
+    "delete": "Löschen",
+    "cancel": "Abbrechen",
+    "ok": "Alles klar 👍",
+    "reload": "🔄 Seite neu laden",
+    "home": "🏠 Zur Startseite",
+    "signin": "Anmelden",
+    "signup": "Registrieren",
+    "sendMagicLink": "Login-Link senden",
+    "addSkill": "Skill hinzufügen",
+    "addGoal": "Ziel hinzufügen",
+    "markAchieved": "Als erreicht markieren",
+    "uploadFile": "Datei hochladen",
+    "addSelectedSkills": "Ausgewählte Skills hinzufügen"
+  },
+  "forms": {
+    "placeholders": {
+      "newGoal": "Neues Ziel...",
+      "achievement": "Erfolg heute?",
+      "username": "Wie kann ich dich nennen?",
+      "email": "Email",
+      "password": "Passwort",
+      "title": "Titel",
+      "description": "Beschreibung (optional)",
+      "newSkill": "Neuen Skill hinzufügen:"
+    }
+  },
+  "home": {
+    "welcome": "Willkommen zurück!",
+    "appDescription": "Deine App für den Alltag nach der Klinik.",
+    "featuresDescription": "Skills, Pläne, Chatbot & Hilfe bei Krisen – immer für dich da.",
+    "quickAccessTitle": "Deine Schnellzugriffe",
+    "subtitle": "Dein digitaler Kompass für Achtsamkeit, Skills & Selbsthilfe",
+    "promise": "Immer für dich da – Skills, Pläne & Hilfe bei Krisen",
+    "username": {
+      "placeholder": "Wie kann ich dich nennen?"
+    }
+  },
+  "welcome": {
+    "title": "Willkommen zurück!",
+    "subtitle": "Dein digitaler Kompass für Achtsamkeit, Skills & Selbsthilfe",
+    "promise": "Immer für dich da – Skills, Pläne & Hilfe bei Krisen",
+    "features": {
+      "skills": "Skills & Achtsamkeit",
+      "journal": "Tagebuch & Ziele",
+      "chatbot": "Chatbot Unterstützung",
+      "emergency": "Notfall Hilfe"
+    },
+    "auth": {
+      "signin": "Anmelden",
+      "signup": "Registrieren",
+      "signinLoading": "Anmelden...",
+      "signupLoading": "Registrieren...",
+      "magicLinkLoading": "Sende Link...",
+      "hasAccount": "Bereits ein Konto? Anmelden",
+      "noAccount": "Kein Konto? Registrieren",
+      "useMagicLink": "Login mit Magic Link",
+      "switchToMagicLink": "Stattdessen mit Magic Link anmelden",
+      "switchToPassword": "Stattdessen mit Passwort anmelden"
+    }
+  },
+  "loading": {
+    "default": "Lädt...",
+    "subtitle": "Einen Moment bitte...",
+    "page": "Seite wird geladen...",
+    "connecting": "Verbindung wird hergestellt...",
+    "fileUploading": "Datei wird hochgeladen und verarbeitet...",
+    "saving": "Speichern...",
+    "sendingLink": "Sende Link...",
+    "loadingGoals": "Lade Ziele..."
+  },
+  "errors": {
+    "somethingWrong": "Etwas ist schiefgelaufen",
+    "unexpectedError": "Ein unerwarteter Fehler ist aufgetreten. Bitte lade die Seite neu oder kehre zur Startseite zurück.",
+    "pageNotFound": "Seite nicht gefunden",
+    "pageNotFoundMessage": "Die angeforderte Seite existiert nicht oder wurde verschoben.",
+    "navigationHint": "Nutze die Navigation oben links, um zu anderen Bereichen zu gelangen.",
+    "wordFileRequired": "Bitte eine Word-Datei hochladen! 📄",
+    "documentParsingError": "Fehler beim Parsen des Dokuments. 📄",
+    "saveError": "Fehler beim Speichern.",
+    "uploadError": "Upload-Fehler:",
+    "dbError": "DB-Fehler:",
+    "addNoteOrSymptom": "Bitte füge eine Notiz oder einen Symptom-Score hinzu"
+  },
+  "success": {
+    "skillsAdded": "Skills erfolgreich hinzugefügt! 🎉",
+    "skillAdded": "Skill \"{skill}\" hinzugefügt! 🎉",
+    "journalSaved": "Tagebucheintrag gespeichert! 📝",
+    "achievement": "🎉 Neues Achievement: {label}"
+  },
+  "sidebar": {
+    "openMenu": "Menü öffnen",
+    "points": "🌟 {points} Punkte",
+    "logout": "Abmelden",
+    "languages": {
+      "de": "Deutsch",
+      "en": "English"
+    }
+  },
+  "moodCompass": {
+    "title": "🧭 Dein Stimmungs-Kompass",
+    "subtitle": "Wie fühlst du dich heute? Wähle eine Richtung.",
+    "moods": {
+      "proud": "🥳 Stolz",
+      "hopeful": "🌞 Hoffnung",
+      "focus": "🧠 Fokus",
+      "tired": "😴 Erschöpft",
+      "overwhelmed": "😖 Überfordert",
+      "angry": "😡 Wütend",
+      "anxious": "😰 Ängstlich",
+      "empty": "🥶 Leer"
+    },
+    "skillTip": "Skill-Tipp:",
+    "defaultResponse": "Heute zählt jeder kleine Schritt."
+  },
+  "moodResponses": {
+    "focus": "Mach eine kleine To-Do-Liste mit maximal 3 Punkten. Fokus durch Klarheit!",
+    "hopeful": "Erinnere dich daran: Auch kleine Schritte führen voran.",
+    "overwhelmed": "Atme tief durch und versuche nur EINE Sache anzugehen.",
+    "tired": "Gönn dir bewusst 10 Minuten Pause – ohne Bildschirm.",
+    "angry": "Geh kurz raus oder bewege dich – das hilft beim Druckablassen.",
+    "empty": "Etwas Einfaches tun – Musik hören, duschen, etwas Warmes trinken.",
+    "anxious": "Sprich laut aus, was dir Angst macht. Das entlastet sofort.",
+    "proud": "Super gemacht! Schreib auf, was dich heute stolz macht."
+  },
+  "journal": {
+    "title": "Symptom-Tagebuch",
+    "dateLabel": "Datum:",
+    "savedEntry": "Gespeicherter Eintrag für {date}:",
+    "symptomQuestion": "Wie stark waren deine Symptome heute? (0=gar nicht, 10=sehr stark)",
+    "goalReminder": "Ziel für heute: Was möchtest du schaffen? 🚩",
+    "weeklyProgress": "🎯 Diese Woche geschafft: {count} Ziel{plural}!",
+    "symptomScore": "Symptom-Score: {score}/10",
+    "sections": {
+      "goals": "Ziele",
+      "achievements": "Erfolge"
+    },
+    "categories": {
+      "general": "Allgemein"
+    }
+  },
+  "deinweg": {
+    "title": "Mein Kompass",
+    "note": {
+      "placeholder": "Was beschäftigt dich heute? Wie geht es dir? Schreib hier deine Gedanken..."
+    },
+    "goals": {
+      "placeholder": "Neues Ziel..."
+    },
+    "achievement": {
+      "placeholder": "Erfolg heute?"
+    },
+    "templates": {
+      "proud": "Ich bin heute stolz auf mich, weil...",
+      "newThing": "Heute habe ich etwas Neues ausprobiert: ...",
+      "selfTime": "Ich habe mir Zeit für mich genommen, indem ich...",
+      "helped": "Ich habe jemandem geholfen und mich dabei gut gefühlt."
+    }
+  },
+  "common": {
+    "buttons": {
+      "save": "Speichern"
+    },
+    "errorDetails": "Fehlerdetails (nur in Entwicklung sichtbar)"
+  },
+  "skills": {
+    "title": "Skills & Achtsamkeit",
+    "personalSkills": "Persönliche Skills/Pläne",
+    "uploadPersonalSkills": "Persönliche Skills/Pläne als Word-Dokument hochladen:",
+    "foundSkills": "Gefundene Skills aus dem Dokument",
+    "selectSkills": "Wähle die Skills aus, die du hinzufügen möchtest:",
+    "addNewSkill": "Neuen Skill hinzufügen:",
+    "new": {
+      "placeholder": "Neuer Skill..."
+    },
+    "defaultSkills": {
+      "breathing": "Atemübung: 4-7-8",
+      "gratitude": "Dankbarkeitstagebuch",
+      "mindfulness": "Achtsamkeitsübung (Bodyscan)",
+      "stretch": "Stretch & Move",
+      "digitalDetox": "10min Handy aus",
+      "meditation": "Meditation",
+      "creative": "Kreativ zeichnen",
+      "selfCare": "Self-Care Snack",
+      "friendship": "Online-Freundschaft pflegen"
+    }
+  },
+  "emergency": {
+    "title": "Notfall / Hilfe",
+    "youthHotline": "📞 116111 Jugendtelefon",
+    "crisisHotline": "📞 0800 111 0 111 Telefonseelsorge",
+    "emergencyNumber": "🚑 112 Notruf",
+    "websitesHelp": "Websites & Hilfe:",
+    "inviteFriends": "Freunde einladen:",
+    "resources": {
+      "nummerGegenKummer": "Nummer gegen Kummer",
+      "kjpHarburg": "KJP Harburg (Asklepios)",
+      "jugendNotmail": "JugendNotmail",
+      "krisenchat": "krisenchat.de"
+    }
+  },
+  "guide": {
+    "title": "Psychotherapeut:in finden 🧭",
+    "onlineSearch": "Online-Suche:",
+    "insuranceMethod": "Bei deiner Krankenkasse nachfragen (Hotline, Listen, Beratung).",
+    "directCallMethod": "Direkt Praxen anrufen und nach freien Plätzen & Wartelisten fragen.",
+    "clinicSocialService": "Sozialdienst der Klinik um Empfehlungen bitten.",
+    "emergencyServices": "Notfall-Angebote nutzen, wenn schnelle Hilfe nötig ist!",
+    "trustPersonNote": "Sprich immer mit Vertrauenspersonen – und nutze im Zweifel die Notfallnummern im Menü 🚨."
+  },
+  "chatbot": {
+    "title": "Chatbot (Demo)",
+    "description": "Hier könntest du in einer echten App anonym schreiben oder Skills/Tipps bekommen.",
+    "demoExplanation": "In dieser Demo ist der Chat nur eine Platzhalterfunktion.",
+    "crisisNote": "(Für echte Krisen immer mit echten Menschen sprechen!)"
+  },
+  "designs": {
+    "title": "Designs",
+    "chooseTheme": "🎨 Theme wählen:",
+    "chooseBackground": "🖼️ Hintergrund wählen:",
+    "themes": {
+      "modernbluegrey": "Modern Blue-Grey",
+      "gruen": "Grün",
+      "classic": "Classic",
+      "night": "Nacht"
+    },
+    "backgrounds": {
+      "clean": "Clean",
+      "green-gradient": "Grün Verlauf"
+    }
+  },
+  "quickEdit": {
+    "title": "Schnellzugriff bearbeiten",
+    "description": "Wähle die Funktionen aus, die auf der Startseite angezeigt werden sollen:"
+  },
+  "onboarding": {
+    "title": "Willkommen bei Kompass!",
+    "features": {
+      "compass": {
+        "title": "„Mein Kompass",
+        "description": "Digitales Tagebuch, Ziele, Erfolge, Symptomtagebuch & Stimmungskalender."
+      },
+      "skills": {
+        "title": "Skills:",
+        "description": "Viele Ideen, wie du dich beruhigen oder stärken kannst – du kannst eigene Word-Dateien hochladen."
+      },
+      "designs": {
+        "title": "Designs:",
+        "description": "Passe Farben & Aussehen an, wie du willst."
+      },
+      "emergency": {
+        "title": "Notfall:",
+        "description": "Soforthilfe, Telefonnummern & Links – du bist nie allein."
+      },
+      "guide": {
+        "title": "Guide:",
+        "description": "Tipps, wie du nach der Klinik eine:n Psychotherapeut:in findest."
+      },
+      "chatbot": {
+        "title": "Chatbot:",
+        "description": "Hier kannst du anonym schreiben & ausprobieren (Demo – kein echter Mensch!)"
+      }
+    },
+    "sidebarExplanation": "Über die Sidebar wechselst du Funktionen. Du kannst die wichtigsten als Kachel direkt auf den Homescreen holen."
+  },
+  "schoolSupport": {
+    "title": "🏫 Klinikschule",
+    "pageTitle": "🏫 Klinikschule",
+    "learningMaterials": "📁 Lernmaterialien",
+    "uploadFile": "Datei hochladen:",
+    "noFiles": "Keine Dateien vorhanden.",
+    "uploadedOn": "Hochgeladen am {date}",
+    "transitionPlanning": "🎯 Übergangsplanung",
+    "progress": "Fortschritt:",
+    "of": "von",
+    "goalsCompleted": "Zielen erledigt",
+    "noGoals": "Keine Ziele vorhanden.",
+    "dueDate": "Fällig bis:",
+    "note": "Hinweis:",
+    "responsible": "Zuständig:",
+    "status": "Status:",
+    "createPlan": "📝 Neuen Lernplan erstellen",
+    "communicationComingSoon": "Kommunikation folgt bald...",
+    "myLearningPlans": "📘 Meine Lernpläne",
+    "loadingPlans": "Lade Lernpläne...",
+    "noPlans": "Du hast noch keine Lernpläne.",
+    "errorLoadingPlans": "Fehler beim Laden der Lernpläne",
+    "errorUpdating": "Fehler beim Aktualisieren:",
+    "dueOn": "Fällig am:",
+    "tabs": {
+      "plans": "Lernpläne",
+      "transition": "Übergangsplanung",
+      "files": "Dateien",
+      "communication": "Kommunikation",
+      "guide": "Ratgeber"
+    }
+  },
+  "ariaLabels": {
+    "removeGoal": "Ziel entfernen",
+    "addGoal": "Ziel hinzufügen",
+    "addSkill": "Skill hinzufügen",
+    "shareAchievement": "Erfolg teilen",
+    "removeAchievement": "Erfolg entfernen",
+    "deleteSkill": "Skill löschen",
+    "shareSkill": "Skill teilen",
+    "deleteFile": "Datei löschen",
+    "languageGerman": "Deutsch",
+    "languageEnglish": "English"
+  },
+  "achievements": {
+    "title": "🏆 Deine Erfolge",
+    "points10": "10 Punkte erreicht",
+    "points25": "25 Punkte erreicht",
+    "points50": "50 Punkte erreicht",
+    "points100": "100 Punkte erreicht",
+    "points200": "200 Punkte - unaufhaltbar!"
+  }
+}

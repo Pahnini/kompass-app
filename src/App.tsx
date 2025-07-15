@@ -3,6 +3,7 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AchievementPopup from './components/AchievementPopup';
 import DatenschutzModal from './components/DatenschutzModal';
+import { LanguageProvider } from './context/LanguageContext';
 import GlobalStyle from './components/GlobalStyle';
 import HomeScreen from './components/HomeScreen';
 import NotFound from './components/NotFound';
@@ -22,7 +23,7 @@ import AchievementsScreen from './screens/AchievementsScreen';
 import { shareAchievement, shareSkill } from './utils/shareUtils';
 import { supabase } from './utils/supabase';
 import MoodCompassView from './views/MoodCompassView';
-import SchoolSupportView from './views/SchoolSupport/SchoolSupportView'
+import SchoolSupportView from './views/SchoolSupport/SchoolSupportView';
 
 // Lazy load components for better performance
 const Chatbot = lazy(() => import('./components/Chatbot'));
@@ -215,8 +216,16 @@ export default function App(): React.ReactElement {
   }
 
   if (!session) {
-    return <WelcomeScreen />;
+    return (
+      <LanguageProvider>
+        <WelcomeScreen />
+      </LanguageProvider>
+    );
   }
 
-  return <AuthenticatedApp />;
+  return (
+    <LanguageProvider>
+      <AuthenticatedApp />
+    </LanguageProvider>
+  );
 }

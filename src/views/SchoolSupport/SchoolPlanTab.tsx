@@ -1,7 +1,8 @@
-import { useEffect, useState, useCallback } from 'react';
-import { supabase } from '../../utils/supabase';
 import { useUser } from '@supabase/auth-helpers-react';
+import { useCallback, useEffect, useState } from 'react';
 import NewPlanForm from '../../components/SchoolSupport/NewPlanForm';
+import { useTranslation } from '../../hooks/useTranslation';
+import { supabase } from '../../utils/supabase';
 
 type SchoolPlan = {
   id: string;
@@ -12,14 +13,13 @@ type SchoolPlan = {
 };
 
 export default function SchoolPlanTab() {
+  const { t } = useTranslation();
   const user = useUser();
   const [plans, setPlans] = useState<SchoolPlan[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   const fetchPlans = useCallback(async () => {
     if (!user) return;
-    setLoading(true);
     const { data, error } = await supabase
       .from('school_plans')
       .select('*')
@@ -27,13 +27,12 @@ export default function SchoolPlanTab() {
       .order('due_date', { ascending: true });
 
     if (error) {
-      setError('Fehler beim Laden der Lernpläne');
+      setError(t('schoolSupport.errorLoadingPlans'));
       console.error(error);
     } else {
       setPlans(data as SchoolPlan[]);
       setError(null);
     }
-    setLoading(false);
   }, [user]);
 
   useEffect(() => {
@@ -48,23 +47,22 @@ export default function SchoolPlanTab() {
       .eq('user_id', user?.id);
 
     if (error) {
-      console.error('Fehler beim Aktualisieren:', error);
+      console.error(t('schoolSupport.errorUpdating'), error);
     } else {
       fetchPlans();
     }
   };
 
-  if (loading) return <p>Lade Lernpläne...</p>;
-  if (error) return <p>{error}</p>;
+  if (error) return <p style={{ color: 'white' }}>{error}</p>;
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-6 text-[#2f4f4f] dark:text-white">📘 Meine Lernpläne</h2>
+    <div>
+      <h2>{t('schoolSupport.myLearningPlans')}</h2>
 
       <NewPlanForm onCreated={fetchPlans} />
 
       {plans.length === 0 ? (
-        <p>Du hast noch keine Lernpläne.</p>
+        <p style={{ color: 'white' }}>{t('schoolSupport.noPlans')}</p>
       ) : (
         <ul className="space-y-4 mt-4">
           {plans.map(plan => (
@@ -76,11 +74,11 @@ export default function SchoolPlanTab() {
               <p className="text-sm text-gray-700 dark:text-gray-300">{plan.description}</p>
               {plan.due_date && (
                 <p className="text-xs text-gray-500 mt-1">
-                  Fällig am: {new Date(plan.due_date).toLocaleDateString()}
+                  {t('schoolSupport.dueOn')} {new Date(plan.due_date).toLocaleDateString()}
                 </p>
               )}
               <p className="mt-1 text-sm">
-                Status: <strong className="capitalize">{plan.status}</strong>
+                {t('schoolSupport.status')} <strong className="capitalize">{plan.status}</strong>
               </p>
 
               {plan.status !== 'done' && (
@@ -88,7 +86,7 @@ export default function SchoolPlanTab() {
                   onClick={() => markAsDone(plan.id)}
                   className="mt-3 inline-block bg-[#2f4f4f] text-white text-sm px-4 py-1.5 rounded-lg hover:bg-[#0b9444] transition"
                 >
-                  Als erledigt markieren
+                  {t('buttons.markAchieved')}
                 </button>
               )}
             </li>

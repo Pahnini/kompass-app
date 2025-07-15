@@ -1,12 +1,15 @@
 import React from 'react';
 import BackButton from './BackButton';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function Guide(): React.ReactElement {
+  const { t } = useTranslation();
+
   return (
     <div className="card">
       <BackButton />
       <h2>
-        Psychotherapeut:in finden{' '}
+        {t('guide.title')}{' '}
         <span role="img" aria-label="Kompass">
           🧭
         </span>
@@ -15,7 +18,7 @@ export default function Guide(): React.ReactElement {
         <li>
           <span style={{ marginRight: 4 }}>🔍</span>
           <div>
-            <b>Online-Suche:</b> Nutze diese Portale:
+            <b>{t('guide.onlineSearch')}</b>
             <div
               style={{
                 marginTop: 8,
@@ -45,23 +48,23 @@ export default function Guide(): React.ReactElement {
         </li>
         <li>
           <span style={{ marginRight: 4 }}>📞</span>
-          Bei deiner Krankenkasse nachfragen (Hotline, Listen, Beratung).
+          {t('guide.insuranceMethod')}
         </li>
         <li>
           <span style={{ marginRight: 4 }}>👩‍⚕️</span>
-          Direkt Praxen anrufen und nach freien Plätzen & Wartelisten fragen.
+          {t('guide.directCallMethod')}
         </li>
         <li>
           <span style={{ color: '#cc3366', marginRight: 4 }}>🏥</span>
-          Sozialdienst der Klinik um Empfehlungen bitten.
+          {t('guide.clinicSocialService')}
         </li>
         <li>
           <span style={{ marginRight: 4 }}>🚨</span>
-          Notfall-Angebote nutzen, wenn schnelle Hilfe nötig ist!
+          {t('guide.emergencyServices')}
         </li>
       </ul>
       <p style={{ marginTop: 18, color: '#888' }}>
-        Sprich immer mit Vertrauenspersonen – und nutze im Zweifel die Notfallnummern im Menü{' '}
+        {t('guide.trustPersonNote')}{' '}
         <span role="img" aria-label="Notruf">
           🚨
         </span>

@@ -1,6 +1,7 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../../utils/supabase';
 import { useUser } from '@supabase/auth-helpers-react';
+import { useEffect, useState } from 'react';
+import { useTranslation } from '../../hooks/useTranslation';
+import { supabase } from '../../utils/supabase';
 
 type FileItem = {
   id: string;
@@ -10,6 +11,7 @@ type FileItem = {
 };
 
 export default function FilesTab() {
+  const { t } = useTranslation();
   const user = useUser();
   const [files, setFiles] = useState<FileItem[]>([]);
   const [uploading, setUploading] = useState(false);
@@ -43,7 +45,7 @@ export default function FilesTab() {
       .upload(filePath, file);
 
     if (uploadError) {
-      console.error('Upload-Fehler:', uploadError.message);
+      console.error(t('errors.uploadError'), uploadError.message);
       setUploading(false);
       return;
     }
@@ -57,7 +59,7 @@ export default function FilesTab() {
       },
     ]);
 
-    if (insertError) console.error('DB-Fehler:', insertError.message);
+    if (insertError) console.error(t('errors.dbError'), insertError.message);
 
     setUploading(false);
     window.location.reload();
@@ -67,13 +69,11 @@ export default function FilesTab() {
     supabase.storage.from('school-files').getPublicUrl(path).data.publicUrl;
 
   return (
-    <div className="p-4">
-      <h2 className="text-2xl font-bold mb-6 text-[#2f4f4f] dark:text-white">📁 Lernmaterialien</h2>
+    <div>
+      <h2>{t('schoolSupport.learningMaterials')}</h2>
 
-      <label className="block mb-4">
-        <span className="text-sm font-medium text-gray-700 dark:text-gray-200">
-          Datei hochladen:
-        </span>
+      <label>
+        <span style={{ color: 'white' }}>{t('schoolSupport.uploadFile')}</span>
         <input
           type="file"
           onChange={handleUpload}
@@ -87,14 +87,11 @@ export default function FilesTab() {
       </label>
 
       {files.length === 0 ? (
-        <p>Keine Dateien vorhanden.</p>
+        <p>{t('schoolSupport.noFiles')}</p>
       ) : (
         <ul className="space-y-4">
           {files.map(file => (
-            <li
-              key={file.id}
-              className="p-4 border rounded-xl bg-white shadow-md dark:bg-slate-800 dark:border-slate-700"
-            >
+            <li key={file.id}>
               <a
                 href={getPublicUrl(file.file_url)}
                 target="_blank"
@@ -103,8 +100,11 @@ export default function FilesTab() {
               >
                 {file.file_name}
               </a>
-              <p className="text-xs text-gray-500 mt-1">
-                Hochgeladen am {new Date(file.created_at).toLocaleString()}
+              <p>
+                {t('schoolSupport.uploadedOn').replace(
+                  '{date}',
+                  new Date(file.created_at).toLocaleString()
+                )}
               </p>
             </li>
           ))}

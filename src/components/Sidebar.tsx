@@ -1,5 +1,6 @@
 import { Award, GraduationCap } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
+import { useTranslation } from '../hooks/useTranslation';
 import { Link, useLocation } from 'react-router-dom';
 import { useUserData } from '../hooks/useUserData';
 import type { SidebarItem } from '../types/index';
@@ -48,10 +49,16 @@ export default function Sidebar({
 
   const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
 
+  const { currentLanguage, setLanguage } = useTranslation();
+
   return (
     <>
       {!isDesktop && (
-        <button className="sidebar-toggle-mobile" onClick={toggleSidebar} aria-label="Menü öffnen">
+        <button
+          className="sidebar-toggle-mobile"
+          onClick={toggleSidebar}
+          aria-label={useTranslation().t('sidebar.openMenu')}
+        >
           ☰
         </button>
       )}
@@ -59,7 +66,11 @@ export default function Sidebar({
       <aside className={`sidebar ${isOpen || isDesktop ? 'open' : ''}`}>
         <div className="sidebar-content">
           {/* Punktestand anzeigen */}
-          <div className="sidebar-points">🌟 {points} Punkte</div>
+          <div className="sidebar-points">
+            {useTranslation()
+              .t('sidebar.points', '🌟 {points} Points')
+              .replace('{points}', points.toString())}
+          </div>
 
           {filteredItems.map(item => (
             <Link
@@ -69,7 +80,7 @@ export default function Sidebar({
               onClick={handleClick}
             >
               <span className="icon">{item.icon as React.ReactNode}</span>
-              <span className="label">{item.label}</span>
+              <span className="label">{useTranslation().t(item.label)}</span>
             </Link>
           ))}
 
@@ -82,7 +93,7 @@ export default function Sidebar({
             <span className="icon">
               <GraduationCap size={18} />
             </span>
-            <span className="label">Klinikschule</span>
+            <span className="label">{useTranslation().t('navigation.schoolSupport')}</span>
           </Link>
 
           {/* Erfolge */}
@@ -94,13 +105,45 @@ export default function Sidebar({
             <span className="icon">
               <Award size={18} />
             </span>
-            <span className="label">Erfolge</span>
+            <span className="label">{useTranslation().t('navigation.achievements')}</span>
           </Link>
+        </div>
+
+        <div
+          className="sidebar-language-toggle"
+          style={{ display: 'flex', gap: 8, justifyContent: 'center', margin: '12px 0' }}
+        >
+          <button
+            aria-label={useTranslation().t('sidebar.languages.de')}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: 24,
+              opacity: currentLanguage === 'de' ? 1 : 0.5,
+              cursor: 'pointer',
+            }}
+            onClick={() => setLanguage('de')}
+          >
+            🇩🇪
+          </button>
+          <button
+            aria-label={useTranslation().t('sidebar.languages.en')}
+            style={{
+              background: 'none',
+              border: 'none',
+              fontSize: 24,
+              opacity: currentLanguage === 'en' ? 1 : 0.5,
+              cursor: 'pointer',
+            }}
+            onClick={() => setLanguage('en')}
+          >
+            🇬🇧
+          </button>
         </div>
 
         <button className="sidebar-item logout-button" onClick={handleLogout}>
           <span className="icon">🚪</span>
-          <span className="label">Abmelden</span>
+          <span className="label">{useTranslation().t('sidebar.logout')}</span>
         </button>
       </aside>
     </>

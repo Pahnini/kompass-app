@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { supabase } from '../../utils/supabase';
 import { useUser } from '@supabase/auth-helpers-react';
+import { useTranslation } from '../../hooks/useTranslation';
 
 type Props = {
   onCreated: () => void;
 };
 
 export default function NewPlanForm({ onCreated }: Props) {
+  const { t } = useTranslation();
   const user = useUser();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -31,7 +33,7 @@ export default function NewPlanForm({ onCreated }: Props) {
     ]);
 
     if (error) {
-      setError('Fehler beim Speichern.');
+      setError(t('errors.saveError'));
       console.error(error);
     } else {
       setTitle('');
@@ -49,12 +51,12 @@ export default function NewPlanForm({ onCreated }: Props) {
       className="space-y-4 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md mb-6"
     >
       <h3 className="text-lg font-semibold text-[#2f4f4f] dark:text-white">
-        📝 Neuen Lernplan erstellen
+        {t('schoolSupport.createPlan')}
       </h3>
 
       <input
         type="text"
-        placeholder="Titel"
+        placeholder={t('forms.placeholders.title')}
         value={title}
         onChange={e => setTitle(e.target.value)}
         required
@@ -62,7 +64,7 @@ export default function NewPlanForm({ onCreated }: Props) {
       />
 
       <textarea
-        placeholder="Beschreibung (optional)"
+        placeholder={t('forms.placeholders.description')}
         value={description}
         onChange={e => setDescription(e.target.value)}
         className="w-full p-2 rounded border dark:bg-slate-700 dark:text-white"
@@ -82,7 +84,7 @@ export default function NewPlanForm({ onCreated }: Props) {
         disabled={loading}
         className="bg-[#2f4f4f] text-white px-4 py-2 rounded-xl hover:bg-[#0b9444] transition-all"
       >
-        {loading ? 'Speichern...' : 'Speichern'}
+        {loading ? t('loading.saving') : t('buttons.save')}
       </button>
     </form>
   );

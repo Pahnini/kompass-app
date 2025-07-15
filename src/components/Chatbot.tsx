@@ -1,18 +1,21 @@
 import React from 'react';
 import BackButton from './BackButton';
+import { useTranslation } from '../hooks/useTranslation';
 
 export default function Chatbot(): React.ReactElement {
+  const { t } = useTranslation();
+
   return (
     <div className="card info-card">
       <BackButton />
-      <h2>Chatbot (Demo)</h2>
+      <h2>{t('chatbot.title')}</h2>
       <p>
-        Hier könntest du in einer echten App anonym schreiben oder Skills/Tipps bekommen.
+        {t('chatbot.description')}
         <br />
-        In dieser Demo ist der Chat nur eine Platzhalterfunktion.
+        {t('chatbot.demoExplanation')}
       </p>
       <p>
-        <i>(Für echte Krisen immer mit echten Menschen sprechen!)</i>
+        <i>{t('chatbot.crisisNote')}</i>
       </p>
     </div>
   );

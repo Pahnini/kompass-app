@@ -1,5 +1,6 @@
 import React from 'react';
 import type { SidebarItem } from '../types/index';
+import { useTranslation } from '../hooks/useTranslation';
 import BackButton from './BackButton';
 
 interface QuickEditProps {
@@ -13,6 +14,8 @@ export default function QuickEdit({
   setQuickItems,
   allItems,
 }: QuickEditProps): React.ReactElement {
+  const { t } = useTranslation();
+
   function toggleQuick(key: string): void {
     setQuickItems(
       quickItems.includes(key) ? quickItems.filter(f => f !== key) : [...quickItems, key]
@@ -23,10 +26,8 @@ export default function QuickEdit({
     <div className="card">
       <BackButton />
       <div className="section">
-        <h2>Schnellzugriff bearbeiten</h2>
-        <p style={{ color: '#d0d0d0', marginBottom: '20px' }}>
-          Wähle die Funktionen aus, die auf der Startseite angezeigt werden sollen:
-        </p>
+        <h2>{t('quickEdit.title')}</h2>
+        <p style={{ color: '#d0d0d0', marginBottom: '20px' }}>{t('quickEdit.description')}</p>
 
         <ul>
           {allItems
@@ -42,7 +43,7 @@ export default function QuickEdit({
                   <span style={{ marginRight: '8px', fontSize: '18px' }}>
                     {item.icon as React.ReactNode}
                   </span>
-                  {item.label}
+                  {t(item.label)}
                 </span>
               </li>
             ))}

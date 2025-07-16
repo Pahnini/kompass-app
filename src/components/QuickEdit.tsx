@@ -1,6 +1,6 @@
 import React from 'react';
 import type { SidebarItem } from '../types/index';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next';
 import BackButton from './BackButton';
 
 interface QuickEditProps {

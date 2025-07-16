@@ -1,6 +1,6 @@
 import React from 'react';
 import { achievementList } from '../data/achievementList';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next'; // ✅
 import { useUserData } from '../hooks/useUserData';
 
 export default function AchievementsScreen(): React.ReactElement {

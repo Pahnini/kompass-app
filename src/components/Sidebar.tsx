@@ -1,6 +1,6 @@
 import { Award, GraduationCap } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { useUserData } from '../hooks/useUserData';
 import type { SidebarItem } from '../types/index';
@@ -23,12 +23,7 @@ export default function Sidebar({
   const location = useLocation();
   const { points } = useUserData();
 
-  const handleLogout = async (): Promise<void> => {
-    await supabase.auth.signOut();
-    if (!isDesktop) {
-      setIsOpen(false);
-    }
-  };
+  const { t, i18n } = useTranslation();
 
   useEffect(() => {
     const handleResize = () => setIsDesktop(window.innerWidth > 700);
@@ -49,15 +44,13 @@ export default function Sidebar({
 
   const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
 
-  const { currentLanguage, setLanguage } = useTranslation();
-
   return (
     <>
       {!isDesktop && (
         <button
           className="sidebar-toggle-mobile"
           onClick={toggleSidebar}
-          aria-label={useTranslation().t('sidebar.openMenu')}
+          aria-label={t('sidebar.openMenu')}
         >
           ☰
         </button>
@@ -67,9 +60,7 @@ export default function Sidebar({
         <div className="sidebar-content">
           {/* Punktestand anzeigen */}
           <div className="sidebar-points">
-            {useTranslation()
-              .t('sidebar.points', '🌟 {points} Points')
-              .replace('{points}', points.toString())}
+            {t('sidebar.points', { points })}
           </div>
 
           {filteredItems.map(item => (
@@ -80,7 +71,7 @@ export default function Sidebar({
               onClick={handleClick}
             >
               <span className="icon">{item.icon as React.ReactNode}</span>
-              <span className="label">{useTranslation().t(item.label)}</span>
+              <span className="label">{t(item.label)}</span>
             </Link>
           ))}
 
@@ -93,7 +84,7 @@ export default function Sidebar({
             <span className="icon">
               <GraduationCap size={18} />
             </span>
-            <span className="label">{useTranslation().t('navigation.schoolSupport')}</span>
+            <span className="label">{t('navigation.schoolSupport')}</span>
           </Link>
 
           {/* Erfolge */}
@@ -105,45 +96,43 @@ export default function Sidebar({
             <span className="icon">
               <Award size={18} />
             </span>
-            <span className="label">{useTranslation().t('navigation.achievements')}</span>
+            <span className="label">{t('navigation.achievements')}</span>
           </Link>
         </div>
 
+        {/* Sprachumschaltung */}
         <div
           className="sidebar-language-toggle"
           style={{ display: 'flex', gap: 8, justifyContent: 'center', margin: '12px 0' }}
         >
-          <button
-            aria-label={useTranslation().t('sidebar.languages.de')}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: 24,
-              opacity: currentLanguage === 'de' ? 1 : 0.5,
-              cursor: 'pointer',
-            }}
-            onClick={() => setLanguage('de')}
-          >
-            🇩🇪
-          </button>
-          <button
-            aria-label={useTranslation().t('sidebar.languages.en')}
-            style={{
-              background: 'none',
-              border: 'none',
-              fontSize: 24,
-              opacity: currentLanguage === 'en' ? 1 : 0.5,
-              cursor: 'pointer',
-            }}
-            onClick={() => setLanguage('en')}
-          >
-            🇬🇧
-          </button>
+          {[
+            { code: 'de', emoji: '🇩🇪' },
+            { code: 'en', emoji: '🇬🇧' },
+            { code: 'tr', emoji: '🇹🇷' }
+          ].map(({ code, emoji }) => (
+            <button
+              key={code}
+              aria-label={t(`sidebar.languages.${code}`, code.toUpperCase())}
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: 24,
+                opacity: i18n.language === code ? 1 : 0.5,
+                cursor: 'pointer'
+              }}
+              onClick={() => i18n.changeLanguage(code)}
+            >
+              {emoji}
+            </button>
+          ))}
         </div>
 
-        <button className="sidebar-item logout-button" onClick={handleLogout}>
+        <button className="sidebar-item logout-button" onClick={async () => {
+          await supabase.auth.signOut();
+          if (!isDesktop) setIsOpen(false);
+        }}>
           <span className="icon">🚪</span>
-          <span className="label">{useTranslation().t('sidebar.logout')}</span>
+          <span className="label">{t('sidebar.logout')}</span>
         </button>
       </aside>
     </>

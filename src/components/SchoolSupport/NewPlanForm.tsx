@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { supabase } from '../../utils/supabase';
 import { useUser } from '@supabase/auth-helpers-react';
-import { useTranslation } from '../../hooks/useTranslation';
+import { useTranslation } from 'react-i18next'; // ✅
+
 
 type Props = {
   onCreated: () => void;

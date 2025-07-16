@@ -1,6 +1,6 @@
 import { JSX, useEffect, useState, useContext } from 'react';
 import Loading from './Loading';
-import { LanguageContext } from '../context/LanguageContext';
+import { useTranslation } from 'react-i18next'; // ✅
 
 type SmartLoadingProps = {
   message?: string;
@@ -11,11 +11,11 @@ export default function SmartLoading({
   message,
   delay = 400, // Only show loading after 400ms
 }: SmartLoadingProps): JSX.Element | null {
-  const languageContext = useContext(LanguageContext);
+  const { t } = useTranslation();
   const [showLoading, setShowLoading] = useState(false);
 
   // Fallback to default message if no context available
-  const loadingMessage = message || languageContext?.t('loading.page') || 'Loading page...';
+  const loadingMessage = message || t('loading.page') || 'Loading page...';
 
   useEffect(() => {
     // Only show loading if it takes longer than the delay

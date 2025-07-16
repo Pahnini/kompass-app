@@ -1,6 +1,6 @@
 import { ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next';
 
 export default function BackButton() {
   const navigate = useNavigate();

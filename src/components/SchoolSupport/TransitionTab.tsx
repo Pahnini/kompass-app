@@ -1,7 +1,7 @@
 import { useEffect, useState, useCallback } from 'react';
 import { supabase } from '../../utils/supabase';
 import { useUser } from '@supabase/auth-helpers-react';
-import { useTranslation } from '../../hooks/useTranslation';
+import { useTranslation } from 'react-i18next'; // ✅
 
 type TransitionGoal = {
   id: string;

@@ -1,5 +1,6 @@
 import { JSX } from 'react';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next'; // ✅
+
 
 type DatenschutzModalProps = {
   onClose: () => void;

@@ -1,6 +1,6 @@
 import React from 'react';
 import BackButton from './BackButton';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next';
 
 export default function Chatbot(): React.ReactElement {
   const { t } = useTranslation();

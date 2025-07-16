@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import type { Skill } from '../types/index';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next';
 
 interface WordFilePreviewProps {
   parsedLines: string[];

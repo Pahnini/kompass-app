@@ -1,6 +1,6 @@
 import { useUser } from '@supabase/auth-helpers-react';
 import { useEffect, useState } from 'react';
-import { useTranslation } from '../../hooks/useTranslation';
+import { useTranslation } from 'react-i18next'; // ✅
 import { supabase } from '../../utils/supabase';
 
 type FileItem = {

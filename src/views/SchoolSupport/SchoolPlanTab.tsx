@@ -1,7 +1,7 @@
 import { useUser } from '@supabase/auth-helpers-react';
 import { useCallback, useEffect, useState } from 'react';
 import NewPlanForm from '../../components/SchoolSupport/NewPlanForm';
-import { useTranslation } from '../../hooks/useTranslation';
+import { useTranslation } from 'react-i18next'; // ✅
 import { supabase } from '../../utils/supabase';
 
 type SchoolPlan = {

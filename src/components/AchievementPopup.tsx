@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next'; // ✅
+
 
 interface AchievementPopupProps {
   label: string;

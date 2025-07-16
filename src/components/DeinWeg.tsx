@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import MoodCompass from '../components/MoodCompass';
 import { Emoji } from '../data/emojis';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next';
 import { Achievement, CalendarNotes, Goal, Symptoms } from '../types/index';
 import { showErrorToast, showSuccessToast } from '../utils/toastUtils';
 import BackButton from './BackButton';

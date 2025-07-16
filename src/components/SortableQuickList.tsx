@@ -1,74 +1,75 @@
-// 📁 components/DragAndDrop/SortableQuickList.tsx
-import { DndContext, DragEndEvent, closestCenter } from '@dnd-kit/core';
-import { SortableContext, arrayMove, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import React, { useState } from 'react';
-import { useDndSensors } from '../hooks/useDndSensors';
-import * as storageService from './../services/storageService';
+import React from 'react';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers';
+import { sortableKeyboardCoordinates } from '@dnd-kit/sortable';
 import SortableQuickItem from './SortableQuickItem';
-// Make sure SidebarItem is exported from './../types', or import the correct type name
-// For example, if the type is named 'ISidebarItem' in './../types', use:
-import type { SidebarItem } from './../types/index';
-// Or, if you need to export it, add this to './../types.ts':
-// export type SidebarItem = { key: string; icon: React.ReactNode; label: string; ... };
+
+interface Item {
+  id: string;
+  icon: React.ReactNode;
+  label: string;
+  onClick: () => void;
+}
 
 interface SortableQuickListProps {
-  items: SidebarItem[];
-  quickItemKeys: string[];
-  onOrderChange: (newOrder: string[]) => void;
-  onItemClick: (key: string) => void;
-  animatingKey?: string;
+  items: Item[];
+  setItems: (newItems: Item[]) => void;
 }
 
 export default function SortableQuickList({
   items,
-  quickItemKeys,
-  onOrderChange,
-  onItemClick,
-  animatingKey,
-}: SortableQuickListProps) {
-  const [order, setOrder] = useState<string[]>(quickItemKeys);
+  setItems,
+}: SortableQuickListProps): React.ReactElement {
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (!over || active.id === over.id) return;
-
-    const oldIndex = order.indexOf(active.id as string);
-    const newIndex = order.indexOf(over.id as string);
-    const newOrder = arrayMove(order, oldIndex, newIndex);
-
-    setOrder(newOrder);
-    storageService.set('favorites', newOrder);
-    onOrderChange(newOrder);
+    if (active.id !== over?.id) {
+      const oldIndex = items.findIndex(item => item.id === active.id);
+      const newIndex = items.findIndex(item => item.id === over?.id);
+      const newItems = arrayMove(items, oldIndex, newIndex);
+      setItems(newItems);
+    }
   };
 
-  const sortedItems = order
-    .filter(key => key !== 'home')
-    .map(key => items.find(item => item.key === key))
-    .filter(Boolean) as SidebarItem[];
-
   return (
-    <DndContext
-      sensors={useDndSensors()}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext
-        items={order.filter(key => key !== 'home')}
-        strategy={verticalListSortingStrategy}
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        modifiers={[restrictToVerticalAxis]}
+        onDragEnd={handleDragEnd}
       >
-        <div className="quick-items-grid">
-          {sortedItems.map(item => (
+        <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
+          {items.map(item => (
             <SortableQuickItem
-              key={item.key}
-              id={item.key}
-              icon={item.icon as React.ReactNode}
+              key={item.id}
+              id={item.id}
+              icon={item.icon}
               label={item.label}
-              onClick={() => onItemClick(item.key)}
-              className={animatingKey === item.key ? 'bounce' : ''}
+              onClick={item.onClick}
             />
           ))}
-        </div>
-      </SortableContext>
-    </DndContext>
+        </SortableContext>
+      </DndContext>
+    </div>
   );
 }

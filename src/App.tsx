@@ -3,7 +3,6 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AchievementPopup from './components/AchievementPopup';
 import DatenschutzModal from './components/DatenschutzModal';
-import { LanguageProvider } from './context/LanguageContext';
 import GlobalStyle from './components/GlobalStyle';
 import HomeScreen from './components/HomeScreen';
 import NotFound from './components/NotFound';
@@ -216,16 +215,8 @@ export default function App(): React.ReactElement {
   }
 
   if (!session) {
-    return (
-      <LanguageProvider>
-        <WelcomeScreen />
-      </LanguageProvider>
-    );
+    return <WelcomeScreen />;
   }
 
-  return (
-    <LanguageProvider>
-      <AuthenticatedApp />
-    </LanguageProvider>
-  );
+  return <AuthenticatedApp />;
 }

@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import FilesTab from '../../components/SchoolSupport/FilesTab';
 import TransitionTab from '../../components/SchoolSupport/TransitionTab';
-import { useTranslation } from '../../hooks/useTranslation';
 import GuideTab from './GuideTab';
 import SchoolPlanTab from './SchoolPlanTab';
+import { useTranslation } from 'react-i18next'; // ✅
+import { t } from 'i18next';
 
 export default function SchoolSupportView() {
-  const { t } = useTranslation();
   const [activeTab, setActiveTab] = useState<'plans' | 'transition' | 'files' | 'chat' | 'guide'>(
     'plans'
   );

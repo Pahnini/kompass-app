@@ -1,7 +1,7 @@
 import React from 'react';
 import { HelpResource } from '../data/helpResources';
 import BackButton from './BackButton';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next';
 
 interface NotfallProps {
   helpResources: HelpResource[];

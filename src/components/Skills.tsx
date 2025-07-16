@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next';
 import type { Skill, WordFile } from '../types/index';
 import { showSuccessToast } from '../utils/toastUtils';
 import { parseWordDocument } from '../utils/wordParser';

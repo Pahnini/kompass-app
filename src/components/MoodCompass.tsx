@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Compass } from 'lucide-react';
 import { moodMockResponses } from '../data/moodMockResponses';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next';
+
 
 const getMoods = (t: (key: string) => string) => [
   { label: t('moodCompass.moods.proud'), value: 'proud', color: '#00bfa5', group: 'positive' },

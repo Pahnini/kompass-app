@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import MoodCompass from '../components/MoodCompass';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next'; // ✅
+import { t } from 'i18next';
+
 
 const MoodCompassView: React.FC = () => {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
-  const { t } = useTranslation();
+
 
   const handleMoodSelect = (mood: string) => {
     setSelectedMood(mood);

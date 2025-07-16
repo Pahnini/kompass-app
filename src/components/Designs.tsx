@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { useTheme } from '../hooks/useTheme';
-import { useTranslation } from '../hooks/useTranslation';
+import { useTranslation } from 'react-i18next'; // ✅
 import BackButton from './BackButton';
 
 export default function Designs(): React.ReactElement {

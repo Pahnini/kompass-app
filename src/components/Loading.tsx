@@ -1,15 +1,16 @@
 import { JSX, useContext } from 'react';
-import { LanguageContext } from '../context/LanguageContext';
+import { useTranslation } from 'react-i18next'; // ✅
+
 
 type LoadingProps = {
   message?: string;
 };
 export default function Loading({ message }: LoadingProps): JSX.Element {
-  const languageContext = useContext(LanguageContext);
+  const { t } = useTranslation();
 
   // Fallback to English if no context available
-  const loadingMessage = message || languageContext?.t('loading.default') || 'Loading...';
-  const subtitleMessage = languageContext?.t('loading.subtitle') || 'Just a moment please...';
+  const loadingMessage = message || t('loading.default') || 'Loading...';
+  const subtitleMessage = t('loading.subtitle') || 'Just a moment please...';
   return (
     <div className="card" style={{ textAlign: 'center', padding: '40px 20px' }}>
       <div className="loading-spinner">🧭</div>

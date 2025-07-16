@@ -29,22 +29,24 @@ export default function SortableQuickItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`quick-item flex items-center justify-between gap-2 px-2 py-1 rounded bg-white shadow ${className}`}
+      className={`flex items-center justify-between gap-2 p-4 rounded-2xl bg-white/5 shadow-inner border border-white/10 hover:bg-white/10 transition-all duration-200 ${className}`}
     >
-      {/* Linker Bereich – klickbar */}
-      <div className="flex items-center gap-2 cursor-pointer flex-grow" onClick={onClick}>
+      {/* Inhalt klickbar */}
+      <div
+        className="flex items-center gap-3 text-left text-white text-sm cursor-pointer flex-grow"
+        onClick={onClick}
+      >
         <div>{icon}</div>
-        <span>{label}</span>
+        <span className="whitespace-nowrap font-medium">{label}</span>
       </div>
 
-      {/* Rechter Bereich – nur Drag */}
+      {/* Drag Handle */}
       <div
+        className="text-white opacity-60 hover:opacity-100 cursor-grab active:cursor-grabbing"
         {...attributes}
         {...listeners}
-        className="drag-handle p-1 cursor-grab select-none"
-        onClick={e => e.stopPropagation()} // verhindert Klick-Fehlverhalten
       >
-        <GripVertical className="w-4 h-4 opacity-60" />
+        <GripVertical size={16} />
       </div>
     </div>
   );

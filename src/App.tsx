@@ -216,13 +216,16 @@ export default function App(): React.ReactElement {
     }
   }, [session, setShowWelcome]);
 
+  const SKIP_WELCOME = true;
+
   if (loading) {
     return <SmartLoading message="Verbindung wird hergestellt..." />;
   }
 
-  if (!session) {
+  if (!session && !SKIP_WELCOME) {
     return <WelcomeScreen />;
   }
 
   return <AuthenticatedApp />;
+
 }

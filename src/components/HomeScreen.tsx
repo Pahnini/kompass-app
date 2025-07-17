@@ -8,6 +8,8 @@ import './HomeScreen.css';
 import SortableQuickList from './SortableQuickList';
 import { useQuests } from '../hooks/useQuest';
 import { QuestTracker } from "../components/QuestTracker";
+import PanicButton from '../components/PanicButton';
+
 
 interface HomeScreenProps {
   username: string;
@@ -65,6 +67,7 @@ export default function HomeScreen({
             alignItems: 'center',
           }}
         >
+          <PanicButton />
           <Compass size={64} color="#5dade2" />
         </div>
 

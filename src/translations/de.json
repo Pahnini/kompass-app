@@ -344,5 +344,12 @@
       "title": "2x Stimmung tracken",
       "description": "Nutze den Mood-Kompass mindestens 2x diese Woche."
     }
+  },
+  "panic": {
+    "breatheIn": "Atme tief ein …",
+    "breatheOut": "… und aus",
+    "focus": "Konzentriere dich auf deinen Atem. Du schaffst das.",
+    "feelBetter": "Ich fühle mich besser",
+    "buttonLabel": "Panikhilfe starten"
   }
 }

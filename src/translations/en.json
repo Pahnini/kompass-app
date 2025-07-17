@@ -344,5 +344,12 @@
       "title": "Track your mood twice",
       "description": "Use the Mood Compass at least twice this week."
     }
+  },
+  "panic": {
+    "breatheIn": "Breathe in deeply …",
+    "breatheOut": "… and out",
+    "focus": "Focus on your breath. You've got this.",
+    "feelBetter": "I feel better now",
+    "buttonLabel": "Start Panic Help"
   }
 }

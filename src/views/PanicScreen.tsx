@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 
 export default function PanicScreen() {
     const navigate = useNavigate();
+    const { t } = useTranslation();
+
     const [phase, setPhase] = useState<'ein' | 'aus'>('ein');
     const [cycle, setCycle] = useState(0);
 
@@ -11,17 +14,16 @@ export default function PanicScreen() {
             setPhase(p => (p === 'ein' ? 'aus' : 'ein'));
             setCycle(c => c + 1);
 
-            // Vibration: 500ms bei jeder Phase
             if (navigator.vibrate) {
                 navigator.vibrate(phase === 'ein' ? [500] : [300]);
             }
-        }, 5000); // alle 5 Sekunden wechseln
+        }, 5000);
 
         return () => clearInterval(interval);
     }, [phase]);
 
     const color = phase === 'ein' ? '#58d68d' : '#5dade2';
-    const text = phase === 'ein' ? 'Atme tief ein …' : '… und aus';
+    const text = phase === 'ein' ? t('panic.breatheIn') : t('panic.breatheOut');
 
     return (
         <div
@@ -39,15 +41,13 @@ export default function PanicScreen() {
             />
 
             <h1 className="text-2xl font-semibold mb-2">{text}</h1>
-            <p className="text-sm text-gray-300 mb-8">
-                Konzentriere dich auf deinen Atem. Du schaffst das.
-            </p>
+            <p className="text-sm text-gray-300 mb-8">{t('panic.focus')}</p>
 
             <button
                 onClick={() => navigate('/')}
                 className="bg-white text-black px-4 py-2 rounded-md shadow hover:bg-gray-200 transition"
             >
-                Ich fühle mich besser
+                {t('panic.feelBetter')}
             </button>
         </div>
     );

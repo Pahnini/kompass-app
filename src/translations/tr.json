@@ -89,5 +89,12 @@
             "title": "2 kez ruh hali takibi yap",
             "description": "Bu hafta en az 2 kez Mood Compass'ı kullan."
         }
+    },
+    "panic": {
+        "breatheIn": "Derin bir nefes al …",
+        "breatheOut": "… ve ver",
+        "focus": "Nefesine odaklan. Bunu başarabilirsin.",
+        "feelBetter": "Kendimi daha iyi hissediyorum",
+        "buttonLabel": "Panik yardımı başlat"
     }
 }

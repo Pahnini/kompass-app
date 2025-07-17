@@ -332,5 +332,17 @@
     "points50": "50 Punkte erreicht",
     "points100": "100 Punkte erreicht",
     "points200": "200 Punkte - unaufhaltbar!"
+  },
+  "quests": {
+    "weeklyTitle": "Wöchentliche Quests",
+    "progress": "Fortschritt",
+    "use-skills-3x": {
+      "title": "3 Skills anwenden",
+      "description": "Wende diese Woche 3 verschiedene Skills an."
+    },
+    "mood-tracker-2x": {
+      "title": "2x Stimmung tracken",
+      "description": "Nutze den Mood-Kompass mindestens 2x diese Woche."
+    }
   }
 }

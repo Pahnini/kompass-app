@@ -332,5 +332,17 @@
     "points50": "50 Points Reached",
     "points100": "100 Points Reached",
     "points200": "200 Points - Unstoppable!"
+  },
+  "quests": {
+    "weeklyTitle": "Weekly Quests",
+    "progress": "Progress",
+    "use-skills-3x": {
+      "title": "Use 3 skills",
+      "description": "Apply 3 different skills this week."
+    },
+    "mood-tracker-2x": {
+      "title": "Track your mood twice",
+      "description": "Use the Mood Compass at least twice this week."
+    }
   }
 }

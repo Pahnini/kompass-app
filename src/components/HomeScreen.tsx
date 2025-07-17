@@ -6,6 +6,8 @@ import { useUserData } from '../hooks/useUserData';
 import type { SidebarItem } from '../types/index';
 import './HomeScreen.css';
 import SortableQuickList from './SortableQuickList';
+import { useQuests } from '../hooks/useQuest';
+import { QuestTracker } from "../components/QuestTracker";
 
 interface HomeScreenProps {
   username: string;
@@ -40,9 +42,12 @@ export default function HomeScreen({
 
   const filteredItems = translatedItems.filter(item => item.key !== 'home');
 
+  const { updateQuestProgress } = useQuests();
+
   const handleQuickClick = (key: string) => {
     setAnimatingKey(key);
     addPoints(1);
+    updateQuestProgress("use-skills-3x");
     setTimeout(() => setAnimatingKey(undefined), 300);
     navigate(getPath(key));
   };
@@ -110,6 +115,12 @@ export default function HomeScreen({
           />
         </div>
       </div>
+
+      {/* Quest-Bereich */}
+      <div style={{ marginTop: '24px' }}>
+        <QuestTracker />
+      </div>
+
 
       {/* Schnellzugriffe */}
       <div className="section">

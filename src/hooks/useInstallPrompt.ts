@@ -17,11 +17,9 @@ export function useInstallPrompt() {
     }, [])
 
     const promptInstall = async () => {
-        if (!deferredPrompt) return
         const promptEvent = deferredPrompt as any
+        if (!promptEvent) return
         await promptEvent.prompt()
-        const choiceResult = await promptEvent.userChoice
-        console.log('User response to install prompt:', choiceResult)
         setDeferredPrompt(null)
     }
 

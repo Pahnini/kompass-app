@@ -27,9 +27,12 @@ import PanicScreen from './views/PanicScreen';
 import OfflineToast from './components/OfflineToast'
 import InstallPromptBanner from './components/InstallPromptBanner'
 import UpdateToast from './components/UpdateToast'
+import LandingPage from './components/LandingPage'
+
 
 // ...
 <Route path="/panic" element={<PanicScreen />} />
+
 
 
 // Lazy load components for better performance
@@ -233,7 +236,7 @@ export default function App(): React.ReactElement {
   }
 
   if (!session && !SKIP_WELCOME) {
-    return <WelcomeScreen />;
+    return <LandingPage />;
   }
 
   return <AuthenticatedApp />;

@@ -24,6 +24,9 @@ import { supabase } from './utils/supabase';
 import MoodCompassView from './views/MoodCompassView';
 import SchoolSupportView from './views/SchoolSupport/SchoolSupportView';
 import PanicScreen from './views/PanicScreen';
+import OfflineToast from './components/OfflineToast'
+import InstallPromptBanner from './components/InstallPromptBanner'
+import UpdateToast from './components/UpdateToast'
 
 // ...
 <Route path="/panic" element={<PanicScreen />} />
@@ -179,6 +182,13 @@ function AuthenticatedApp() {
       {latestAchievement && (
         <AchievementPopup label={latestAchievement} onClose={() => setLatestAchievement(null)} />
       )}
+
+      <OfflineToast />
+      <InstallPromptBanner />
+      <UpdateToast />
+      <div>
+        {/* ... dein restlicher Code */}
+      </div>
     </div>
   );
 }

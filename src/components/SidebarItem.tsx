@@ -7,6 +7,7 @@ interface SidebarItemProps {
   label: string;
   icon: JSX.Element;
   active?: boolean;
+
 }
 
 export default function SidebarItem({ to, label, icon, active = false }: SidebarItemProps) {

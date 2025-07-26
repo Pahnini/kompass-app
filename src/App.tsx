@@ -9,7 +9,6 @@ import NotFound from './components/NotFound';
 import OnboardingModal from './components/OnboardingModal';
 import Sidebar from './components/Sidebar';
 import SmartLoading from './components/SmartLoading';
-import WelcomeScreen from './components/WelcomeScreen';
 import { emojiList } from './data/emojis';
 import { helpResources } from './data/helpResources';
 import { sidebarItems } from './data/navigation';
@@ -24,12 +23,15 @@ import { supabase } from './utils/supabase';
 import MoodCompassView from './views/MoodCompassView';
 import SchoolSupportView from './views/SchoolSupport/SchoolSupportView';
 import PanicScreen from './views/PanicScreen';
+import OfflineToast from './components/OfflineToast';
+import InstallPromptBanner from './components/InstallPromptBanner';
+import UpdateToast from './components/UpdateToast';
+import LandingPage from './components/LandingPage';
+import { NovaAssistant } from './components/NovaAssistant';
+import { useLocation } from 'react-router-dom';
+import NovaSettings from './views/NovaSettings';
 
-// ...
-<Route path="/panic" element={<PanicScreen />} />
-
-
-// Lazy load components for better performance
+// Lazy-loaded Komponenten
 const Chatbot = lazy(() => import('./components/Chatbot'));
 const DeinWeg = lazy(() => import('./components/DeinWeg'));
 const Designs = lazy(() => import('./components/Designs'));
@@ -42,6 +44,15 @@ function AuthenticatedApp() {
   usePageTitle();
   const { theme, background } = useTheme();
   const [latestAchievement, setLatestAchievement] = useState<string | null>(null);
+  const location = useLocation();
+  const path = location.pathname;
+
+  let novaContext: 'free' | 'welcome' | 'mood' | 'skill' | 'goal' = 'free';
+  if (path === '/') novaContext = 'welcome';
+  if (path === '/mood') novaContext = 'mood';
+  if (path === '/skills') novaContext = 'skill';
+  if (path === '/deinweg') novaContext = 'goal';
+
   const {
     username,
     setUsername,
@@ -64,19 +75,15 @@ function AuthenticatedApp() {
 
   const { isSidebarOpen, setIsSidebarOpen, showDS, setShowDS, onboarding, setOnboarding } = useUI();
 
-  // Handle achievements
   useEffect(() => {
-    // Only process if we have achievements
     if (achievements && achievements.length > 0) {
       const sorted = [...achievements].sort(
         (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
       );
-
       const newest = sorted[0];
       const lastShown = localStorage.getItem('lastAchievementShown');
 
       if (newest && newest.date !== lastShown) {
-        // Use label property from the Achievement type
         const achievementText = newest.label || 'New Achievement';
         setLatestAchievement(achievementText);
         localStorage.setItem('lastAchievementShown', newest.date);
@@ -118,7 +125,7 @@ function AuthenticatedApp() {
             <Route path="/mood" element={<MoodCompassView />} />
             <Route path="/school" element={<SchoolSupportView />} />
             <Route path="/panic" element={<PanicScreen />} />
-
+            <Route path="/nova" element={<NovaSettings />} />
             <Route
               path="/deinweg"
               element={
@@ -150,7 +157,6 @@ function AuthenticatedApp() {
                 />
               }
             />
-
             <Route path="/notfall" element={<Notfall helpResources={helpResources} />} />
             <Route path="/designs" element={<Designs />} />
             <Route path="/guide" element={<Guide />} />
@@ -169,6 +175,7 @@ function AuthenticatedApp() {
           </Routes>
         </Suspense>
       </main>
+
       {onboarding && <OnboardingModal onClose={() => setOnboarding(false)} />}
       {!onboarding && showDS && (
         <DatenschutzModal
@@ -179,6 +186,14 @@ function AuthenticatedApp() {
       {latestAchievement && (
         <AchievementPopup label={latestAchievement} onClose={() => setLatestAchievement(null)} />
       )}
+      <OfflineToast />
+      <InstallPromptBanner />
+      <UpdateToast />
+
+      {/* ✅ Nova ist global sichtbar (unten rechts) */}
+      <div className="fixed bottom-6 left-[260px] z-[100]" style={{ maxWidth: '240px' }}>
+        <NovaAssistant context={novaContext} />
+      </div>
     </div>
   );
 }
@@ -195,7 +210,7 @@ export default function App(): React.ReactElement {
       return;
     }
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    void supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
     });
@@ -209,7 +224,6 @@ export default function App(): React.ReactElement {
     return () => subscription.unsubscribe();
   }, []);
 
-  // Update showWelcome state based on session
   useEffect(() => {
     if (session) {
       setShowWelcome(false);
@@ -223,9 +237,7 @@ export default function App(): React.ReactElement {
   }
 
   if (!session && !SKIP_WELCOME) {
-    return <WelcomeScreen />;
+    return <LandingPage />;
   }
-
   return <AuthenticatedApp />;
-
 }

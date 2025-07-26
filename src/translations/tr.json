@@ -1,100 +1,100 @@
 {
-    "home": {
-        "welcome": "Tekrar hoş geldin!",
-        "appDescription": "Klinikten sonraki günlük yaşamın için sana özel bir uygulama.",
-        "featuresDescription": "Beceriler, planlar, sohbet botu ve kriz desteği – her zaman yanında.",
-        "quickAccessTitle": "Hızlı Erişimlerin",
-        "subtitle": "Farkındalık, beceriler ve öz‑yardım için dijital pusulan",
-        "promise": "Her zaman yanında – beceriler, planlar ve kriz yardımı",
-        "username": {
-            "placeholder": "Sana nasıl hitap edebilirim?"
-        }
-    },
-    "buttons": {
-        "back": "Geri",
-        "save": "Kaydet",
-        "share": "Paylaş",
-        "delete": "Sil",
-        "cancel": "İptal",
-        "ok": "Tamam 👍",
-        "reload": "Sayfayı yeniden yükle",
-        "home": "🏠 Ana Sayfa",
-        "signin": "Giriş Yap",
-        "signup": "Kayıt Ol",
-        "sendMagicLink": "Giriş Linki Gönder",
-        "addSkill": "Beceri Ekle",
-        "addGoal": "Hedef Ekle",
-        "markAchieved": "Başarıldı Olarak İşaretle",
-        "uploadFile": "Dosya Yükle",
-        "addSelectedSkills": "Seçilen Becerileri Ekle"
-    },
-    "sidebar": {
-        "openMenu": "Menüyü Aç",
-        "points": "🌟 {points} Puan",
-        "logout": "Çıkış Yap",
-        "languages": {
-            "de": "Almanca",
-            "en": "İngilizce",
-            "tr": "Türkçe"
-        }
-    },
-    "navigation": {
-        "home": "Ana Sayfa",
-        "skills": "Beceriler ve Farkındalık",
-        "deinweg": "Pusulam",
-        "achievements": "Başarılar",
-        "designs": "Tasarım",
-        "emergency": "Acil Durum",
-        "guide": "Rehber",
-        "chatbot": "Sohbet Botu",
-        "schoolSupport": "Klinik Okulu",
-        "quickedit": "Hızlı Erişimi Düzenle"
-    },
-    "moodCompass": {
-        "title": "🧭 Duygu Pusulası",
-        "subtitle": "Bugün nasıl hissediyorsun? Bir yön seç.",
-        "moods": {
-            "proud": "🥳 Gururlu",
-            "hopeful": "🌞 Umutlu",
-            "focus": "🧠 Odaklanmış",
-            "tired": "😴 Yorgun",
-            "overwhelmed": "😖 Bunalmış",
-            "angry": "😡 Kızgın",
-            "anxious": "😰 Endişeli",
-            "empty": "🥶 Boş"
-        },
-        "skillTip": "Beceri İpucu:",
-        "defaultResponse": "Bugün küçük adımlar bile önemlidir."
-    },
-    "success": {
-        "skillsAdded": "Beceriler başarılı şekilde eklendi! 🎉",
-        "skillAdded": "\"{skill}\" becerisi eklendi! 🎉",
-        "journalSaved": "Günlük kaydedildi! 📝",
-        "achievement": "🎉 Yeni Başarı: {label}"
-    },
-    "errors": {
-        "somethingWrong": "Bir şeyler yanlış gitti",
-        "unexpectedError": "Beklenmeyen bir hata oluştu. Lütfen sayfayı yenile veya ana sayfaya dön.",
-        "pageNotFound": "Sayfa bulunamadı",
-        "navigationHint": "Sol üstteki menüden diğer bölümlere geçebilirsiniz."
-    },
-    "quests": {
-        "weeklyTitle": "Haftalık Görevler",
-        "progress": "İlerleme",
-        "use-skills-3x": {
-            "title": "3 beceri kullan",
-            "description": "Bu hafta 3 farklı beceri uygula."
-        },
-        "mood-tracker-2x": {
-            "title": "2 kez ruh hali takibi yap",
-            "description": "Bu hafta en az 2 kez Mood Compass'ı kullan."
-        }
-    },
-    "panic": {
-        "breatheIn": "Derin bir nefes al …",
-        "breatheOut": "… ve ver",
-        "focus": "Nefesine odaklan. Bunu başarabilirsin.",
-        "feelBetter": "Kendimi daha iyi hissediyorum",
-        "buttonLabel": "Panik yardımı başlat"
+  "home": {
+    "welcome": "Tekrar hoş geldin!",
+    "appDescription": "Klinikten sonraki günlük yaşamın için sana özel bir uygulama.",
+    "featuresDescription": "Beceriler, planlar, sohbet botu ve kriz desteği – her zaman yanında.",
+    "quickAccessTitle": "Hızlı Erişimlerin",
+    "subtitle": "Farkındalık, beceriler ve öz‑yardım için dijital pusulan",
+    "promise": "Her zaman yanında – beceriler, planlar ve kriz yardımı",
+    "username": {
+      "placeholder": "Sana nasıl hitap edebilirim?"
     }
+  },
+  "buttons": {
+    "back": "Geri",
+    "save": "Kaydet",
+    "share": "Paylaş",
+    "delete": "Sil",
+    "cancel": "İptal",
+    "ok": "Tamam 👍",
+    "reload": "Sayfayı yeniden yükle",
+    "home": "🏠 Ana Sayfa",
+    "signin": "Giriş Yap",
+    "signup": "Kayıt Ol",
+    "sendMagicLink": "Giriş Linki Gönder",
+    "addSkill": "Beceri Ekle",
+    "addGoal": "Hedef Ekle",
+    "markAchieved": "Başarıldı Olarak İşaretle",
+    "uploadFile": "Dosya Yükle",
+    "addSelectedSkills": "Seçilen Becerileri Ekle"
+  },
+  "sidebar": {
+    "openMenu": "Menüyü Aç",
+    "points": "🌟 {points} Puan",
+    "logout": "Çıkış Yap",
+    "languages": {
+      "de": "Almanca",
+      "en": "İngilizce",
+      "tr": "Türkçe"
+    }
+  },
+  "navigation": {
+    "home": "Ana Sayfa",
+    "skills": "Beceriler ve Farkındalık",
+    "deinweg": "Pusulam",
+    "achievements": "Başarılar",
+    "designs": "Tasarım",
+    "emergency": "Acil Durum",
+    "guide": "Rehber",
+    "chatbot": "Sohbet Botu",
+    "schoolSupport": "Klinik Okulu",
+    "quickedit": "Hızlı Erişimi Düzenle"
+  },
+  "moodCompass": {
+    "title": "🧭 Duygu Pusulası",
+    "subtitle": "Bugün nasıl hissediyorsun? Bir yön seç.",
+    "moods": {
+      "proud": "🥳 Gururlu",
+      "hopeful": "🌞 Umutlu",
+      "focus": "🧠 Odaklanmış",
+      "tired": "😴 Yorgun",
+      "overwhelmed": "😖 Bunalmış",
+      "angry": "😡 Kızgın",
+      "anxious": "😰 Endişeli",
+      "empty": "🥶 Boş"
+    },
+    "skillTip": "Beceri İpucu:",
+    "defaultResponse": "Bugün küçük adımlar bile önemlidir."
+  },
+  "success": {
+    "skillsAdded": "Beceriler başarılı şekilde eklendi! 🎉",
+    "skillAdded": "\"{skill}\" becerisi eklendi! 🎉",
+    "journalSaved": "Günlük kaydedildi! 📝",
+    "achievement": "🎉 Yeni Başarı: {label}"
+  },
+  "errors": {
+    "somethingWrong": "Bir şeyler yanlış gitti",
+    "unexpectedError": "Beklenmeyen bir hata oluştu. Lütfen sayfayı yenile veya ana sayfaya dön.",
+    "pageNotFound": "Sayfa bulunamadı",
+    "navigationHint": "Sol üstteki menüden diğer bölümlere geçebilirsiniz."
+  },
+  "quests": {
+    "weeklyTitle": "Haftalık Görevler",
+    "progress": "İlerleme",
+    "use-skills-3x": {
+      "title": "3 beceri kullan",
+      "description": "Bu hafta 3 farklı beceri uygula."
+    },
+    "mood-tracker-2x": {
+      "title": "2 kez ruh hali takibi yap",
+      "description": "Bu hafta en az 2 kez Mood Compass'ı kullan."
+    }
+  },
+  "panic": {
+    "breatheIn": "Derin bir nefes al …",
+    "breatheOut": "… ve ver",
+    "focus": "Nefesine odaklan. Bunu başarabilirsin.",
+    "feelBetter": "Kendimi daha iyi hissediyorum",
+    "buttonLabel": "Panik yardımı başlat"
+  }
 }

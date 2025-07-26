@@ -7,7 +7,7 @@ export default function BackButton() {
   const { t } = useTranslation();
 
   return (
-    <button onClick={() => navigate('/')} className="back-button">
+    <button onClick={() => void navigate('/')} className="back-button">
       <ArrowLeft size={20} />
       {t('buttons.back')}
     </button>

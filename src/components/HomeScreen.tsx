@@ -7,9 +7,8 @@ import type { SidebarItem } from '../types/index';
 import './HomeScreen.css';
 import SortableQuickList from './SortableQuickList';
 import { useQuests } from '../hooks/useQuest';
-import { QuestTracker } from "../components/QuestTracker";
+import { QuestTracker } from '../components/QuestTracker';
 import PanicButton from '../components/PanicButton';
-
 
 interface HomeScreenProps {
   username: string;
@@ -28,7 +27,7 @@ export default function HomeScreen({
 }: HomeScreenProps): React.ReactElement {
   const navigate = useNavigate();
   const { addPoints, level, levelProgress } = useUserData();
-  const [animatingKey, setAnimatingKey] = useState<string | undefined>(undefined);
+  const [, setAnimatingKey] = useState<string | undefined>(undefined);
 
   const { t } = useTranslation();
 
@@ -49,9 +48,9 @@ export default function HomeScreen({
   const handleQuickClick = (key: string) => {
     setAnimatingKey(key);
     addPoints(1);
-    updateQuestProgress("use-skills-3x");
+    updateQuestProgress('use-skills-3x');
     setTimeout(() => setAnimatingKey(undefined), 300);
-    navigate(getPath(key));
+    void navigate(getPath(key));
   };
 
   return (
@@ -124,7 +123,6 @@ export default function HomeScreen({
         <QuestTracker />
       </div>
 
-
       {/* Schnellzugriffe */}
       <div className="section">
         <h3>{t('home.quickAccessTitle')}</h3>
@@ -135,12 +133,11 @@ export default function HomeScreen({
             label: item.label,
             onClick: () => handleQuickClick(item.key),
           }))}
-          setItems={(newItems) => {
+          setItems={newItems => {
             const newKeys = newItems.map(item => item.id);
             setFavorites(newKeys);
           }}
         />
-
       </div>
     </div>
   );

@@ -32,7 +32,7 @@ export default function Sidebar({
   }, []);
 
   const filteredItems = items.filter(
-    item => favorites.includes(item.key) || item.key === 'home' || item.key === 'quickedit'
+    item => favorites.includes(item.key) || ['home', 'quickedit', 'nova'].includes(item.key)
   );
 
   const toggleSidebar = (): void => setIsOpen(!isOpen);
@@ -59,9 +59,7 @@ export default function Sidebar({
       <aside className={`sidebar ${isOpen || isDesktop ? 'open' : ''}`}>
         <div className="sidebar-content">
           {/* Punktestand anzeigen */}
-          <div className="sidebar-points">
-            {t('sidebar.points', { points })}
-          </div>
+          <div className="sidebar-points">{t('sidebar.points', { points })}</div>
 
           {filteredItems.map(item => (
             <Link
@@ -108,7 +106,7 @@ export default function Sidebar({
           {[
             { code: 'de', emoji: '🇩🇪' },
             { code: 'en', emoji: '🇬🇧' },
-            { code: 'tr', emoji: '🇹🇷' }
+            { code: 'tr', emoji: '🇹🇷' },
           ].map(({ code, emoji }) => (
             <button
               key={code}
@@ -118,19 +116,24 @@ export default function Sidebar({
                 border: 'none',
                 fontSize: 24,
                 opacity: i18n.language === code ? 1 : 0.5,
-                cursor: 'pointer'
+                cursor: 'pointer',
               }}
-              onClick={() => i18n.changeLanguage(code)}
+              onClick={() => void i18n.changeLanguage(code)}
             >
               {emoji}
             </button>
           ))}
         </div>
 
-        <button className="sidebar-item logout-button" onClick={async () => {
-          await supabase.auth.signOut();
-          if (!isDesktop) setIsOpen(false);
-        }}>
+        <button
+          className="sidebar-item logout-button"
+          onClick={() =>
+            void (async () => {
+              await supabase.auth.signOut();
+              if (!isDesktop) setIsOpen(false);
+            })()
+          }
+        >
           <span className="icon">🚪</span>
           <span className="label">{t('sidebar.logout')}</span>
         </button>

@@ -39,7 +39,12 @@ export default function Notfall({ helpResources }: NotfallProps): React.ReactEle
         <ul>
           {helpResources.map(h => (
             <li key={h.url}>
-              <a href={h.url} target="_blank" rel="noopener noreferrer" style={{ color: '#abebc6' }}>
+              <a
+                href={h.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#abebc6' }}
+              >
                 {t(h.nameKey) || h.name}
               </a>
             </li>
@@ -54,7 +59,9 @@ export default function Notfall({ helpResources }: NotfallProps): React.ReactEle
               onFocus={(e: React.FocusEvent<HTMLInputElement>) => e.target.select()}
               style={{ width: '80%' }}
             />{' '}
-            <button onClick={() => navigator.clipboard.writeText(window.location.href)}>📋</button>
+            <button onClick={() => void navigator.clipboard.writeText(window.location.href)}>
+              📋
+            </button>
           </p>
         </div>
       </div>

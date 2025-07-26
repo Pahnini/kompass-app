@@ -29,6 +29,3 @@ dist-ssr
 .env.development
 .env.test
 .env.production
-
-# Claude Code configuration
-CLAUDE.md

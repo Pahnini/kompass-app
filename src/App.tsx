@@ -3,7 +3,6 @@ import React, { lazy, Suspense, useEffect, useState } from 'react'
 import { Route, Routes } from 'react-router-dom'
 import AchievementPopup from './components/AchievementPopup'
 import DatenschutzModal from './components/DatenschutzModal'
-import GlobalStyle from './components/GlobalStyle'
 import HomeScreen from './components/HomeScreen'
 import NotFound from './components/NotFound'
 import OnboardingModal from './components/OnboardingModal'
@@ -44,7 +43,7 @@ const Skills = lazy(() => import('./components/Skills'))
 
 function AuthenticatedApp() {
   usePageTitle()
-  const { theme, background } = useTheme()
+  useTheme()
   const [latestAchievement, setLatestAchievement] = useState<string | null>(null)
   const location = useLocation();
   const path = location.pathname;
@@ -103,22 +102,9 @@ function AuthenticatedApp() {
 
   return (
     <div>
-      <GlobalStyle />
-      <Sidebar
-        items={sidebarItems}
-        isOpen={isSidebarOpen}
-        setIsOpen={setIsSidebarOpen}
-        favorites={favorites}
-      />
-      <main
-        className="main-area"
-        style={{
-          background: background.url
-            ? `url(${background.url}) center/cover`
-            : theme.bg,
-          minHeight: '100vh',
-        }}
-      >
+      <Sidebar />
+      <main className="min-h-screen px-4 pt-4 pb-24 lg:ml-64 bg-background text-white transition-colors duration-300">
+
         <Suspense fallback={<SmartLoading message="Seite wird geladen..." />}>
           <Routes>
             <Route

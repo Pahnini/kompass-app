@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body.night {
+    @apply bg-[#1f2f2f] text-white font-sans;
+}
+
+body.light {
+    @apply bg-white text-black font-sans;
+}

@@ -1,23 +1,30 @@
 // SidebarItem.tsx – modern, klickbar
 import { JSX } from 'react';
 import { Link } from 'react-router-dom';
+import React from 'react';
 
 interface SidebarItemProps {
   to: string;
   label: string;
   icon: JSX.Element;
   active?: boolean;
-
+  onClick?: () => void;
 }
 
-export default function SidebarItem({ to, label, icon, active = false }: SidebarItemProps) {
+export default function SidebarItem({
+  label,
+  icon,
+  active = false,
+  onClick,
+}: SidebarItemProps): React.ReactElement {
   return (
-    <Link
-      to={to}
-      className={`flex items-center gap-3 px-4 py-2 rounded-md transition text-sm font-medium ${active ? 'bg-white/10 text-white' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
+    <button
+      onClick={onClick}
+      className={`w-full flex items-center gap-3 px-4 py-2 rounded-xl text-sm font-medium transition 
+        ${active ? 'bg-white/10 text-white' : 'text-white/70 hover:bg-white/10 hover:text-white'}`}
     >
-      <span className="text-white text-base">{icon}</span>
+      {icon}
       <span>{label}</span>
-    </Link>
+    </button>
   );
 }

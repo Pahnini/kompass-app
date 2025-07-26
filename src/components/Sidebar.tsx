@@ -1,143 +1,109 @@
-import { Award, GraduationCap } from 'lucide-react';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import {
+  Home,
+  HeartPulse,
+  Wrench,
+  Eye,
+  AlertTriangle,
+  BookOpen,
+  Award,
+  GraduationCap,
+  Paintbrush,
+  LogOut,
+} from 'lucide-react';
+import Flag from 'react-world-flags';
 import { useTranslation } from 'react-i18next';
-import { Link, useLocation } from 'react-router-dom';
-import { useUserData } from '../hooks/useUserData';
-import type { SidebarItem } from '../types/index';
-import { supabase } from '../utils/supabase';
+import SidebarItem from './SidebarItem';
+import { useSupabaseClient } from '@supabase/auth-helpers-react';
 
-interface SidebarProps {
-  items: SidebarItem[];
-  isOpen: boolean;
-  setIsOpen: (isOpen: boolean) => void;
-  favorites?: string[];
-}
-
-export default function Sidebar({
-  items,
-  isOpen,
-  setIsOpen,
-  favorites = [],
-}: SidebarProps): React.ReactElement {
-  const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth > 700);
+export default function Sidebar(): React.ReactElement {
   const location = useLocation();
-  const { points } = useUserData();
+  const navigate = useNavigate();
+  const { i18n } = useTranslation();
+  const supabase = useSupabaseClient();
 
-  const { t, i18n } = useTranslation();
-
-  useEffect(() => {
-    const handleResize = () => setIsDesktop(window.innerWidth > 700);
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  const filteredItems = items.filter(
-    item =>
-      favorites.includes(item.key) ||
-      ['home', 'quickedit', 'nova'].includes(item.key)
-  )
-
-  const toggleSidebar = (): void => setIsOpen(!isOpen);
-  const handleClick = (): void => {
-    if (!isDesktop) {
-      setTimeout(() => setIsOpen(false), 300);
-    }
+  const handleClick = (path: string) => {
+    navigate(path);
   };
 
-  const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    navigate('/');
+  };
 
   return (
-    <>
-      {!isDesktop && (
-        <button
-          className="sidebar-toggle-mobile"
-          onClick={toggleSidebar}
-          aria-label={t('sidebar.openMenu')}
-        >
-          ☰
-        </button>
-      )}
+    <aside className="fixed top-0 left-0 h-full w-64 bg-[#1f2f2f] text-white p-4 flex flex-col justify-between z-50">
+      <div className="space-y-2">
+        <SidebarItem
+          label="Home"
+          icon={<Home size={18} />}
+          onClick={() => handleClick('/')}
+          active={location.pathname === '/'} to={''} />
+        <SidebarItem
+          label="Mein Kompass"
+          icon={<HeartPulse size={18} />}
+          onClick={() => handleClick('/deinweg')}
+          active={location.pathname === '/deinweg'} to={''} />
+        <SidebarItem
+          label="Skills"
+          icon={<Wrench size={18} />}
+          onClick={() => handleClick('/skills')}
+          active={location.pathname === '/skills'} to={''} />
+        <SidebarItem
+          label="Achtsamkeit"
+          icon={<Eye size={18} />}
+          onClick={() => handleClick('/achtsamkeit')}
+          active={location.pathname === '/achtsamkeit'} to={''} />
+        <SidebarItem
+          label="Notfall"
+          icon={<AlertTriangle size={18} />}
+          onClick={() => handleClick('/notfall')}
+          active={location.pathname === '/notfall'} to={''} />
+        <SidebarItem
+          label="Ratgeber"
+          icon={<BookOpen size={18} />}
+          onClick={() => handleClick('/guide')}
+          active={location.pathname === '/guide'} to={''} />
+        <SidebarItem
+          label="Quests & Badges"
+          icon={<Award size={18} />}
+          onClick={() => handleClick('/achievements')}
+          active={location.pathname === '/achievements'} to={''} />
+        <SidebarItem
+          label="Klinikschule"
+          icon={<GraduationCap size={18} />}
+          onClick={() => handleClick('/school')}
+          active={location.pathname === '/school'} to={''} />
+        <SidebarItem
+          label="Design ändern"
+          icon={<Paintbrush size={18} />}
+          onClick={() => handleClick('/designs')}
+          active={location.pathname === '/designs'} to={''} />
+      </div>
 
-      <aside className={`sidebar ${isOpen || isDesktop ? 'open' : ''}`}>
-        <div className="sidebar-content">
-          {/* Punktestand anzeigen */}
-          <div className="sidebar-points">
-            {t('sidebar.points', { points })}
-          </div>
-
-          {filteredItems.map(item => (
-            <Link
-              key={item.key}
-              to={getPath(item.key)}
-              className={`sidebar-item ${location.pathname === getPath(item.key) ? 'active' : ''}`}
-              onClick={handleClick}
-            >
-              <span className="icon">{item.icon as React.ReactNode}</span>
-              <span className="label">{t(item.label)}</span>
-            </Link>
-          ))}
-
-          {/* Klinikschule */}
-          <Link
-            to="/school"
-            className={`sidebar-item ${location.pathname === '/school' ? 'active' : ''}`}
-            onClick={handleClick}
-          >
-            <span className="icon">
-              <GraduationCap size={18} />
-            </span>
-            <span className="label">{t('navigation.schoolSupport')}</span>
-          </Link>
-
-          {/* Erfolge */}
-          <Link
-            to="/achievements"
-            className={`sidebar-item ${location.pathname === '/achievements' ? 'active' : ''}`}
-            onClick={handleClick}
-          >
-            <span className="icon">
-              <Award size={18} />
-            </span>
-            <span className="label">{t('navigation.achievements')}</span>
-          </Link>
-        </div>
-
-
-        {/* Sprachumschaltung */}
-        <div
-          className="sidebar-language-toggle"
-          style={{ display: 'flex', gap: 8, justifyContent: 'center', margin: '12px 0' }}
-        >
-          {[
-            { code: 'de', emoji: '🇩🇪' },
-            { code: 'en', emoji: '🇬🇧' },
-            { code: 'tr', emoji: '🇹🇷' }
-          ].map(({ code, emoji }) => (
-            <button
-              key={code}
-              aria-label={t(`sidebar.languages.${code}`, code.toUpperCase())}
-              style={{
-                background: 'none',
-                border: 'none',
-                fontSize: 24,
-                opacity: i18n.language === code ? 1 : 0.5,
-                cursor: 'pointer'
-              }}
-              onClick={() => i18n.changeLanguage(code)}
-            >
-              {emoji}
-            </button>
-          ))}
-        </div>
-
-        <button className="sidebar-item logout-button" onClick={async () => {
-          await supabase.auth.signOut();
-          if (!isDesktop) setIsOpen(false);
-        }}>
-          <span className="icon">🚪</span>
-          <span className="label">{t('sidebar.logout')}</span>
-        </button>
-      </aside>
-    </>
+      <div className="mt-6 space-y-1">
+        <SidebarItem
+          label="Deutsch"
+          icon={<Flag code="DE" className="w-5 h-5 rounded-sm" />}
+          onClick={() => i18n.changeLanguage('de')}
+          active={i18n.language === 'de'} to={''} />
+        <SidebarItem
+          label="English"
+          icon={<Flag code="GB" className="w-5 h-5 rounded-sm" />}
+          onClick={() => i18n.changeLanguage('en')}
+          active={i18n.language === 'en'} to={''} />
+        <SidebarItem
+          label="Türkçe"
+          icon={<Flag code="TR" className="w-5 h-5 rounded-sm" />}
+          onClick={() => i18n.changeLanguage('tr')}
+          active={i18n.language === 'tr'} to={''} />
+        <SidebarItem
+          label="Abmelden"
+          icon={<LogOut size={18} />}
+          onClick={handleLogout}
+          active={false} to={''} />
+      </div>
+    </aside>
   );
 }

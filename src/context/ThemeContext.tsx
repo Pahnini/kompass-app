@@ -1,4 +1,4 @@
-import React, { createContext, ReactNode, useEffect, useState } from 'react';
+import React, { createContext, ReactNode, useEffect, useState, useCallback, useMemo, useContext } from 'react';
 import type { BackgroundOptions } from '../data/backgrounds';
 import { backgrounds } from '../data/backgrounds';
 import type { Theme } from '../data/themes';
@@ -16,6 +16,16 @@ export interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 export { ThemeContext };
 
+export function useTheme() {
+  const context = useContext(ThemeContext);
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider');
+  }
+  return context;
+}
+
+
+
 export function ThemeProvider({ children }: { children: ReactNode }): React.ReactElement {
   const [theme, setThemeState] = useState<Theme>(() => {
     const saved = localStorage.getItem('kompass_theme');
@@ -23,27 +33,22 @@ export function ThemeProvider({ children }: { children: ReactNode }): React.Reac
     return found || modernBlueGrey;
   });
 
-  // Use useCallback to ensure stable reference for setTheme
-  const setTheme = React.useCallback((newTheme: Theme): void => {
+  const setTheme = useCallback((newTheme: Theme): void => {
     setThemeState(newTheme);
     localStorage.setItem('kompass_theme', newTheme.name);
   }, []);
 
   const [background, setBackgroundState] = useState<BackgroundOptions>(() => backgrounds[0]);
-  // Use useCallback to ensure stable reference for setBackground
-  const setBackground = React.useCallback((bg: BackgroundOptions): void => {
+  const setBackground = useCallback((bg: BackgroundOptions): void => {
     setBackgroundState(bg);
   }, []);
 
   useEffect(() => {
-    document.body.style.background = theme.bg;
-    document.body.style.fontFamily = theme.font;
-    document.body.style.color = theme.dark ? '#fff' : '#222';
-    document.body.className = theme.dark ? 'night' : '';
+    document.body.classList.remove('light', 'night');
+    document.body.classList.add(theme.dark ? 'night' : 'light');
   }, [theme]);
 
-  // Memoize the context value to prevent unnecessary re-renders
-  const value = React.useMemo<ThemeContextType>(
+  const value = useMemo<ThemeContextType>(
     () => ({
       theme,
       setTheme,

@@ -1,58 +1,50 @@
 import React from 'react';
-
-import { useTheme } from '../hooks/useTheme';
-import { useTranslation } from 'react-i18next'; // ✅
-import BackButton from './BackButton';
+import { useContext } from 'react';
+import { ThemeContext } from '../context/ThemeContext';
 
 export default function Designs(): React.ReactElement {
-  const { t: translate } = useTranslation();
   const {
-    theme: currentTheme,
+    theme,
     setTheme,
     background,
     setBackground,
     availableThemes,
-    availableBackgrounds,
-  } = useTheme();
-
+    availableBackgrounds
+  } = useContext(ThemeContext)!;
   return (
-    <div className="card">
-      <BackButton />
-      <h2>{translate('designs.title')}</h2>
-
-      <div className="theme-selector">
-        <label>{translate('designs.chooseTheme')}</label>
-        <div className="theme-options">
-          {availableThemes.map(theme => (
+    <div className="p-6 space-y-6 text-white">
+      <div>
+        <h2 className="text-lg font-semibold mb-2">Farbschema</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {availableThemes.map((t) => (
             <button
-              key={theme.name}
-              onClick={() => setTheme(theme)}
-              style={{
-                backgroundColor: theme.bg,
-                fontFamily: theme.font,
-                color: theme.dark ? '#fff' : '#000',
-                border:
-                  currentTheme.name === theme.name ? `3px solid ${theme.accent}` : '1px solid #ccc',
-              }}
+              key={t.name}
+              onClick={() => setTheme(t)}
+              className={`rounded-xl p-4 shadow-inner transition border border-white/10 hover:scale-105 duration-200 ${t.name === theme.name ? 'ring-2 ring-white' : ''}`}
+              style={{ backgroundColor: t.bg }}
             >
-              {translate(`designs.themes.${theme.name.toLowerCase().replace(/[^a-z]/g, '')}`) ||
-                theme.name}
+              <span className="block font-medium text-sm text-white/90">{t.name}</span>
             </button>
           ))}
         </div>
       </div>
 
-      <div className="background-selector">
-        <label>{translate('designs.chooseBackground')}</label>
-        <div className="background-options">
-          {availableBackgrounds.map(bg => (
+      <div>
+        <h2 className="text-lg font-semibold mb-2">Hintergrund</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          {availableBackgrounds.map((bg) => (
             <button
               key={bg.id}
-              className={`bg-button ${background.id === bg.id ? 'active' : ''}`}
               onClick={() => setBackground(bg)}
-              style={{ backgroundColor: bg.color, color: '#000' }} //171, 235, 198)
+              className={`rounded-xl overflow-hidden shadow-inner border border-white/10 transition hover:scale-105 duration-200 ${bg.id === background.id ? 'ring-2 ring-white' : ''}`}
             >
-              {translate(`designs.backgrounds.${bg.id}`) || bg.label}
+              {bg.url ? (
+                <img src={bg.url} alt={bg.name} className="w-full h-24 object-cover" />
+              ) : (
+                <div className="w-full h-24 bg-gray-700 flex items-center justify-center text-white text-sm">
+                  {bg.name}
+                </div>
+              )}
             </button>
           ))}
         </div>

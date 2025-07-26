@@ -65,9 +65,16 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
   const [wordFiles, setWordFilesState] = useState<WordFile[]>(
     () => storageService.get<WordFile[]>('wordFiles') ?? []
   );
-  const [skillsList, setSkillsListState] = useState<Skill[]>(
-    () => storageService.get<Skill[]>('skillsList') ?? defaultSkills
-  );
+  const [skillsList, setSkillsListState] = useState<Skill[]>(() => {
+    const stored = storageService.get<any[]>('skillsList');
+    if (!stored) return defaultSkills;
+
+    const normalized = stored.map(s =>
+      typeof s === 'string' ? { text: s, done: false } : s
+    );
+
+    return normalized;
+  });
   const [points, setPoints] = useState<number>(() => storageService.get<number>('points') ?? 0);
 
   // Calculate level and progress
@@ -112,6 +119,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
     setSkillsListState(value);
     storageService.set('skillsList', value);
   }, []);
+
 
   const addPoints = React.useCallback(
     (amount: number) => {

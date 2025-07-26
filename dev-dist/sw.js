@@ -20,21 +20,23 @@ if (!self.define) {
   let nextDefineUri;
 
   const singleRequire = (uri, parentUri) => {
-    uri = new URL(uri + '.js', parentUri).href;
-    return (
-      registry[uri] ||
-      new Promise(resolve => {
-        if ('document' in self) {
-          const script = document.createElement('script');
-          script.src = uri;
-          script.onload = resolve;
-          document.head.appendChild(script);
-        } else {
-          nextDefineUri = uri;
-          importScripts(uri);
-          resolve();
-        }
-      }).then(() => {
+    uri = new URL(uri + ".js", parentUri).href;
+    return registry[uri] || (
+      
+        new Promise(resolve => {
+          if ("document" in self) {
+            const script = document.createElement("script");
+            script.src = uri;
+            script.onload = resolve;
+            document.head.appendChild(script);
+          } else {
+            nextDefineUri = uri;
+            importScripts(uri);
+            resolve();
+          }
+        })
+      
+      .then(() => {
         let promise = registry[uri];
         if (!promise) {
           throw new Error(`Module ${uri} didn’t register its module`);
@@ -45,8 +47,7 @@ if (!self.define) {
   };
 
   self.define = (depsNames, factory) => {
-    const uri =
-      nextDefineUri || ('document' in self ? document.currentScript.src : '') || location.href;
+    const uri = nextDefineUri || ("document" in self ? document.currentScript.src : "") || location.href;
     if (registry[uri]) {
       // Module is already loading or loaded.
       return;
@@ -56,18 +57,17 @@ if (!self.define) {
     const specialDeps = {
       module: { uri },
       exports,
-      require,
+      require
     };
-    registry[uri] = Promise.all(
-      depsNames.map(depName => specialDeps[depName] || require(depName))
-    ).then(deps => {
+    registry[uri] = Promise.all(depsNames.map(
+      depName => specialDeps[depName] || require(depName)
+    )).then(deps => {
       factory(...deps);
       return exports;
     });
   };
 }
-define(['./workbox-d38da2cf'], function (workbox) {
-  'use strict';
+define(['./workbox-d38da2cf'], (function (workbox) { 'use strict';
 
   self.skipWaiting();
   workbox.clientsClaim();
@@ -77,70 +77,45 @@ define(['./workbox-d38da2cf'], function (workbox) {
    * requests for URLs in the manifest.
    * See https://goo.gl/S9QRab
    */
-  workbox.precacheAndRoute(
-    [
-      {
-        url: 'registerSW.js',
-        revision: '3ca0b8505b4bec776b69afdba2768812',
-      },
-      {
-        url: 'index.html',
-        revision: '0.2frp8ggnjlg',
-      },
-    ],
-    {}
-  );
+  workbox.precacheAndRoute([{
+    "url": "registerSW.js",
+    "revision": "3ca0b8505b4bec776b69afdba2768812"
+  }, {
+    "url": "index.html",
+    "revision": "0.igo7paephto"
+  }], {});
   workbox.cleanupOutdatedCaches();
-  workbox.registerRoute(
-    new workbox.NavigationRoute(workbox.createHandlerBoundToURL('index.html'), {
-      allowlist: [/^\/$/],
-    })
-  );
-  workbox.registerRoute(
-    /^https:\/\/fonts\.googleapis\.com\/.*/i,
-    new workbox.CacheFirst({
-      cacheName: 'google-fonts-stylesheets',
-      plugins: [
-        new workbox.ExpirationPlugin({
-          maxEntries: 10,
-          maxAgeSeconds: 31536000,
-        }),
-      ],
-    }),
-    'GET'
-  );
-  workbox.registerRoute(
-    /^https:\/\/fonts\.gstatic\.com\/.*/i,
-    new workbox.CacheFirst({
-      cacheName: 'google-fonts-webfonts',
-      plugins: [
-        new workbox.ExpirationPlugin({
-          maxEntries: 10,
-          maxAgeSeconds: 31536000,
-        }),
-      ],
-    }),
-    'GET'
-  );
-  workbox.registerRoute(
-    ({ url }) => url.pathname.startsWith('/assets/'),
-    new workbox.CacheFirst({
-      cacheName: 'app-assets',
-      plugins: [
-        new workbox.ExpirationPlugin({
-          maxEntries: 50,
-          maxAgeSeconds: 2592000,
-        }),
-      ],
-    }),
-    'GET'
-  );
-  workbox.registerRoute(
-    ({ url }) => url.origin === 'https://kompass-app.vercel.app',
-    new workbox.NetworkOnly({
-      cacheName: 'supabase-or-dynamic',
-      plugins: [],
-    }),
-    'GET'
-  );
-});
+  workbox.registerRoute(new workbox.NavigationRoute(workbox.createHandlerBoundToURL("index.html"), {
+    allowlist: [/^\/$/]
+  }));
+  workbox.registerRoute(/^https:\/\/fonts\.googleapis\.com\/.*/i, new workbox.CacheFirst({
+    "cacheName": "google-fonts-stylesheets",
+    plugins: [new workbox.ExpirationPlugin({
+      maxEntries: 10,
+      maxAgeSeconds: 31536000
+    })]
+  }), 'GET');
+  workbox.registerRoute(/^https:\/\/fonts\.gstatic\.com\/.*/i, new workbox.CacheFirst({
+    "cacheName": "google-fonts-webfonts",
+    plugins: [new workbox.ExpirationPlugin({
+      maxEntries: 10,
+      maxAgeSeconds: 31536000
+    })]
+  }), 'GET');
+  workbox.registerRoute(({
+    url
+  }) => url.pathname.startsWith("/assets/"), new workbox.CacheFirst({
+    "cacheName": "app-assets",
+    plugins: [new workbox.ExpirationPlugin({
+      maxEntries: 50,
+      maxAgeSeconds: 2592000
+    })]
+  }), 'GET');
+  workbox.registerRoute(({
+    url
+  }) => url.origin === "https://kompass-app.vercel.app", new workbox.NetworkOnly({
+    "cacheName": "supabase-or-dynamic",
+    plugins: []
+  }), 'GET');
+
+}));

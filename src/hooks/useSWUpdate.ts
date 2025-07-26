@@ -30,9 +30,9 @@ export function useSWUpdate() {
       });
     }
     // ✅ Debug-Modus (nur im Dev-Modus)
-    if (import.meta.env.DEV) {
-      setTimeout(() => setNewVersionAvailable(true), 5000); // nach 5 Sekunden simulieren
-    }
+    // if (import.meta.env.DEV) {
+    //   setTimeout(() => setNewVersionAvailable(true), 5000); // nach 5 Sekunden simulieren
+    // }
   }, []);
 
   const update = () => {

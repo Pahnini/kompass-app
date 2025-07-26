@@ -23,8 +23,8 @@ export default function GuideTab() {
       <section>
         <h3 className="text-lg font-semibold">📄 Was ist ein Nachteilsausgleich?</h3>
         <p className="text-sm text-gray-700 dark:text-gray-300">
-          Ein Nachteilsausgleich hilft dir z. B. bei Konzentrationsschwierigkeiten, Prüfungsangst
-          oder längeren Auszeiten. Du bekommst z. B. mehr Zeit für Klassenarbeiten oder darfst
+          Ein Nachteilsausgleich hilft dir z. B. bei Konzentrationsschwierigkeiten, Prüfungsangst
+          oder längeren Auszeiten. Du bekommst z. B. mehr Zeit für Klassenarbeiten oder darfst
           Pausen machen.
         </p>
       </section>

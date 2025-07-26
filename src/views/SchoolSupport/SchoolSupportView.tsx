@@ -3,7 +3,6 @@ import FilesTab from '../../components/SchoolSupport/FilesTab';
 import TransitionTab from '../../components/SchoolSupport/TransitionTab';
 import GuideTab from './GuideTab';
 import SchoolPlanTab from './SchoolPlanTab';
-import { useTranslation } from 'react-i18next'; // ✅
 import { t } from 'i18next';
 
 export default function SchoolSupportView() {

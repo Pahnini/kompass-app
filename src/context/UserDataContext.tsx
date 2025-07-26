@@ -118,7 +118,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       setPoints(currentPoints => {
         const newPoints = currentPoints + amount;
         const audio = new Audio(pointSound);
-        audio.play().catch(() => { }); // Falls Browser blockiert, kein Fehler
+        audio.play().catch(() => {}); // Falls Browser blockiert, kein Fehler
         storageService.set('points', newPoints);
 
         // Achievement logic
@@ -211,7 +211,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
 export function useUserData(): UserDataContextType {
   const context = React.useContext(UserDataContext);
   if (!context) {
-    throw new Error("useUserData must be used within a UserDataProvider");
+    throw new Error('useUserData must be used within a UserDataProvider');
   }
   return context;
 }

@@ -3,7 +3,6 @@ import { supabase } from '../../utils/supabase';
 import { useUser } from '@supabase/auth-helpers-react';
 import { useTranslation } from 'react-i18next'; // ✅
 
-
 type Props = {
   onCreated: () => void;
 };
@@ -48,7 +47,7 @@ export default function NewPlanForm({ onCreated }: Props) {
 
   return (
     <form
-      onSubmit={handleSubmit}
+      onSubmit={e => void handleSubmit(e)}
       className="space-y-4 bg-white dark:bg-slate-800 p-6 rounded-xl shadow-md mb-6"
     >
       <h3 className="text-lg font-semibold text-[#2f4f4f] dark:text-white">

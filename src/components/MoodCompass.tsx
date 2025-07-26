@@ -4,7 +4,6 @@ import { Compass } from 'lucide-react';
 import { moodMockResponses } from '../data/moodMockResponses';
 import { useTranslation } from 'react-i18next';
 
-
 const getMoods = (t: (key: string) => string) => [
   { label: t('moodCompass.moods.proud'), value: 'proud', color: '#00bfa5', group: 'positive' },
   { label: t('moodCompass.moods.hopeful'), value: 'hopeful', color: '#4caf50', group: 'positive' },

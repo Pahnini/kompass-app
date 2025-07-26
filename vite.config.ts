@@ -1,10 +1,11 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { VitePWA } from 'vite-plugin-pwa'
+import { VitePWA } from 'vite-plugin-pwa';
 
 export default defineConfig({
   plugins: [
     react(),
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.svg', 'robots.txt', 'apple-touch-icon.png'],
@@ -61,7 +62,7 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: ({ url }) => url.pathname.startsWith('/assets/'),
+            urlPattern: ({ url }: { url: URL }) => url.pathname.startsWith('/assets/'),
             handler: 'CacheFirst',
             options: {
               cacheName: 'app-assets',
@@ -72,7 +73,7 @@ export default defineConfig({
             },
           },
           {
-            urlPattern: ({ url }) => url.origin === 'https://kompass-app.vercel.app',
+            urlPattern: ({ url }: { url: URL }) => url.origin === 'https://kompass-app.vercel.app',
             handler: 'NetworkOnly',
             options: {
               cacheName: 'supabase-or-dynamic',

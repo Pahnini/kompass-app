@@ -75,6 +75,7 @@ export default function HomeScreen({
         <p>{t('home.appDescription')}</p>
         <p>{t('home.featuresDescription')}</p>
 
+
         {!username && (
           <div className="form-row" style={{ marginTop: '20px' }}>
             <input

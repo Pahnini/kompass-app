@@ -32,8 +32,10 @@ export default function Sidebar({
   }, []);
 
   const filteredItems = items.filter(
-    item => favorites.includes(item.key) || item.key === 'home' || item.key === 'quickedit'
-  );
+    item =>
+      favorites.includes(item.key) ||
+      ['home', 'quickedit', 'nova'].includes(item.key)
+  )
 
   const toggleSidebar = (): void => setIsOpen(!isOpen);
   const handleClick = (): void => {
@@ -99,6 +101,7 @@ export default function Sidebar({
             <span className="label">{t('navigation.achievements')}</span>
           </Link>
         </div>
+
 
         {/* Sprachumschaltung */}
         <div

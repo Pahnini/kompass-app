@@ -12,6 +12,7 @@ export default [
   {
     ignores: [
       'dist/**',
+      'dev-dist/**',
       'build/**',
       'node_modules/**',
       '*.min.js',
@@ -21,6 +22,8 @@ export default [
       '.vscode/**',
       '.idea/**',
       '*.log',
+      '**/sw.js',
+      '**/workbox-*.js',
     ],
   },
 

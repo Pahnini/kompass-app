@@ -20,7 +20,7 @@ export default function NotFound(): JSX.Element {
         }}
       >
         <button
-          onClick={() => navigate('/')}
+          onClick={() => void navigate('/')}
           style={{
             background: '#abebc6',
             color: '#2f4f4f',
@@ -34,7 +34,7 @@ export default function NotFound(): JSX.Element {
           {t('buttons.home')}
         </button>
         <button
-          onClick={() => navigate(-1)}
+          onClick={() => void navigate(-1)}
           style={{
             background: 'rgba(255, 255, 255, 0.1)',
             color: '#ffffff',

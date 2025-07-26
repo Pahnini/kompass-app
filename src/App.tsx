@@ -4,11 +4,11 @@ import { Route, Routes } from 'react-router-dom';
 import AchievementPopup from './components/AchievementPopup';
 import DatenschutzModal from './components/DatenschutzModal';
 import GlobalStyle from './components/GlobalStyle';
-import HomeScreen from './components/HomeScreen';
-import NotFound from './components/NotFound';
+import HomePage from './pages/HomePage';
+import NotFoundPage from './pages/NotFoundPage';
 import OnboardingModal from './components/OnboardingModal';
-import Sidebar from './components/Sidebar';
-import SmartLoading from './components/SmartLoading';
+import Sidebar from './components/layout/Sidebar';
+import SmartLoading from './components/ui/SmartLoading';
 import { emojiList } from './data/emojis';
 import { helpResources } from './data/helpResources';
 import { sidebarItems } from './data/navigation';
@@ -17,7 +17,7 @@ import { usePageTitle } from './hooks/usePageTitle';
 import { useTheme } from './hooks/useTheme';
 import { useUI } from './hooks/useUI';
 import { useUserData } from './hooks/useUserData';
-import AchievementsScreen from './screens/AchievementsScreen';
+import AchievementsPage from './pages/AchievementsPage';
 import { shareAchievement, shareSkill } from './utils/shareUtils';
 import { supabase } from './utils/supabase';
 import MoodCompassView from './views/MoodCompassView';
@@ -26,19 +26,19 @@ import PanicScreen from './views/PanicScreen';
 import OfflineToast from './components/OfflineToast';
 import InstallPromptBanner from './components/InstallPromptBanner';
 import UpdateToast from './components/UpdateToast';
-import LandingPage from './components/LandingPage';
+import LandingPage from './pages/LandingPage';
 import { NovaAssistant } from './components/NovaAssistant';
 import { useLocation } from 'react-router-dom';
 import NovaSettings from './views/NovaSettings';
 
 // Lazy-loaded Komponenten
-const Chatbot = lazy(() => import('./components/Chatbot'));
-const DeinWeg = lazy(() => import('./components/DeinWeg'));
-const Designs = lazy(() => import('./components/Designs'));
-const Guide = lazy(() => import('./components/Guide'));
-const Notfall = lazy(() => import('./components/Notfall'));
-const QuickEdit = lazy(() => import('./components/QuickEdit'));
-const Skills = lazy(() => import('./components/Skills'));
+const ChatPage = lazy(() => import('./pages/ChatPage'));
+const GoalsPage = lazy(() => import('./pages/GoalsPage'));
+const DesignsPage = lazy(() => import('./pages/DesignsPage'));
+const GuidePage = lazy(() => import('./pages/GuidePage'));
+const EmergencyPage = lazy(() => import('./pages/EmergencyPage'));
+const QuickEditPage = lazy(() => import('./pages/QuickEditPage'));
+const SkillsPage = lazy(() => import('./pages/SkillsPage'));
 
 function AuthenticatedApp() {
   usePageTitle();
@@ -112,7 +112,7 @@ function AuthenticatedApp() {
             <Route
               path="/"
               element={
-                <HomeScreen
+                <HomePage
                   username={username}
                   setUsername={setUsername}
                   quickItems={favorites}
@@ -121,7 +121,7 @@ function AuthenticatedApp() {
                 />
               }
             />
-            <Route path="/achievements" element={<AchievementsScreen />} />
+            <Route path="/achievements" element={<AchievementsPage />} />
             <Route path="/mood" element={<MoodCompassView />} />
             <Route path="/school" element={<SchoolSupportView />} />
             <Route path="/panic" element={<PanicScreen />} />
@@ -129,7 +129,7 @@ function AuthenticatedApp() {
             <Route
               path="/deinweg"
               element={
-                <DeinWeg
+                <GoalsPage
                   goals={goals}
                   setGoals={setGoals}
                   achievements={achievements}
@@ -148,7 +148,7 @@ function AuthenticatedApp() {
             <Route
               path="/skills"
               element={
-                <Skills
+                <SkillsPage
                   shareSkill={shareSkill}
                   wordFiles={wordFiles}
                   setWordFiles={setWordFiles}
@@ -157,21 +157,21 @@ function AuthenticatedApp() {
                 />
               }
             />
-            <Route path="/notfall" element={<Notfall helpResources={helpResources} />} />
-            <Route path="/designs" element={<Designs />} />
-            <Route path="/guide" element={<Guide />} />
-            <Route path="/chat" element={<Chatbot />} />
+            <Route path="/notfall" element={<EmergencyPage helpResources={helpResources} />} />
+            <Route path="/designs" element={<DesignsPage />} />
+            <Route path="/guide" element={<GuidePage />} />
+            <Route path="/chat" element={<ChatPage />} />
             <Route
               path="/quickedit"
               element={
-                <QuickEdit
+                <QuickEditPage
                   quickItems={favorites}
                   setQuickItems={setFavorites}
                   allItems={sidebarItems}
                 />
               }
             />
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </Suspense>
       </main>

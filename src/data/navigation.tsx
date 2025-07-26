@@ -25,7 +25,6 @@ export const sidebarItems: SidebarItem[] = [
     key: 'nova',
     label: 'Nova',
     icon: <Bot />,
-    path: '/nova',
   },
   { key: 'designs', label: 'navigation.designs', icon: <Paintbrush size={18} /> },
   { key: 'notfall', label: 'navigation.notfall', icon: <AlertCircle size={18} /> },

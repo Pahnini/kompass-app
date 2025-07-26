@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import MoodCompass from '../components/MoodCompass';
+import MoodCompass from '../components/shared/MoodCompass';
 import { Emoji } from '../data/emojis';
 import { useTranslation } from 'react-i18next';
 import { Achievement, CalendarNotes, Goal, Symptoms } from '../types/index';
 import { showErrorToast, showSuccessToast } from '../utils/toastUtils';
-import BackButton from './BackButton';
-import DeleteButton from './DeleteButton';
-import ShareButton from './ShareButton';
+import BackButton from '../components/ui/BackButton';
+import DeleteButton from '../components/ui/DeleteButton';
+import ShareButton from '../components/ui/ShareButton';
 
 interface DeinWegProps {
   goals: Goal[];

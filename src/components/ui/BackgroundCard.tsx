@@ -1,7 +1,7 @@
 // src/components/BackgroundCard.tsx
 
 import React from 'react';
-import type { BackgroundOptions } from '../data/backgrounds';
+import type { BackgroundOptions } from '../../data/backgrounds';
 
 interface BackgroundCardProps {
   background: BackgroundOptions;

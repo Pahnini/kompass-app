@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next';
 import type { Skill, WordFile } from '../types/index';
 import { showSuccessToast } from '../utils/toastUtils';
 import { parseWordDocument } from '../utils/wordParser';
-import BackButton from './BackButton';
-import DeleteButton from './DeleteButton';
-import Loading from './Loading';
-import ShareButton from './ShareButton';
-import WordFilePreview from './WordFilePreview';
+import BackButton from '../components/ui/BackButton';
+import DeleteButton from '../components/ui/DeleteButton';
+import Loading from '../components/ui/Loading';
+import ShareButton from '../components/ui/ShareButton';
+import WordFilePreview from '../components/WordFilePreview';
 
 interface SkillsProps {
   shareSkill: (skill: string) => void;

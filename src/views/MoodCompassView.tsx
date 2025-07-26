@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import MoodCompass from '../components/MoodCompass';
+import MoodCompass from '../components/shared/MoodCompass';
 import { t } from 'i18next';
 
 const MoodCompassView: React.FC = () => {

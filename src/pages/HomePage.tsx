@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useUserData } from '../hooks/useUserData';
 import type { SidebarItem } from '../types/index';
-import './HomeScreen.css';
-import SortableQuickList from './SortableQuickList';
+import './HomePage.css';
+import SortableQuickList from '../components/shared/SortableQuickList';
 import { useQuests } from '../hooks/useQuest';
-import { QuestTracker } from '../components/QuestTracker';
-import PanicButton from '../components/PanicButton';
+import { QuestTracker } from '../components/shared/QuestTracker';
+import PanicButton from '../components/shared/PanicButton';
 
 interface HomeScreenProps {
   username: string;

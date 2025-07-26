@@ -1,6 +1,6 @@
 import { useUser } from '@supabase/auth-helpers-react';
 import { useCallback, useEffect, useState } from 'react';
-import NewPlanForm from '../../components/SchoolSupport/NewPlanForm';
+import NewPlanForm from '../../components/forms/NewPlanForm';
 import { useTranslation } from 'react-i18next'; // ✅
 import { supabase } from '../../utils/supabase';
 

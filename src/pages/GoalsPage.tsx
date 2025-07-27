@@ -171,7 +171,9 @@ export default function DeinWeg({
             </h4>
             {emoji && <div style={{ fontSize: '24px', marginBottom: '5px' }}>{emoji}</div>}
             {currentNote.text && (
-              <div style={{ fontStyle: 'italic', color: '#555' }}>"{currentNote.text}"</div>
+              <div style={{ fontStyle: 'italic', color: '#555' }}>
+                &ldquo;{currentNote.text}&rdquo;
+              </div>
             )}
             {symptoms[selectedDate] && symptoms[selectedDate].length > 0 && (
               <div style={{ marginTop: '5px', color: '#666' }}>

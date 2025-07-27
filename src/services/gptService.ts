@@ -1,5 +1,17 @@
 import { moodMockResponses } from '../data/moodMockResponses';
 
+interface OpenAIMessage {
+  content: string;
+}
+
+interface OpenAIChoice {
+  message: OpenAIMessage;
+}
+
+interface OpenAIResponse {
+  choices: OpenAIChoice[];
+}
+
 export async function fetchGPTResponse(mood: string): Promise<string> {
   const useMock = !import.meta.env.VITE_OPENAI_API_KEY;
 
@@ -32,7 +44,7 @@ export async function fetchGPTResponse(mood: string): Promise<string> {
       }),
     });
 
-    const data = await response.json();
+    const data = (await response.json()) as OpenAIResponse;
 
     if (!data.choices || !data.choices[0]?.message?.content) {
       console.warn('Unvollständige Antwort von GPT:', data);

@@ -30,7 +30,7 @@ export default function FilesTab() {
       }
     };
 
-    loadFiles();
+    void loadFiles();
   }, [user]);
 
   const handleUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,7 +76,7 @@ export default function FilesTab() {
         <span style={{ color: 'white' }}>{t('schoolSupport.uploadFile')}</span>
         <input
           type="file"
-          onChange={handleUpload}
+          onChange={e => void handleUpload(e)}
           disabled={uploading}
           className="mt-1 block w-full text-sm file:mr-4 file:py-2 file:px-4
             file:rounded-lg file:border-0

@@ -32,7 +32,7 @@ export default function TransitionTab() {
   }, [user]);
 
   useEffect(() => {
-    fetchGoals();
+    void fetchGoals();
   }, [fetchGoals]);
 
   const markAsDone = async (id: string) => {
@@ -42,7 +42,7 @@ export default function TransitionTab() {
       .eq('id', id)
       .eq('user_id', user?.id);
 
-    if (!error) fetchGoals();
+    if (!error) void fetchGoals();
   };
 
   const doneCount = goals.filter(g => g.status === 'done').length;
@@ -101,7 +101,7 @@ export default function TransitionTab() {
 
               {goal.status !== 'done' && (
                 <button
-                  onClick={() => markAsDone(goal.id)}
+                  onClick={() => void markAsDone(goal.id)}
                   className="mt-3 inline-block bg-[#2f4f4f] text-white text-sm px-4 py-1.5 rounded-lg hover:bg-[#0b9444] transition"
                 >
                   {t('buttons.markAchieved')}

@@ -1,6 +1,6 @@
 import { useUser } from '@supabase/auth-helpers-react';
 import { useCallback, useEffect, useState } from 'react';
-import NewPlanForm from '../../components/SchoolSupport/NewPlanForm';
+import NewPlanForm from '../../components/forms/NewPlanForm';
 import { useTranslation } from 'react-i18next'; // ✅
 import { supabase } from '../../utils/supabase';
 
@@ -36,7 +36,7 @@ export default function SchoolPlanTab() {
   }, [user]);
 
   useEffect(() => {
-    fetchPlans();
+    void fetchPlans();
   }, [fetchPlans]);
 
   const markAsDone = async (id: string) => {
@@ -49,7 +49,7 @@ export default function SchoolPlanTab() {
     if (error) {
       console.error(t('schoolSupport.errorUpdating'), error);
     } else {
-      fetchPlans();
+      void fetchPlans();
     }
   };
 
@@ -59,7 +59,7 @@ export default function SchoolPlanTab() {
     <div>
       <h2>{t('schoolSupport.myLearningPlans')}</h2>
 
-      <NewPlanForm onCreated={fetchPlans} />
+      <NewPlanForm onCreated={() => void fetchPlans()} />
 
       {plans.length === 0 ? (
         <p style={{ color: 'white' }}>{t('schoolSupport.noPlans')}</p>
@@ -83,7 +83,7 @@ export default function SchoolPlanTab() {
 
               {plan.status !== 'done' && (
                 <button
-                  onClick={() => markAsDone(plan.id)}
+                  onClick={() => void markAsDone(plan.id)}
                   className="mt-3 inline-block bg-[#2f4f4f] text-white text-sm px-4 py-1.5 rounded-lg hover:bg-[#0b9444] transition"
                 >
                   {t('buttons.markAchieved')}

@@ -2,9 +2,9 @@ import { Award, GraduationCap } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
-import { useUserData } from '../hooks/useUserData';
-import type { SidebarItem } from '../types/index';
-import { supabase } from '../utils/supabase';
+import { useUserData } from '../../hooks/useUserData';
+import type { SidebarItem } from '../../types/index';
+import { supabase } from '../../utils/supabase';
 
 interface SidebarProps {
   items: SidebarItem[];

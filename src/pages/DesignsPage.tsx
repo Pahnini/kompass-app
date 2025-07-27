@@ -2,7 +2,7 @@ import React from 'react';
 
 import { useTheme } from '../hooks/useTheme';
 import { useTranslation } from 'react-i18next'; // ✅
-import BackButton from './BackButton';
+import BackButton from '../components/ui/BackButton';
 
 export default function Designs(): React.ReactElement {
   const { t: translate } = useTranslation();

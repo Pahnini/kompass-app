@@ -1,6 +1,6 @@
 import React from 'react';
-import type { Theme } from '../data/themes';
-import { themes } from '../data/themes';
+import type { Theme } from '../../data/themes';
+import { themes } from '../../data/themes';
 
 interface ThemeSelectorProps {
   currentTheme: string;

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import MoodCompass from '../components/MoodCompass';
+import MoodCompass from '../components/shared/MoodCompass';
 import { Emoji } from '../data/emojis';
 import { useTranslation } from 'react-i18next';
 import { Achievement, CalendarNotes, Goal, Symptoms } from '../types/index';
 import { showErrorToast, showSuccessToast } from '../utils/toastUtils';
-import BackButton from './BackButton';
-import DeleteButton from './DeleteButton';
-import ShareButton from './ShareButton';
+import BackButton from '../components/ui/BackButton';
+import DeleteButton from '../components/ui/DeleteButton';
+import ShareButton from '../components/ui/ShareButton';
 
 interface DeinWegProps {
   goals: Goal[];
@@ -171,7 +171,9 @@ export default function DeinWeg({
             </h4>
             {emoji && <div style={{ fontSize: '24px', marginBottom: '5px' }}>{emoji}</div>}
             {currentNote.text && (
-              <div style={{ fontStyle: 'italic', color: '#555' }}>"{currentNote.text}"</div>
+              <div style={{ fontStyle: 'italic', color: '#555' }}>
+                &ldquo;{currentNote.text}&rdquo;
+              </div>
             )}
             {symptoms[selectedDate] && symptoms[selectedDate].length > 0 && (
               <div style={{ marginTop: '5px', color: '#666' }}>

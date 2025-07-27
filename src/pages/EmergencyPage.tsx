@@ -1,8 +1,8 @@
 import React from 'react';
 import { HelpResource } from '../data/helpResources';
-import BackButton from './BackButton';
+import BackButton from '../components/ui/BackButton';
 import { useTranslation } from 'react-i18next';
-import FailsafeWrapper from './FailsafeWrapper';
+import FailsafeWrapper from '../components/FailsafeWrapper';
 
 interface NotfallProps {
   helpResources: HelpResource[];

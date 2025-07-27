@@ -1,13 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import BackButton from '../components/ui/BackButton';
+import DeleteButton from '../components/ui/DeleteButton';
+import Loading from '../components/ui/Loading';
+import ShareButton from '../components/ui/ShareButton';
+import WordFilePreview from '../components/WordFilePreview';
 import type { Skill, WordFile } from '../types/index';
 import { showSuccessToast } from '../utils/toastUtils';
 import { parseWordDocument } from '../utils/wordParser';
-import BackButton from './BackButton';
-import DeleteButton from './DeleteButton';
-import Loading from './Loading';
-import ShareButton from './ShareButton';
-import WordFilePreview from './WordFilePreview';
 
 interface SkillsProps {
   shareSkill: (skill: string) => void;
@@ -30,7 +30,7 @@ export default function Skills({
 }: SkillsProps): React.ReactElement {
   const { t } = useTranslation();
   const [done, setDone] = useState<SkillsDoneState>(
-    () => JSON.parse(localStorage.getItem('kompass_skills_done') || '{}') || {}
+    () => (JSON.parse(localStorage.getItem('kompass_skills_done') || '{}') as SkillsDoneState) || {}
   );
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [parsedLines, setParsedLines] = useState<string[]>([]);
@@ -79,7 +79,6 @@ export default function Skills({
       setSkillsList([...skillsList, newSkill.trim()]);
       setNewSkill('');
       showSuccessToast(t('success.skillAdded').replace('{skill}', newSkill.trim()));
-      // Focus the input field after adding
       if (inputRef.current) {
         inputRef.current.focus();
       }
@@ -150,10 +149,10 @@ export default function Skills({
                     const keyNum = parseInt(key);
                     if (keyNum < i) {
                       // Indices before the deleted item remain the same
-                      newDone[keyNum] = value;
+                      newDone[keyNum] = value as boolean;
                     } else if (keyNum > i) {
                       // Indices after the deleted item shift down by 1
-                      newDone[keyNum - 1] = value;
+                      newDone[keyNum - 1] = value as boolean;
                     }
                     // The deleted item's done state is removed
                   });
@@ -272,7 +271,7 @@ export default function Skills({
           <input
             type="file"
             accept=".doc,.docx,application/msword"
-            onChange={handleFile}
+            onChange={e => void handleFile(e)}
             style={{ display: 'block', marginTop: 7 }}
           />
         </label>

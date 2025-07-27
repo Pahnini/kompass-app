@@ -3,7 +3,7 @@ import { ThemeSupa } from '@supabase/auth-ui-shared';
 import React, { useState } from 'react';
 import compassImg from '../assets/kompass-welcome.png';
 import { supabase } from '../utils/supabase';
-import './WelcomeScreen.css';
+import './WelcomePage.css';
 
 export default function WelcomeScreen(): React.ReactElement {
   const [authView, setAuthView] = useState<'sign_in' | 'magic_link'>('sign_in');

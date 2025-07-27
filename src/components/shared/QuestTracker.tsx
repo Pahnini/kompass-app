@@ -1,5 +1,5 @@
 // src/components/QuestTracker.tsx
-import { useQuests } from '../hooks/useQuest';
+import { useQuests } from '../../hooks/useQuest';
 import { useTranslation } from 'react-i18next';
 
 export const QuestTracker = () => {

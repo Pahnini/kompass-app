@@ -1,5 +1,5 @@
 import React from 'react';
-import BackButton from './BackButton';
+import BackButton from '../components/ui/BackButton';
 import { useTranslation } from 'react-i18next';
 
 export default function Guide(): React.ReactElement {

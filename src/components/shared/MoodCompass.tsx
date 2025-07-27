@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Compass } from 'lucide-react';
-import { moodMockResponses } from '../data/moodMockResponses';
+import { moodMockResponses } from '../../data/moodMockResponses';
 import { useTranslation } from 'react-i18next';
 
 const getMoods = (t: (key: string) => string) => [

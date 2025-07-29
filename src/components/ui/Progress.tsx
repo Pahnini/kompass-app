@@ -1,4 +1,3 @@
-
 type ProgressProps = {
   value: number;
   className?: string;

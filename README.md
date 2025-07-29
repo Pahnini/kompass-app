@@ -48,6 +48,17 @@ Die App läuft dann unter `http://localhost:5173`.
 
 ---
 
+## 📚 Documentation
+
+Comprehensive documentation and development resources:
+
+- **[📖 Full Documentation](docs_and_scripts/)** - Complete documentation index
+- **[🤝 Contributing Guide](docs_and_scripts/contributing/)** - How to contribute
+- **[🔧 Development Docs](docs_and_scripts/development/)** - Roadmaps and guides
+- **[✨ Feature Specs](docs_and_scripts/features/)** - Feature documentation
+
+---
+
 ## 🤝 Mitmachen
 
 Du willst helfen? Großartig! Jede Unterstützung ist willkommen – ob UX-Ideen, Bugfixes oder neue Features.

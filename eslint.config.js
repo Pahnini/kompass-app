@@ -1,11 +1,12 @@
 // eslint.config.js
 import js from '@eslint/js';
 import globals from 'globals';
-import tseslint from 'typescript-eslint';
+import parser from '@typescript-eslint/parser';
 import react from 'eslint-plugin-react';
+import tseslint from '@typescript-eslint/eslint-plugin';
 
 export default [
-  // Base configuration for all files
+  // Base configuration
   js.configs.recommended,
 
   // Global ignores
@@ -27,7 +28,7 @@ export default [
     ],
   },
 
-  // Configuration for JavaScript files (including config files)
+  // JavaScript configuration
   {
     files: ['**/*.js', '**/*.jsx'],
     languageOptions: {
@@ -51,31 +52,30 @@ export default [
     },
   },
 
-  // TypeScript configuration - only apply to TypeScript files
-  ...tseslint.configs.recommendedTypeChecked.map(config => ({
-    ...config,
-    files: ['**/*.ts', '**/*.tsx'],
-  })),
-
-  // Override configuration for TypeScript files
+  // TypeScript configuration
   {
     files: ['**/*.ts', '**/*.tsx'],
     languageOptions: {
+      parser,
+      parserOptions: {
+        project: './tsconfig.eslint.json',
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+      },
       globals: {
         ...globals.browser,
         ...globals.node,
       },
-      parserOptions: {
-        project: './tsconfig.eslint.json',
-      },
     },
     plugins: {
+      '@typescript-eslint': tseslint,
       react,
     },
     rules: {
       'react/react-in-jsx-scope': 'off',
       'react/jsx-no-duplicate-props': 'error',
       'react/no-unescaped-entities': 'warn',
+      '@typescript-eslint/no-unused-vars': 'warn',
     },
     settings: {
       react: {

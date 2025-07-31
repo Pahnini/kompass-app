@@ -8,7 +8,7 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 
 export default [
-  { 
+  {
     ignores: [
       'dist',
       'dev-dist',
@@ -24,8 +24,8 @@ export default [
       '.vscode',
       '.idea',
       '.DS_Store',
-      'Thumbs.db'
-    ] 
+      'Thumbs.db',
+    ],
   },
   {
     files: ['**/*.{js,jsx}'],

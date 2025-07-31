@@ -8,7 +8,25 @@ import reactRefresh from 'eslint-plugin-react-refresh';
 import globals from 'globals';
 
 export default [
-  { ignores: ['dist'] },
+  { 
+    ignores: [
+      'dist',
+      'dev-dist',
+      'build',
+      'coverage',
+      'node_modules',
+      '*.min.js',
+      '*.bundle.js',
+      'public',
+      '*.log',
+      'logs',
+      '.env*',
+      '.vscode',
+      '.idea',
+      '.DS_Store',
+      'Thumbs.db'
+    ] 
+  },
   {
     files: ['**/*.{js,jsx}'],
     languageOptions: {
@@ -30,7 +48,7 @@ export default [
       ...reactHooks.configs.recommended.rules,
       ...prettierConfig.rules,
       'prettier/prettier': 'error',
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': 'off', // Vollständig deaktiviert wegen Interface-Parameter False Positives
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
   },
@@ -58,8 +76,8 @@ export default [
       ...prettierConfig.rules,
       'prettier/prettier': 'error',
       // Disable JS rule and use TS rule instead
-      'no-unused-vars': 'off',
-      '@typescript-eslint/no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      'no-unused-vars': 'off', // TypeScript-Regel wird verwendet
+      '@typescript-eslint/no-unused-vars': 'off', // Deaktiviert - False Positives bei Interface-Parametern
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',

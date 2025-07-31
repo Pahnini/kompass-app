@@ -1,0 +1,67 @@
+
+> kompass-app@0.0.0 lint
+> eslint .
+
+
+/home/thor/Documents/kompass-app/src/components/QuickAccess.tsx
+  7:20  error  'page' is defined but never used  no-unused-vars
+
+/home/thor/Documents/kompass-app/src/components/WordFilePreview.tsx
+  7:17  error  'skills' is defined but never used  no-unused-vars
+
+/home/thor/Documents/kompass-app/src/components/layout/Sidebar.tsx
+  12:15  error  'isOpen' is defined but never used  no-unused-vars
+
+/home/thor/Documents/kompass-app/src/components/shared/MoodCompass.tsx
+   7:23  error  'key' is defined but never used    no-unused-vars
+  25:18  error  'value' is defined but never used  no-unused-vars
+
+/home/thor/Documents/kompass-app/src/components/shared/SortableQuickList.tsx
+  26:14  error  'newItems' is defined but never used  no-unused-vars
+
+/home/thor/Documents/kompass-app/src/components/ui/ThemeSelector.tsx
+  7:14  error  'theme' is defined but never used  no-unused-vars
+
+/home/thor/Documents/kompass-app/src/context/ThemeContext.tsx
+   9:14  error  'theme' is defined but never used  no-unused-vars
+  11:19  error  'bg' is defined but never used     no-unused-vars
+
+/home/thor/Documents/kompass-app/src/context/UIContext.tsx
+   6:20  error  'show' is defined but never used  no-unused-vars
+   8:22  error  'open' is defined but never used  no-unused-vars
+  10:15  error  'show' is defined but never used  no-unused-vars
+  12:19  error  'show' is defined but never used  no-unused-vars
+  14:15  error  'msg' is defined but never used   no-unused-vars
+
+/home/thor/Documents/kompass-app/src/context/UserDataContext.tsx
+  12:17  error  'username' is defined but never used      no-unused-vars
+  14:14  error  'goals' is defined but never used         no-unused-vars
+  16:21  error  'achievements' is defined but never used  no-unused-vars
+  18:22  error  'notes' is defined but never used         no-unused-vars
+  20:17  error  'symptoms' is defined but never used      no-unused-vars
+  22:18  error  'favorites' is defined but never used     no-unused-vars
+  24:18  error  'files' is defined but never used         no-unused-vars
+  26:19  error  'skills' is defined but never used        no-unused-vars
+  29:15  error  'amount' is defined but never used        no-unused-vars
+
+/home/thor/Documents/kompass-app/src/pages/GoalsPage.tsx
+  13:14  error  'goals' is defined but never used         no-unused-vars
+  15:21  error  'achievements' is defined but never used  no-unused-vars
+  17:22  error  'notes' is defined but never used         no-unused-vars
+  19:17  error  'symptoms' is defined but never used      no-unused-vars
+  20:22  error  'achievement' is defined but never used   no-unused-vars
+
+/home/thor/Documents/kompass-app/src/pages/HomePage.tsx
+  15:17  error  'username' is defined but never used  no-unused-vars
+  18:18  error  'items' is defined but never used     no-unused-vars
+
+/home/thor/Documents/kompass-app/src/pages/QuickEditPage.tsx
+  8:19  error  'items' is defined but never used  no-unused-vars
+
+/home/thor/Documents/kompass-app/src/pages/SkillsPage.tsx
+  13:16  error  'skill' is defined but never used   no-unused-vars
+  15:18  error  'files' is defined but never used   no-unused-vars
+  17:19  error  'skills' is defined but never used  no-unused-vars
+
+✖ 34 problems (34 errors, 0 warnings)
+

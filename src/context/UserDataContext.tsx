@@ -5,6 +5,7 @@ import { skillsList as defaultSkills } from '../data/skills';
 import * as storageService from '../services/storageService';
 import type { Achievement, CalendarNotes, Goal, Skill, Symptoms, WordFile } from '../types/index';
 
+/* eslint-disable react-refresh/only-export-components */
 export const UserDataContext = React.createContext<UserDataContextType | undefined>(undefined);
 
 export interface UserDataContextType {

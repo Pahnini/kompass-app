@@ -78,6 +78,26 @@ Du willst helfen? Großartig! Jede Unterstützung ist willkommen – ob UX-Ideen
 - `UX`: Design & Benutzerfreundlichkeit
 - `help wanted`: Ideen oder Unterstützung gesucht
 
+### 🤖 Automated Sync Scripts
+
+For contributors: We provide automated scripts to streamline the contribution workflow:
+
+```bash
+cd scripts
+./sync-to-main.sh    # Automated sync to main repository with PR creation
+./quick-sync.sh      # Quick sync for experienced contributors
+./setup-repo.sh      # One-time repository setup
+```
+
+**Features:**
+
+- ✅ Automatic rebase onto upstream/main
+- ✅ Safe force-push with `--force-with-lease`
+- ✅ Automated Pull Request creation (with GitHub CLI)
+- ✅ Comprehensive error handling
+
+📖 **[Full Documentation](scripts/SYNC_SCRIPTS_README.md)**
+
 ---
 
 ## 📂 Projektstruktur

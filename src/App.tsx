@@ -3,7 +3,6 @@ import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import AchievementPopup from './components/AchievementPopup';
 import DatenschutzModal from './components/DatenschutzModal';
-import GlobalStyle from './components/GlobalStyle';
 import HomePage from './pages/HomePage';
 import NotFoundPage from './pages/NotFoundPage';
 import OnboardingModal from './components/OnboardingModal';
@@ -93,7 +92,6 @@ function AuthenticatedApp() {
 
   return (
     <div>
-      <GlobalStyle />
       <Sidebar
         items={sidebarItems}
         isOpen={isSidebarOpen}

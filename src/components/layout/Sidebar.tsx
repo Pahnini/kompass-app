@@ -1,10 +1,11 @@
-import { Award, GraduationCap } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
-import { useUserData } from '../../hooks/useUserData';
-import type { SidebarItem } from '../../types/index';
+import { useTranslation } from 'react-i18next';
+import { GraduationCap, Award } from 'lucide-react';
 import { supabase } from '../../utils/supabase';
+import { useUserData } from '../../hooks/useUserData';
+import { motion } from 'framer-motion';
+import type { SidebarItem } from '../../types/index';
 
 interface SidebarProps {
   items: SidebarItem[];
@@ -13,16 +14,10 @@ interface SidebarProps {
   favorites?: string[];
 }
 
-export default function Sidebar({
-  items,
-  isOpen,
-  setIsOpen,
-  favorites = [],
-}: SidebarProps): React.ReactElement {
-  const [isDesktop, setIsDesktop] = useState<boolean>(window.innerWidth > 700);
+export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }: SidebarProps) {
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 700);
   const location = useLocation();
   const { points } = useUserData();
-
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
@@ -32,112 +27,104 @@ export default function Sidebar({
   }, []);
 
   const filteredItems = items.filter(
-    item => favorites.includes(item.key) || ['home', 'quickedit', 'nova'].includes(item.key)
+    (item) => favorites.includes(item.key) || ['home', 'quickedit', 'nova'].includes(item.key)
   );
 
-  const toggleSidebar = (): void => setIsOpen(!isOpen);
-  const handleClick = (): void => {
-    if (!isDesktop) {
-      setTimeout(() => setIsOpen(false), 300);
-    }
+  const getPath = (key: string) => (key === 'home' ? '/' : `/${key}`);
+
+  const handleClick = () => {
+    if (!isDesktop) setTimeout(() => setIsOpen(false), 300);
   };
 
-  const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
+  const sidebarClasses = `fixed top-0 left-0 h-full z-40 bg-primary text-white w-64 transform transition-transform duration-300 ease-in-out
+    ${isOpen || isDesktop ? 'translate-x-0' : '-translate-x-full'}`;
 
   return (
     <>
       {!isDesktop && (
         <button
-          className="sidebar-toggle-mobile"
-          onClick={toggleSidebar}
+          className="fixed top-4 left-4 z-50 p-2 bg-primary text-white rounded-md shadow-md"
+          onClick={() => setIsOpen(!isOpen)}
           aria-label={t('sidebar.openMenu')}
         >
           ☰
         </button>
       )}
 
-      <aside className={`sidebar ${isOpen || isDesktop ? 'open' : ''}`}>
-        <div className="sidebar-content">
-          {/* Punktestand anzeigen */}
-          <div className="sidebar-points">{t('sidebar.points', { points })}</div>
+      <motion.aside
+        initial={{ x: -300 }}
+        animate={{ x: isOpen || isDesktop ? 0 : -300 }}
+        transition={{ duration: 0.3 }}
+        className={sidebarClasses}
+      >
+        <div className="flex flex-col h-full justify-between">
+          <div className="p-4 space-y-2 overflow-y-auto">
+            <div className="text-center text-sm mb-4">
+              {t('sidebar.points', { points })}
+            </div>
 
-          {filteredItems.map(item => (
+            {filteredItems.map((item) => (
+              <Link
+                key={item.key}
+                to={getPath(item.key)}
+                onClick={handleClick}
+                className={`flex items-center gap-3 px-4 py-2 rounded-md transition text-sm font-medium
+                  ${location.pathname === getPath(item.key) ? 'bg-white/10 text-white' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
+              >
+                <span className="text-base">{item.icon}</span>
+                <span>{t(item.label)}</span>
+              </Link>
+            ))}
+
             <Link
-              key={item.key}
-              to={getPath(item.key)}
-              className={`sidebar-item ${location.pathname === getPath(item.key) ? 'active' : ''}`}
+              to="/school"
               onClick={handleClick}
+              className={`flex items-center gap-3 px-4 py-2 rounded-md transition text-sm font-medium
+                ${location.pathname === '/school' ? 'bg-white/10 text-white' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
             >
-              <span className="icon">{item.icon as React.ReactNode}</span>
-              <span className="label">{t(item.label)}</span>
-            </Link>
-          ))}
-
-          {/* Klinikschule */}
-          <Link
-            to="/school"
-            className={`sidebar-item ${location.pathname === '/school' ? 'active' : ''}`}
-            onClick={handleClick}
-          >
-            <span className="icon">
               <GraduationCap size={18} />
-            </span>
-            <span className="label">{t('navigation.schoolSupport')}</span>
-          </Link>
+              <span>{t('navigation.schoolSupport')}</span>
+            </Link>
 
-          {/* Erfolge */}
-          <Link
-            to="/achievements"
-            className={`sidebar-item ${location.pathname === '/achievements' ? 'active' : ''}`}
-            onClick={handleClick}
-          >
-            <span className="icon">
-              <Award size={18} />
-            </span>
-            <span className="label">{t('navigation.achievements')}</span>
-          </Link>
-        </div>
-
-        {/* Sprachumschaltung */}
-        <div
-          className="sidebar-language-toggle"
-          style={{ display: 'flex', gap: 8, justifyContent: 'center', margin: '12px 0' }}
-        >
-          {[
-            { code: 'de', emoji: '🇩🇪' },
-            { code: 'en', emoji: '🇬🇧' },
-            { code: 'tr', emoji: '🇹🇷' },
-          ].map(({ code, emoji }) => (
-            <button
-              key={code}
-              aria-label={t(`sidebar.languages.${code}`, code.toUpperCase())}
-              style={{
-                background: 'none',
-                border: 'none',
-                fontSize: 24,
-                opacity: i18n.language === code ? 1 : 0.5,
-                cursor: 'pointer',
-              }}
-              onClick={() => void i18n.changeLanguage(code)}
+            <Link
+              to="/achievements"
+              onClick={handleClick}
+              className={`flex items-center gap-3 px-4 py-2 rounded-md transition text-sm font-medium
+                ${location.pathname === '/achievements' ? 'bg-white/10 text-white' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
             >
-              {emoji}
-            </button>
-          ))}
-        </div>
+              <Award size={18} />
+              <span>{t('navigation.achievements')}</span>
+            </Link>
+          </div>
 
-        <button
-          className="sidebar-item logout-button"
-          onClick={() =>
-            void (async () => {
-              await supabase.auth.signOut();
-              if (!isDesktop) setIsOpen(false);
-            })()
-          }
-        >
-          <span className="icon">🚪</span>
-          <span className="label">{t('sidebar.logout')}</span>
-        </button>
-      </aside>
+          <div className="p-4 flex flex-col items-center gap-3 border-t border-white/10">
+            <div className="flex gap-4">
+              {[
+                { code: 'de', emoji: '🇩🇪' },
+                { code: 'en', emoji: '🇬🇧' },
+                { code: 'tr', emoji: '🇹🇷' },
+              ].map(({ code, emoji }) => (
+                <button
+                  key={code}
+                  onClick={() => i18n.changeLanguage(code)}
+                  aria-label={t(`sidebar.languages.${code}`, code.toUpperCase())}
+                  className={`text-2xl transition-opacity ${i18n.language === code ? 'opacity-100' : 'opacity-50 hover:opacity-80'}`}
+                >
+                  {emoji}
+                </button>
+              ))}
+            </div>
+
+            <button
+              onClick={() => void supabase.auth.signOut()}
+              className="flex items-center gap-2 text-sm text-white/70 hover:text-white hover:bg-white/5 px-4 py-2 rounded-md"
+            >
+              <span>🚪</span>
+              <span>{t('sidebar.logout')}</span>
+            </button>
+          </div>
+        </div>
+      </motion.aside>
     </>
   );
 }

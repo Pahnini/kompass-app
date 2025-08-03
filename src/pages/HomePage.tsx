@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useUserData } from '../hooks/useUserData';
 import type { SidebarItem } from '../types/index';
-import './HomePage.css';
 import SortableQuickList from '../components/shared/SortableQuickList';
 import { useQuests } from '../hooks/useQuest';
 import { QuestTracker } from '../components/shared/QuestTracker';
@@ -28,22 +27,17 @@ export default function HomeScreen({
   const navigate = useNavigate();
   const { addPoints, level, levelProgress } = useUserData();
   const [, setAnimatingKey] = useState<string | undefined>(undefined);
-
   const { t } = useTranslation();
+  const { updateQuestProgress } = useQuests();
 
   const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
 
   const translatedItems = quickItems
-    .map(key => allItems.find(item => item.key === key))
+    .map((key) => allItems.find((item) => item.key === key))
     .filter((item): item is SidebarItem => !!item)
-    .map(item => ({
-      ...item,
-      label: t(item.label),
-    }));
+    .map((item) => ({ ...item, label: t(item.label) }));
 
-  const filteredItems = translatedItems.filter(item => item.key !== 'home');
-
-  const { updateQuestProgress } = useQuests();
+  const filteredItems = translatedItems.filter((item) => item.key !== 'home');
 
   const handleQuickClick = (key: string) => {
     setAnimatingKey(key);
@@ -54,32 +48,24 @@ export default function HomeScreen({
   };
 
   return (
-    <div className="card">
-      {/* Begrüßung */}
-      <div className="welcome-section">
-        <div
-          style={{
-            fontSize: '48px',
-            marginBottom: '16px',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-          }}
-        >
+    <div className="p-6 max-w-xl mx-auto text-center">
+      {/* Begrüßung & Kompass */}
+      <div className="flex flex-col items-center gap-4 mb-6">
+        <div className="flex items-center justify-center gap-4">
           <PanicButton />
-          <Compass size={64} color="#5dade2" />
+          <Compass size={64} className="text-blue-400" />
         </div>
-
-        <h1>{t('home.welcome')}</h1>
-        <p>{t('home.appDescription')}</p>
-        <p>{t('home.featuresDescription')}</p>
+        <h1 className="text-3xl font-bold text-white">{t('home.welcome')}</h1>
+        <p className="text-white/80">{t('home.appDescription')}</p>
+        <p className="text-white/80">{t('home.featuresDescription')}</p>
 
         {!username && (
-          <div className="form-row" style={{ marginTop: '20px' }}>
+          <div className="flex flex-col sm:flex-row gap-2 mt-4 w-full max-w-md mx-auto">
             <input
               type="text"
-              placeholder={t('home.username.placeholder')}
-              onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => {
+              placeholder={t('home.username.placeholder') || ''}
+              className="flex-1 px-4 py-2 rounded bg-white/10 text-white placeholder-white/60"
+              onKeyDown={(e) => {
                 const input = e.currentTarget;
                 if (e.key === 'Enter' && input.value.trim()) {
                   setUsername(input.value.trim());
@@ -93,6 +79,7 @@ export default function HomeScreen({
                   setUsername(input.value.trim());
                 }
               }}
+              className="px-4 py-2 bg-accent text-white rounded hover:bg-accent/90"
             >
               ✓
             </button>
@@ -100,41 +87,36 @@ export default function HomeScreen({
         )}
       </div>
 
-      {/* XP-Level */}
-      <div style={{ marginTop: '16px' }}>
-        <div style={{ fontSize: '14px', marginBottom: '4px' }}>
+      {/* XP Fortschritt */}
+      <div className="mb-6">
+        <div className="text-sm text-white/70 mb-1">
           Level {level} – {Math.round(levelProgress)}%
         </div>
-        <div style={{ background: '#ddd', height: '10px', borderRadius: '5px' }}>
+        <div className="w-full h-3 bg-white/10 rounded">
           <div
-            style={{
-              width: `${levelProgress}%`,
-              height: '100%',
-              background: '#0b9444',
-              borderRadius: '5px',
-              transition: 'width 0.3s ease',
-            }}
+            className="h-full bg-accent rounded transition-all duration-300"
+            style={{ width: `${levelProgress}%` }}
           />
         </div>
       </div>
 
-      {/* Quest-Bereich */}
-      <div style={{ marginTop: '24px' }}>
+      {/* Quests */}
+      <div className="mb-6">
         <QuestTracker />
       </div>
 
       {/* Schnellzugriffe */}
-      <div className="section">
-        <h3>{t('home.quickAccessTitle')}</h3>
+      <div>
+        <h3 className="text-lg font-semibold text-white mb-2">{t('home.quickAccessTitle')}</h3>
         <SortableQuickList
-          items={filteredItems.map(item => ({
+          items={filteredItems.map((item) => ({
             id: item.key,
             icon: item.icon as React.ReactNode,
             label: item.label,
             onClick: () => handleQuickClick(item.key),
           }))}
-          setItems={newItems => {
-            const newKeys = newItems.map(item => item.id);
+          setItems={(newItems) => {
+            const newKeys = newItems.map((item) => item.id);
             setFavorites(newKeys);
           }}
         />

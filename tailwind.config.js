@@ -9,9 +9,13 @@ module.exports = {
         accent: '#0b9444', // Asklepios-Grün
         light: '#b7ffd0', // hellgrün
         background: '#1f2f2f', // dunkler Hintergrund
+        success: '#28a745',
+        warning: '#ffc107',
+        error: '#dc3545',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
+        poppins: ['Poppins', 'sans-serif'],
       },
     },
   },

@@ -29,20 +29,18 @@ export default function SortableQuickItem({
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center justify-between gap-2 p-4 rounded-2xl bg-white/5 shadow-inner border border-white/10 hover:bg-white/10 transition-all duration-200 ${className}`}
+      className={`flex items-center justify-between gap-2 p-4 rounded-xl bg-white/5 shadow-sm border border-white/10 hover:bg-white/10 transition duration-200 ${className}`}
     >
-      {/* Inhalt klickbar */}
       <div
-        className="flex items-center gap-3 text-left text-white text-sm cursor-pointer flex-grow"
+        className="flex items-center gap-3 text-white text-sm cursor-pointer flex-grow"
         onClick={onClick}
       >
-        <div>{icon}</div>
+        <div className="text-lg">{icon}</div>
         <span className="whitespace-nowrap font-medium">{label}</span>
       </div>
 
-      {/* Drag Handle */}
       <div
-        className="text-white opacity-60 hover:opacity-100 cursor-grab active:cursor-grabbing"
+        className="text-white/60 hover:text-white cursor-grab active:cursor-grabbing"
         {...attributes}
         {...listeners}
       >

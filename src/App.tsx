@@ -1,6 +1,6 @@
 import { Session } from '@supabase/supabase-js';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import AchievementPopup from './components/AchievementPopup';
 import DatenschutzModal from './components/DatenschutzModal';
 import HomePage from './pages/HomePage';
@@ -27,10 +27,8 @@ import InstallPromptBanner from './components/InstallPromptBanner';
 import UpdateToast from './components/UpdateToast';
 import LandingPage from './pages/LandingPage';
 import { NovaAssistant } from './components/NovaAssistant';
-import { useLocation } from 'react-router-dom';
 import NovaSettings from './views/NovaSettings';
 
-// Lazy-loaded Komponenten
 const ChatPage = lazy(() => import('./pages/ChatPage'));
 const GoalsPage = lazy(() => import('./pages/GoalsPage'));
 const DesignsPage = lazy(() => import('./pages/DesignsPage'));
@@ -91,19 +89,17 @@ function AuthenticatedApp() {
   }, [achievements]);
 
   return (
-    <div>
+    <div className="flex min-h-screen bg-background text-white font-poppins">
       <Sidebar
         items={sidebarItems}
         isOpen={isSidebarOpen}
         setIsOpen={setIsSidebarOpen}
         favorites={favorites}
       />
+
       <main
-        className="main-area"
-        style={{
-          background: background.url ? `url(${background.url}) center/cover` : theme.bg,
-          minHeight: '100vh',
-        }}
+        className={`flex-1 min-h-screen w-full transition-colors p-4 md:p-6 lg:p-8`}
+        style={background.url ? { background: `url(${background.url}) center/cover` } : undefined}
       >
         <Suspense fallback={<SmartLoading message="Seite wird geladen..." />}>
           <Routes>
@@ -188,8 +184,7 @@ function AuthenticatedApp() {
       <InstallPromptBanner />
       <UpdateToast />
 
-      {/* ✅ Nova ist global sichtbar (unten rechts) */}
-      <div className="fixed bottom-6 left-[260px] z-[100]" style={{ maxWidth: '240px' }}>
+      <div className="fixed bottom-6 right-6 z-[100] max-w-xs">
         <NovaAssistant context={novaContext} />
       </div>
     </div>
@@ -202,12 +197,6 @@ export default function App(): React.ReactElement {
   const { setShowWelcome } = useUI();
 
   useEffect(() => {
-    if (!supabase) {
-      console.error('Supabase client is not initialized.');
-      setLoading(false);
-      return;
-    }
-
     void supabase.auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setLoading(false);
@@ -230,12 +219,7 @@ export default function App(): React.ReactElement {
 
   const SKIP_WELCOME = true;
 
-  if (loading) {
-    return <SmartLoading message="Verbindung wird hergestellt..." />;
-  }
-
-  if (!session && !SKIP_WELCOME) {
-    return <LandingPage />;
-  }
+  if (loading) return <SmartLoading message="Verbindung wird hergestellt..." />;
+  if (!session && !SKIP_WELCOME) return <LandingPage />;
   return <AuthenticatedApp />;
 }

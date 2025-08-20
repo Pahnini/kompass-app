@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+// Sidebar.tsx (vollständig modernisiert mit Tailwind + Framer Motion + Sprachwahl)
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { GraduationCap, Award } from 'lucide-react';
@@ -15,19 +16,19 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }: SidebarProps) {
-  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 700);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth > 1024);
   const location = useLocation();
   const { points } = useUserData();
   const { t, i18n } = useTranslation();
 
   useEffect(() => {
-    const handleResize = () => setIsDesktop(window.innerWidth > 700);
+    const handleResize = () => setIsDesktop(window.innerWidth > 1024);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const filteredItems = items.filter(
-    (item) => favorites.includes(item.key) || ['home', 'quickedit', 'nova'].includes(item.key)
+    item => favorites.includes(item.key) || ['home', 'quickedit', 'nova'].includes(item.key)
   );
 
   const getPath = (key: string) => (key === 'home' ? '/' : `/${key}`);
@@ -59,17 +60,19 @@ export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }: Si
       >
         <div className="flex flex-col h-full justify-between">
           <div className="p-4 space-y-2 overflow-y-auto">
-            <div className="text-center text-sm mb-4">
-              {t('sidebar.points', { points })}
-            </div>
+            <div className="text-center text-sm mb-4">{t('sidebar.points', { points })}</div>
 
-            {filteredItems.map((item) => (
+            {filteredItems.map(item => (
               <Link
                 key={item.key}
                 to={getPath(item.key)}
                 onClick={handleClick}
                 className={`flex items-center gap-3 px-4 py-2 rounded-md transition text-sm font-medium
-                  ${location.pathname === getPath(item.key) ? 'bg-white/10 text-white' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
+                  ${
+                    location.pathname === getPath(item.key)
+                      ? 'bg-white/10 text-white'
+                      : 'text-white/70 hover:text-white hover:bg-white/5'
+                  }`}
               >
                 <span className="text-base">{item.icon}</span>
                 <span>{t(item.label)}</span>
@@ -80,7 +83,11 @@ export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }: Si
               to="/school"
               onClick={handleClick}
               className={`flex items-center gap-3 px-4 py-2 rounded-md transition text-sm font-medium
-                ${location.pathname === '/school' ? 'bg-white/10 text-white' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
+                ${
+                  location.pathname === '/school'
+                    ? 'bg-white/10 text-white'
+                    : 'text-white/70 hover:text-white hover:bg-white/5'
+                }`}
             >
               <GraduationCap size={18} />
               <span>{t('navigation.schoolSupport')}</span>
@@ -90,7 +97,11 @@ export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }: Si
               to="/achievements"
               onClick={handleClick}
               className={`flex items-center gap-3 px-4 py-2 rounded-md transition text-sm font-medium
-                ${location.pathname === '/achievements' ? 'bg-white/10 text-white' : 'text-white/70 hover:text-white hover:bg-white/5'}`}
+                ${
+                  location.pathname === '/achievements'
+                    ? 'bg-white/10 text-white'
+                    : 'text-white/70 hover:text-white hover:bg-white/5'
+                }`}
             >
               <Award size={18} />
               <span>{t('navigation.achievements')}</span>
@@ -107,8 +118,10 @@ export default function Sidebar({ items, isOpen, setIsOpen, favorites = [] }: Si
                 <button
                   key={code}
                   onClick={() => i18n.changeLanguage(code)}
-                  aria-label={t(`sidebar.languages.${code}`, code.toUpperCase())}
-                  className={`text-2xl transition-opacity ${i18n.language === code ? 'opacity-100' : 'opacity-50 hover:opacity-80'}`}
+                  aria-label={t(`sidebar.languages.${code}`) as string}
+                  className={`text-2xl transition-opacity ${
+                    i18n.language === code ? 'opacity-100' : 'opacity-50 hover:opacity-80'
+                  }`}
                 >
                   {emoji}
                 </button>

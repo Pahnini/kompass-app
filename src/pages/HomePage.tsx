@@ -33,11 +33,11 @@ export default function HomeScreen({
   const getPath = (key: string): string => (key === 'home' ? '/' : `/${key}`);
 
   const translatedItems = quickItems
-    .map((key) => allItems.find((item) => item.key === key))
+    .map(key => allItems.find(item => item.key === key))
     .filter((item): item is SidebarItem => !!item)
-    .map((item) => ({ ...item, label: t(item.label) }));
+    .map(item => ({ ...item, label: t(item.label) }));
 
-  const filteredItems = translatedItems.filter((item) => item.key !== 'home');
+  const filteredItems = translatedItems.filter(item => item.key !== 'home');
 
   const handleQuickClick = (key: string) => {
     setAnimatingKey(key);
@@ -65,7 +65,7 @@ export default function HomeScreen({
               type="text"
               placeholder={t('home.username.placeholder') || ''}
               className="flex-1 px-4 py-2 rounded bg-white/10 text-white placeholder-white/60"
-              onKeyDown={(e) => {
+              onKeyDown={e => {
                 const input = e.currentTarget;
                 if (e.key === 'Enter' && input.value.trim()) {
                   setUsername(input.value.trim());
@@ -109,14 +109,14 @@ export default function HomeScreen({
       <div>
         <h3 className="text-lg font-semibold text-white mb-2">{t('home.quickAccessTitle')}</h3>
         <SortableQuickList
-          items={filteredItems.map((item) => ({
+          items={filteredItems.map(item => ({
             id: item.key,
             icon: item.icon as React.ReactNode,
             label: item.label,
             onClick: () => handleQuickClick(item.key),
           }))}
-          setItems={(newItems) => {
-            const newKeys = newItems.map((item) => item.id);
+          setItems={newItems => {
+            const newKeys = newItems.map(item => item.id);
             setFavorites(newKeys);
           }}
         />

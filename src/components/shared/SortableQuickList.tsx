@@ -30,7 +30,10 @@ interface SortableQuickListProps {
   setItems: (newItems: Item[]) => void;
 }
 
-export default function SortableQuickList({ items, setItems }: SortableQuickListProps): React.ReactElement {
+export default function SortableQuickList({
+  items,
+  setItems,
+}: SortableQuickListProps): React.ReactElement {
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(TouchSensor),
@@ -42,8 +45,8 @@ export default function SortableQuickList({ items, setItems }: SortableQuickList
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (active.id !== over?.id) {
-      const oldIndex = items.findIndex((item) => item.id === active.id);
-      const newIndex = items.findIndex((item) => item.id === over?.id);
+      const oldIndex = items.findIndex(item => item.id === active.id);
+      const newIndex = items.findIndex(item => item.id === over?.id);
       const newItems = arrayMove(items, oldIndex, newIndex);
       setItems(newItems);
     }
@@ -57,8 +60,8 @@ export default function SortableQuickList({ items, setItems }: SortableQuickList
         modifiers={[restrictToVerticalAxis]}
         onDragEnd={handleDragEnd}
       >
-        <SortableContext items={items.map((item) => item.id)} strategy={verticalListSortingStrategy}>
-          {items.map((item) => (
+        <SortableContext items={items.map(item => item.id)} strategy={verticalListSortingStrategy}>
+          {items.map(item => (
             <SortableQuickItem
               key={item.id}
               id={item.id}

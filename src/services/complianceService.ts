@@ -515,8 +515,7 @@ export class ComplianceService {
           
           // Check if data should be retained for legal reasons
           if (options.retainForLegalReasons && 
-              policy && 
-              policy.exceptions.includes('legal_proceedings')) {
+              policy?.exceptions.includes('legal_proceedings')) {
             results.retained.push(dataType);
             continue;
           }

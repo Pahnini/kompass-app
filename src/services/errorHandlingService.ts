@@ -617,7 +617,7 @@ export class ErrorHandlingService {
           key.toLowerCase().includes('key')) {
         sanitized[key] = '[REDACTED]';
       } else if (typeof value === 'string' && value.length > 1000) {
-        sanitized[key] = value.substring(0, 1000) + '...[TRUNCATED]';
+        sanitized[key] = `${value.substring(0, 1000)  }...[TRUNCATED]`;
       } else {
         sanitized[key] = value;
       }

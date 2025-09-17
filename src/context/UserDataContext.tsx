@@ -1,4 +1,5 @@
-import React, { ReactNode, useState, useEffect } from 'react';
+import type { ReactNode} from 'react';
+import React, { useState, useEffect } from 'react';
 import pointSound from '../assets/sounds/point.wav';
 import { achievementList } from '../data/achievementList';
 import { skillsList as defaultSkills } from '../data/skills';

@@ -153,7 +153,7 @@ export class EncryptionService {
       if (import.meta.env.DEV) {
         console.log('🔄 User not authenticated, using development fallback encryption');
       }
-      return 'fallback:' + Buffer.from(jsonData).toString('base64');
+      return `fallback:${  Buffer.from(jsonData).toString('base64')}`;
     }
     
     try {
@@ -169,7 +169,7 @@ export class EncryptionService {
           console.log('   Using development fallback encryption');
         }
         // Fallback to base64 encoding for development (NOT secure, but allows development)
-        return 'fallback:' + Buffer.from(jsonData).toString('base64');
+        return `fallback:${  Buffer.from(jsonData).toString('base64')}`;
       }
 
       if (import.meta.env.DEV) {
@@ -181,7 +181,7 @@ export class EncryptionService {
         console.log('🔄 Encryption service unavailable, using fallback:', error);
       }
       // Fallback to base64 encoding for development
-      return 'fallback:' + Buffer.from(jsonData).toString('base64');
+      return `fallback:${  Buffer.from(jsonData).toString('base64')}`;
     }
   }
 
@@ -293,7 +293,7 @@ export class EncryptionService {
       if (import.meta.env.DEV) {
         console.log('🔄 User not authenticated, using development fallback for field encryption');
       }
-      return 'fallback:' + Buffer.from(value).toString('base64');
+      return `fallback:${  Buffer.from(value).toString('base64')}`;
     }
 
     try {
@@ -307,7 +307,7 @@ export class EncryptionService {
         if (import.meta.env.DEV) {
           console.log('🔄 Field encryption failed (expected in dev), using fallback:', error.message);
         }
-        return 'fallback:' + Buffer.from(value).toString('base64');
+        return `fallback:${  Buffer.from(value).toString('base64')}`;
       }
 
       if (import.meta.env.DEV) {
@@ -318,7 +318,7 @@ export class EncryptionService {
       if (import.meta.env.DEV) {
         console.log('🔄 Field encryption unavailable, using fallback:', error);
       }
-      return 'fallback:' + Buffer.from(value).toString('base64');
+      return `fallback:${  Buffer.from(value).toString('base64')}`;
     }
   }
 

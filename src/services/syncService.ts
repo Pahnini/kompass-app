@@ -398,7 +398,7 @@ export class SyncService {
       if (!user) throw new Error('No authenticated user');
 
       let finalData: any;
-      let timestamp = new Date().toISOString();
+      const timestamp = new Date().toISOString();
 
       switch (resolution) {
         case 'use_local':

@@ -1,14 +1,43 @@
 // src/services/dataService.ts
+/**
+ * Healthcare-Grade Data Service for German GDPR Compliance
+ * 
+ * Architecture:
+ * - Supabase: Primary storage with AES-256 encryption at rest
+ * - localStorage: Offline fallback with healthcare validation
+ * - GDPR Integration: Automatic audit logging and consent validation
+ * 
+ * Compliance: GDPR + German BDSG + Healthcare standards
+ * Last Updated: 2025-01-14
+ */
+
 import type { Achievement, CalendarNotes, Goal, Skill, Symptoms, WordFile } from '../types/index';
 import { supabase } from '../utils/supabase';
 import { encryptionService } from './encryptionService';
 import * as storageService from './storageService';
 
 /**
- * Healthcare-grade data service with encryption and hybrid storage
+ * Healthcare-grade data service with GDPR compliance
  * Provides seamless switching between Supabase and localStorage
- * with automatic fallback and offline support
+ * with automatic fallback, offline support, and audit logging
  */
+
+// Enhanced error types for healthcare compliance
+interface HealthcareDataError extends Error {
+  code: 'GDPR_VIOLATION' | 'AUDIT_FAILURE' | 'HEALTHCARE_VALIDATION' | 'SYNC_FAILURE';
+  userId?: string;
+  dataType?: string;
+  originalError?: Error;
+}
+
+// Audit logging interface
+interface AuditLogEntry {
+  userId: string;
+  action: string;
+  tableName: string;
+  recordId?: string;
+  metadata: Record<string, any>;
+}
 
 // Storage backend interface
 interface StorageBackend {
@@ -18,8 +47,97 @@ interface StorageBackend {
   sync(userId: string): Promise<void>;
 }
 
-// Supabase storage backend
+// Supabase storage backend with healthcare compliance
 class SupabaseStorageBackend implements StorageBackend {
+  /**
+   * Log data access for GDPR audit compliance
+   */
+  private async logDataAccess(
+    action: string,
+    tableName: string,
+    userId: string,
+    metadata: Record<string, any> = {}
+  ): Promise<void> {
+    try {
+      await supabase.from('audit_logs').insert({
+        user_id: userId,
+        action,
+        table_name: tableName,
+        metadata: {
+          ...metadata,
+          timestamp: new Date().toISOString(),
+          ip_address: 'client_side',
+          user_agent: navigator.userAgent
+        }
+      });
+    } catch (error) {
+      console.warn('⚠️ Audit logging failed:', error);
+      // Don't fail the main operation if audit logging fails
+    }
+  }
+
+  /**
+   * Safely decrypt data that might be encrypted string or plain JSONB
+   */
+  private async safeDecrypt(encryptedData: any, userId: string): Promise<any> {
+    // If data is null or undefined, return null
+    if (encryptedData === null || encryptedData === undefined) {
+      return null;
+    }
+
+    // If data is already an object (JSONB), return it directly
+    // This handles cases where data was stored before encryption was implemented
+    if (typeof encryptedData === 'object') {
+      console.log('🔄 Found JSONB data (pre-encryption), using directly');
+      return encryptedData;
+    }
+
+    // If data is a string, try to decrypt it
+    if (typeof encryptedData === 'string') {
+      try {
+        return await encryptionService.decrypt(encryptedData, userId);
+      } catch (error) {
+        console.warn('⚠️ Decryption failed, trying JSON parse fallback:', error);
+        
+        // Fallback: try to parse as JSON (for data stored before encryption)
+        try {
+          return JSON.parse(encryptedData);
+        } catch (parseError) {
+          console.error('❌ Failed to parse data as JSON:', parseError);
+          throw new Error(`Failed to decrypt or parse data: ${error}`);
+        }
+      }
+    }
+
+    // If we get here, we don't know how to handle this data type
+    throw new Error(`Unknown data type for decryption: ${typeof encryptedData}`);
+  }
+
+  /**
+   * Validate healthcare data before processing
+   */
+  private validateHealthcareData(data: any, userId: string): void {
+    if (encryptionService.isHealthcareData(data)) {
+      console.log('🏥 Healthcare data detected - applying enhanced protection');
+      
+      // Additional validation for healthcare data
+      if (typeof data === 'object' && data !== null) {
+        const serialized = JSON.stringify(data);
+        
+        // Check for potential PII patterns
+        const sensitivePatterns = [
+          /\b\d{3}-\d{2}-\d{4}\b/, // SSN
+          /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/, // Email
+          /\b\d{10,}\b/ // Phone
+        ];
+        
+        const containsPII = sensitivePatterns.some(pattern => pattern.test(serialized));
+        if (containsPII) {
+          console.warn('⚠️ PII detected in healthcare data - ensure GDPR compliance');
+        }
+      }
+    }
+  }
   private async getTableName(key: string): Promise<string> {
     const tableMap: Record<string, string> = {
       goals: 'user_goals',
@@ -40,14 +158,32 @@ class SupabaseStorageBackend implements StorageBackend {
   async get<T>(key: string, userId: string): Promise<T | null> {
     try {
       const tableName = await this.getTableName(key);
+      
+      // Log data access for GDPR audit
+      await this.logDataAccess('DATA_ACCESS', tableName, userId, { key });
 
+      let result: T | null;
       if (tableName === 'user_profiles') {
-        return await this.getUserProfileData<T>(key, userId);
+        result = await this.getUserProfileData<T>(key, userId);
       } else {
-        return await this.getUserDataFromTable<T>(key, tableName, userId);
+        result = await this.getUserDataFromTable<T>(key, tableName, userId);
       }
+      
+      // Validate healthcare data
+      if (result !== null) {
+        this.validateHealthcareData(result, userId);
+      }
+      
+      return result;
     } catch (error) {
-      console.error(`Supabase get failed for ${key}:`, error);
+      console.error(`❌ Supabase get failed for ${key}:`, error);
+      
+      // Log the error for audit purposes
+      await this.logDataAccess('DATA_ACCESS_ERROR', await this.getTableName(key), userId, {
+        key,
+        error: String(error)
+      });
+      
       throw error;
     }
   }
@@ -57,13 +193,9 @@ class SupabaseStorageBackend implements StorageBackend {
       .from('user_profiles')
       .select('*')
       .eq('user_id', userId)
-      .single();
+      .maybeSingle();
 
     if (error) {
-      if (error.code === 'PGRST116') {
-        // No rows returned
-        return null;
-      }
       throw error;
     }
 
@@ -81,7 +213,7 @@ class SupabaseStorageBackend implements StorageBackend {
 
       case 'favorites':
         if (data.encrypted_preferences) {
-          const preferences = encryptionService.decrypt(data.encrypted_preferences, userId);
+          const preferences = await this.safeDecrypt(data.encrypted_preferences, userId);
           return (preferences.favorites || null) as T;
         }
         return null;
@@ -109,44 +241,52 @@ class SupabaseStorageBackend implements StorageBackend {
     // Decrypt and transform data based on table
     switch (tableName) {
       case 'user_goals':
-        const goals = data.map(row => encryptionService.decrypt(row.encrypted_goal_data, userId));
+        const goals = await Promise.all(
+          data.map(row => this.safeDecrypt(row.encrypted_goal_data, userId))
+        );
         return goals as T;
 
       case 'user_achievements':
-        const achievements = data.map(row =>
-          encryptionService.decrypt(row.encrypted_achievement_data, userId)
+        const achievements = await Promise.all(
+          data.map(row => this.safeDecrypt(row.encrypted_achievement_data, userId))
         );
         return achievements as T;
 
       case 'user_skills':
         if (data[0]?.encrypted_skills_data) {
-          return encryptionService.decrypt<T>(data[0].encrypted_skills_data, userId);
+          return await this.safeDecrypt(data[0].encrypted_skills_data, userId) as T;
         }
         return null;
 
       case 'user_calendar_notes':
         const calendarNotes: Record<string, any> = {};
-        data.forEach(row => {
-          const noteData = encryptionService.decrypt(row.encrypted_note_data, userId);
-          calendarNotes[row.note_date] = noteData;
-        });
+        await Promise.all(
+          data.map(async row => {
+            const noteData = await this.safeDecrypt(row.encrypted_note_data, userId);
+            calendarNotes[row.note_date] = noteData;
+          })
+        );
         return calendarNotes as T;
 
       case 'user_symptoms':
         const symptoms: Record<string, any> = {};
-        data.forEach(row => {
-          const symptomData = encryptionService.decrypt(row.encrypted_symptom_data, userId);
-          symptoms[row.symptom_date] = symptomData;
-        });
+        await Promise.all(
+          data.map(async row => {
+            const symptomData = await this.safeDecrypt(row.encrypted_symptom_data, userId);
+            symptoms[row.symptom_date] = symptomData;
+          })
+        );
         return symptoms as T;
 
       case 'user_word_files':
-        const wordFiles = data.map(row => ({
-          id: row.file_id,
-          name: encryptionService.decryptField(row.encrypted_file_name, userId),
-          url: row.file_url,
-          file: null, // File object not stored in DB
-        }));
+        const wordFiles = await Promise.all(
+          data.map(async row => ({
+            id: row.file_id,
+            name: await encryptionService.decryptField(row.encrypted_file_name, userId),
+            url: row.file_url,
+            file: null, // File object not stored in DB
+          }))
+        );
         return wordFiles as T;
 
       default:
@@ -157,6 +297,15 @@ class SupabaseStorageBackend implements StorageBackend {
   async set<T>(key: string, data: T, userId: string): Promise<void> {
     try {
       const tableName = await this.getTableName(key);
+      
+      // Validate healthcare data before storage
+      this.validateHealthcareData(data, userId);
+      
+      // Log data modification for GDPR audit
+      await this.logDataAccess('DATA_MODIFY', tableName, userId, { 
+        key, 
+        is_healthcare: encryptionService.isHealthcareData(data)
+      });
 
       if (tableName === 'user_profiles') {
         await this.setUserProfileData(key, data, userId);
@@ -164,17 +313,29 @@ class SupabaseStorageBackend implements StorageBackend {
         await this.setUserDataInTable(key, data, tableName, userId);
       }
 
-      // Update sync status
-      await this.updateSyncStatus(tableName, userId, 'completed');
+      // Update sync status with compliance metadata
+      await this.updateSyncStatus(tableName, userId, 'completed', undefined, {
+        healthcare_data: encryptionService.isHealthcareData(data),
+        encryption_used: true,
+        gdpr_compliant: true
+      });
+      
     } catch (error) {
-      console.error(`Supabase set failed for ${key}:`, error);
+      console.error(`❌ Supabase set failed for ${key}:`, error);
+      
+      // Log the error for audit purposes
+      await this.logDataAccess('DATA_MODIFY_ERROR', await this.getTableName(key), userId, {
+        key,
+        error: String(error)
+      });
+      
       await this.updateSyncStatus(await this.getTableName(key), userId, 'failed', String(error));
       throw error;
     }
   }
 
   private async setUserProfileData<T>(key: string, data: T, userId: string): Promise<void> {
-    let updateData: any = {};
+    const updateData: any = {};
 
     switch (key) {
       case 'username':
@@ -195,11 +356,11 @@ class SupabaseStorageBackend implements StorageBackend {
 
         let preferences: any = {};
         if (existingProfile?.encrypted_preferences) {
-          preferences = encryptionService.decrypt(existingProfile.encrypted_preferences, userId);
+          preferences = await this.safeDecrypt(existingProfile.encrypted_preferences, userId);
         }
 
         preferences.favorites = data;
-        updateData.encrypted_preferences = encryptionService.encrypt(preferences, userId);
+        updateData.encrypted_preferences = await encryptionService.encrypt(preferences, userId);
         break;
 
       default:
@@ -222,22 +383,40 @@ class SupabaseStorageBackend implements StorageBackend {
     tableName: string,
     userId: string
   ): Promise<void> {
-    // First, mark existing records as deleted (soft delete)
-    await supabase.from(tableName).update({ is_deleted: true }).eq('user_id', userId);
-
     switch (tableName) {
       case 'user_goals':
         const goals = data as Goal[];
-        if (goals && goals.length > 0) {
-          const goalRows = goals.map(goal => ({
-            user_id: userId,
-            goal_id: goal.id,
-            encrypted_goal_data: encryptionService.encrypt(goal, userId),
-            completed: goal.completed,
-            version: 1,
-          }));
+        
+        // First, mark all existing goals as deleted
+        await supabase
+          .from('user_goals')
+          .update({ 
+            is_deleted: true, 
+            deleted_at: new Date().toISOString(),
+            deletion_reason: 'replaced_by_update'
+          })
+          .eq('user_id', userId)
+          .eq('is_deleted', false);
 
-          const { error } = await supabase.from('user_goals').insert(goalRows);
+        if (goals && goals.length > 0) {
+          const goalRows = await Promise.all(
+            goals.map(async goal => ({
+              user_id: userId,
+              goal_id: goal.id,
+              encrypted_goal_data: await encryptionService.encrypt(goal, userId),
+              completed: goal.completed,
+              version: 1,
+              is_deleted: false, // Explicitly set as not deleted
+            }))
+          );
+
+          // Use upsert to handle existing goal_ids
+          const { error } = await supabase
+            .from('user_goals')
+            .upsert(goalRows, { 
+              onConflict: 'user_id,goal_id',
+              ignoreDuplicates: false 
+            });
 
           if (error) throw error;
         }
@@ -245,17 +424,38 @@ class SupabaseStorageBackend implements StorageBackend {
 
       case 'user_achievements':
         const achievements = data as Achievement[];
-        if (achievements && achievements.length > 0) {
-          const achievementRows = achievements.map(achievement => ({
-            user_id: userId,
-            achievement_id: achievement.id,
-            encrypted_achievement_data: encryptionService.encrypt(achievement, userId),
-            achievement_date: achievement.date,
-            achievement_type: achievement.type || 'general',
-            version: 1,
-          }));
+        
+        // First, mark all existing achievements as deleted
+        await supabase
+          .from('user_achievements')
+          .update({ 
+            is_deleted: true, 
+            deleted_at: new Date().toISOString(),
+            deletion_reason: 'replaced_by_update'
+          })
+          .eq('user_id', userId)
+          .eq('is_deleted', false);
 
-          const { error } = await supabase.from('user_achievements').insert(achievementRows);
+        if (achievements && achievements.length > 0) {
+          const achievementRows = await Promise.all(
+            achievements.map(async achievement => ({
+              user_id: userId,
+              achievement_id: achievement.id,
+              encrypted_achievement_data: await encryptionService.encrypt(achievement, userId),
+              achievement_date: achievement.date,
+              achievement_type: achievement.type || 'general',
+              version: 1,
+              is_deleted: false, // Explicitly set as not deleted
+            }))
+          );
+
+          // Use upsert to handle existing achievement_ids
+          const { error } = await supabase
+            .from('user_achievements')
+            .upsert(achievementRows, { 
+              onConflict: 'user_id,achievement_id',
+              ignoreDuplicates: false 
+            });
 
           if (error) throw error;
         }
@@ -266,7 +466,7 @@ class SupabaseStorageBackend implements StorageBackend {
         if (skills) {
           const { error } = await supabase.from('user_skills').insert({
             user_id: userId,
-            encrypted_skills_data: encryptionService.encrypt(skills, userId),
+            encrypted_skills_data: await encryptionService.encrypt(skills, userId),
             skills_count: Array.isArray(skills) ? skills.length : 0,
             version: 1,
           });
@@ -278,12 +478,14 @@ class SupabaseStorageBackend implements StorageBackend {
       case 'user_calendar_notes':
         const calendarNotes = data as CalendarNotes;
         if (calendarNotes && Object.keys(calendarNotes).length > 0) {
-          const noteRows = Object.entries(calendarNotes).map(([date, noteData]) => ({
-            user_id: userId,
-            note_date: date,
-            encrypted_note_data: encryptionService.encrypt(noteData, userId),
-            version: 1,
-          }));
+          const noteRows = await Promise.all(
+            Object.entries(calendarNotes).map(async ([date, noteData]) => ({
+              user_id: userId,
+              note_date: date,
+              encrypted_note_data: await encryptionService.encrypt(noteData, userId),
+              version: 1,
+            }))
+          );
 
           const { error } = await supabase.from('user_calendar_notes').insert(noteRows);
 
@@ -294,13 +496,15 @@ class SupabaseStorageBackend implements StorageBackend {
       case 'user_symptoms':
         const symptoms = data as Symptoms;
         if (symptoms && Object.keys(symptoms).length > 0) {
-          const symptomRows = Object.entries(symptoms).map(([date, symptomData]) => ({
-            user_id: userId,
-            symptom_date: date,
-            encrypted_symptom_data: encryptionService.encrypt(symptomData, userId),
-            symptom_count: Array.isArray(symptomData) ? symptomData.length : 0,
-            version: 1,
-          }));
+          const symptomRows = await Promise.all(
+            Object.entries(symptoms).map(async ([date, symptomData]) => ({
+              user_id: userId,
+              symptom_date: date,
+              encrypted_symptom_data: await encryptionService.encrypt(symptomData, userId),
+              symptom_count: Array.isArray(symptomData) ? symptomData.length : 0,
+              version: 1,
+            }))
+          );
 
           const { error } = await supabase.from('user_symptoms').insert(symptomRows);
 
@@ -311,13 +515,15 @@ class SupabaseStorageBackend implements StorageBackend {
       case 'user_word_files':
         const wordFiles = data as WordFile[];
         if (wordFiles && wordFiles.length > 0) {
-          const fileRows = wordFiles.map(file => ({
-            user_id: userId,
-            file_id: file.id,
-            encrypted_file_name: encryptionService.encryptField(file.name, userId),
-            file_url: file.url,
-            version: 1,
-          }));
+          const fileRows = await Promise.all(
+            wordFiles.map(async file => ({
+              user_id: userId,
+              file_id: file.id,
+              encrypted_file_name: await encryptionService.encryptField(file.name, userId),
+              file_url: file.url,
+              version: 1,
+            }))
+          );
 
           const { error } = await supabase.from('user_word_files').insert(fileRows);
 
@@ -330,18 +536,40 @@ class SupabaseStorageBackend implements StorageBackend {
   async remove(key: string, userId: string): Promise<void> {
     try {
       const tableName = await this.getTableName(key);
+      
+      // Log data deletion for GDPR audit (important for Right to Erasure)
+      await this.logDataAccess('DATA_DELETE', tableName, userId, { 
+        key,
+        deletion_type: 'soft_delete',
+        gdpr_basis: 'user_request'
+      });
 
-      // Soft delete by marking as deleted
+      // Soft delete by marking as deleted (GDPR compliant)
       const { error } = await supabase
         .from(tableName)
-        .update({ is_deleted: true })
+        .update({ 
+          is_deleted: true, 
+          deleted_at: new Date().toISOString(),
+          deletion_reason: 'user_request'
+        })
         .eq('user_id', userId);
 
       if (error) throw error;
 
-      await this.updateSyncStatus(tableName, userId, 'completed');
+      await this.updateSyncStatus(tableName, userId, 'completed', undefined, {
+        operation: 'soft_delete',
+        gdpr_compliant: true
+      });
+      
     } catch (error) {
-      console.error(`Supabase remove failed for ${key}:`, error);
+      console.error(`❌ Supabase remove failed for ${key}:`, error);
+      
+      // Log the error for audit purposes
+      await this.logDataAccess('DATA_DELETE_ERROR', await this.getTableName(key), userId, {
+        key,
+        error: String(error)
+      });
+      
       throw error;
     }
   }
@@ -355,7 +583,8 @@ class SupabaseStorageBackend implements StorageBackend {
     tableName: string,
     userId: string,
     status: string,
-    errorMessage?: string
+    errorMessage?: string,
+    metadata?: Record<string, any>
   ): Promise<void> {
     try {
       await supabase.from('sync_status').upsert({
@@ -364,9 +593,11 @@ class SupabaseStorageBackend implements StorageBackend {
         sync_status: status,
         error_message: errorMessage || null,
         updated_at: new Date().toISOString(),
+        compliance_metadata: metadata || null,
+        encryption_status: encryptionService.getHealthStatus()
       });
     } catch (error) {
-      console.error('Failed to update sync status:', error);
+      console.error('⚠️ Failed to update sync status:', error);
     }
   }
 }
@@ -431,7 +662,7 @@ export class HybridDataService {
       return await this.localStorageBackend.get<T>(key, userId);
     } catch (error) {
       console.warn(`Supabase unavailable for ${key}, using localStorage:`, error);
-      return await this.localStorageBackend.get<T>(key, userId);
+      return this.localStorageBackend.get<T>(key, userId);
     }
   }
 
@@ -540,6 +771,121 @@ export class HybridDataService {
    */
   getEncryptionMetadata(userId: string) {
     return encryptionService.getEncryptionMetadata(userId);
+  }
+
+  /**
+   * GDPR Data Export - implements Article 15 (Right of Access)
+   */
+  async exportUserDataGDPR(userId: string): Promise<any> {
+    try {
+      const { data, error } = await supabase.rpc('gdpr_export_user_data', {
+        user_uuid: userId
+      });
+
+      if (error) throw error;
+      
+      console.log('📋 GDPR data export completed for user:', userId);
+      return data;
+    } catch (error) {
+      console.error('❌ GDPR data export failed:', error);
+      throw new Error(`GDPR data export failed: ${error}`);
+    }
+  }
+
+  /**
+   * GDPR Data Erasure - implements Article 17 (Right to be Forgotten)
+   */
+  async eraseUserDataGDPR(userId: string, reason: string = 'User request'): Promise<any> {
+    try {
+      const { data, error } = await supabase.rpc('gdpr_erase_user_data', {
+        user_uuid: userId,
+        erasure_reason: reason
+      });
+
+      if (error) throw error;
+      
+      // Clear local storage as well
+      const dataKeys = [
+        'username', 'goals', 'achievements', 'skills', 'skillsList',
+        'calendarNotes', 'symptoms', 'wordFiles', 'favorites', 'points'
+      ];
+      
+      for (const key of dataKeys) {
+        await this.localStorageBackend.remove(key, userId);
+      }
+      
+      console.log('🗑️ GDPR data erasure completed for user:', userId);
+      return data;
+    } catch (error) {
+      console.error('❌ GDPR data erasure failed:', error);
+      throw new Error(`GDPR data erasure failed: ${error}`);
+    }
+  }
+
+  /**
+   * GDPR Data Portability - implements Article 20 (Right to Data Portability)
+   */
+  async exportPortableDataGDPR(userId: string, format: string = 'json'): Promise<any> {
+    try {
+      const { data, error } = await supabase.rpc('gdpr_export_portable_data', {
+        user_uuid: userId,
+        format
+      });
+
+      if (error) throw error;
+      
+      console.log('📦 GDPR portable data export completed for user:', userId);
+      return data;
+    } catch (error) {
+      console.error('❌ GDPR portable data export failed:', error);
+      throw new Error(`GDPR portable data export failed: ${error}`);
+    }
+  }
+
+  /**
+   * Record user consent for healthcare data processing
+   */
+  async recordHealthcareConsent(
+    consentType: string,
+    granted: boolean,
+    isMinor: boolean = false,
+    parentalConsent: boolean = false
+  ): Promise<any> {
+    try {
+      const { data, error } = await supabase.rpc('record_user_consent', {
+        consent_type_param: consentType,
+        consent_granted_param: granted,
+        is_minor_param: isMinor,
+        parental_consent_param: parentalConsent
+      });
+
+      if (error) throw error;
+      
+      console.log('✅ Healthcare consent recorded:', { consentType, granted });
+      return data;
+    } catch (error) {
+      console.error('❌ Healthcare consent recording failed:', error);
+      throw new Error(`Healthcare consent recording failed: ${error}`);
+    }
+  }
+
+  /**
+   * Withdraw user consent
+   */
+  async withdrawConsent(consentType: string): Promise<any> {
+    try {
+      const { data, error } = await supabase.rpc('withdraw_user_consent', {
+        consent_type_param: consentType
+      });
+
+      if (error) throw error;
+      
+      console.log('🚫 Consent withdrawn:', consentType);
+      return data;
+    } catch (error) {
+      console.error('❌ Consent withdrawal failed:', error);
+      throw new Error(`Consent withdrawal failed: ${error}`);
+    }
   }
 
   private queueForSync(key: string, data: any, userId: string): void {

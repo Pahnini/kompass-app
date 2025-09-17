@@ -1,8 +1,9 @@
-import React, { ReactNode, useState } from 'react';
+import React, { ReactNode, useState, useEffect } from 'react';
 import pointSound from '../assets/sounds/point.wav';
 import { achievementList } from '../data/achievementList';
 import { skillsList as defaultSkills } from '../data/skills';
-import * as storageService from '../services/storageService';
+import { dataService } from '../services/dataService';
+import { supabase } from '../utils/supabase';
 import type { Achievement, CalendarNotes, Goal, Skill, Symptoms, WordFile } from '../types/index';
 
 export const UserDataContext = React.createContext<UserDataContextType | undefined>(undefined);
@@ -29,6 +30,8 @@ export interface UserDataContextType {
   addPoints: (amount: number) => void;
   level: number;
   levelProgress: number;
+  isLoading: boolean;
+  userId: string | null;
 }
 
 interface UserDataProviderProps {
@@ -45,73 +48,209 @@ const getLevel = (points: number): { level: number; progress: number } => {
 };
 
 export function UserDataProvider({ children }: UserDataProviderProps): React.ReactElement {
-  // Use lazy initialization for all state to avoid unnecessary localStorage access on re-renders
-  const [username, setUsernameState] = useState<string>(
-    () => storageService.get<string>('username') ?? ''
-  );
-  const [goals, setGoalsState] = useState<Goal[]>(() => storageService.get<Goal[]>('goals') ?? []);
-  const [achievements, setAchievementsState] = useState<Achievement[]>(
-    () => storageService.get<Achievement[]>('achievements') ?? []
-  );
-  const [calendarNotes, setCalendarNotesState] = useState<CalendarNotes>(
-    () => storageService.get<CalendarNotes>('calendarNotes') ?? {}
-  );
-  const [symptoms, setSymptomsState] = useState<Symptoms>(
-    () => storageService.get<Symptoms>('symptoms') ?? {}
-  );
-  const [favorites, setFavoritesState] = useState<string[]>(
-    () => storageService.get<string[]>('favorites') ?? ['home', 'skills', 'notfall', 'guide']
-  );
-  const [wordFiles, setWordFilesState] = useState<WordFile[]>(
-    () => storageService.get<WordFile[]>('wordFiles') ?? []
-  );
-  const [skillsList, setSkillsListState] = useState<Skill[]>(
-    () => storageService.get<Skill[]>('skillsList') ?? defaultSkills
-  );
-  const [points, setPoints] = useState<number>(() => storageService.get<number>('points') ?? 0);
+  // State for authenticated user
+  const [userId, setUserId] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  // Initialize state with default values (will be loaded from database when authenticated)
+  const [username, setUsernameState] = useState<string>('');
+  const [goals, setGoalsState] = useState<Goal[]>([]);
+  const [achievements, setAchievementsState] = useState<Achievement[]>([]);
+  const [calendarNotes, setCalendarNotesState] = useState<CalendarNotes>({});
+  const [symptoms, setSymptomsState] = useState<Symptoms>({});
+  const [favorites, setFavoritesState] = useState<string[]>(['home', 'skills', 'notfall', 'guide']);
+  const [wordFiles, setWordFilesState] = useState<WordFile[]>([]);
+  const [skillsList, setSkillsListState] = useState<Skill[]>(defaultSkills);
+  const [points, setPoints] = useState<number>(0);
+
+  // Load user data when authentication changes
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (session?.user?.id) {
+          setUserId(session.user.id);
+          console.log('🔄 Loading user data from healthcare database...');
+          
+          // Load all user data from the healthcare-compliant database
+          const [
+            userData_username,
+            userData_goals,
+            userData_achievements,
+            userData_calendarNotes,
+            userData_symptoms,
+            userData_favorites,
+            userData_wordFiles,
+            userData_skillsList,
+            userData_points
+          ] = await Promise.all([
+            dataService.getData<string>('username', session.user.id),
+            dataService.getData<Goal[]>('goals', session.user.id),
+            dataService.getData<Achievement[]>('achievements', session.user.id),
+            dataService.getData<CalendarNotes>('calendarNotes', session.user.id),
+            dataService.getData<Symptoms>('symptoms', session.user.id),
+            dataService.getData<string[]>('favorites', session.user.id),
+            dataService.getData<WordFile[]>('wordFiles', session.user.id),
+            dataService.getData<Skill[]>('skillsList', session.user.id),
+            dataService.getData<number>('points', session.user.id)
+          ]);
+
+          // Update state with loaded data (use defaults if no data found)
+          setUsernameState(userData_username ?? '');
+          setGoalsState(userData_goals ?? []);
+          setAchievementsState(userData_achievements ?? []);
+          setCalendarNotesState(userData_calendarNotes ?? {});
+          setSymptomsState(userData_symptoms ?? {});
+          setFavoritesState(userData_favorites ?? ['home', 'skills', 'notfall', 'guide']);
+          setWordFilesState(userData_wordFiles ?? []);
+          setSkillsListState(userData_skillsList ?? defaultSkills);
+          setPoints(userData_points ?? 0);
+
+          console.log('✅ User data loaded from healthcare database');
+        } else {
+          // No user logged in, reset to defaults
+          setUserId(null);
+          setUsernameState('');
+          setGoalsState([]);
+          setAchievementsState([]);
+          setCalendarNotesState({});
+          setSymptomsState({});
+          setFavoritesState(['home', 'skills', 'notfall', 'guide']);
+          setWordFilesState([]);
+          setSkillsListState(defaultSkills);
+          setPoints(0);
+        }
+      } catch (error) {
+        console.error('❌ Failed to load user data:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    loadUserData();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        loadUserData();
+      } else if (event === 'SIGNED_OUT') {
+        setUserId(null);
+        setIsLoading(false);
+        // Reset to defaults on logout
+        setUsernameState('');
+        setGoalsState([]);
+        setAchievementsState([]);
+        setCalendarNotesState({});
+        setSymptomsState({});
+        setFavoritesState(['home', 'skills', 'notfall', 'guide']);
+        setWordFilesState([]);
+        setSkillsListState(defaultSkills);
+        setPoints(0);
+      }
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   // Calculate level and progress
   const { level, progress } = getLevel(points);
 
-  const setUsername = React.useCallback((value: string) => {
+  const setUsername = React.useCallback(async (value: string) => {
     setUsernameState(value);
-    storageService.set('username', value);
-  }, []);
+    if (userId) {
+      try {
+        await dataService.setData('username', value, userId);
+        console.log('✅ Username saved to healthcare database');
+      } catch (error) {
+        console.error('❌ Failed to save username:', error);
+      }
+    }
+  }, [userId]);
 
-  const setGoals = React.useCallback((value: Goal[]) => {
+  const setGoals = React.useCallback(async (value: Goal[]) => {
     setGoalsState(value);
-    storageService.set('goals', value);
-  }, []);
+    if (userId) {
+      try {
+        await dataService.setData('goals', value, userId);
+        console.log('✅ Goals saved to healthcare database');
+      } catch (error) {
+        console.error('❌ Failed to save goals:', error);
+      }
+    }
+  }, [userId]);
 
-  const setAchievements = React.useCallback((value: Achievement[]) => {
+  const setAchievements = React.useCallback(async (value: Achievement[]) => {
     setAchievementsState(value);
-    storageService.set('achievements', value);
-  }, []);
+    if (userId) {
+      try {
+        await dataService.setData('achievements', value, userId);
+        console.log('✅ Achievements saved to healthcare database');
+      } catch (error) {
+        console.error('❌ Failed to save achievements:', error);
+      }
+    }
+  }, [userId]);
 
-  const setCalendarNotes = React.useCallback((value: CalendarNotes) => {
+  const setCalendarNotes = React.useCallback(async (value: CalendarNotes) => {
     setCalendarNotesState(value);
-    storageService.set('calendarNotes', value);
-  }, []);
+    if (userId) {
+      try {
+        await dataService.setData('calendarNotes', value, userId);
+        console.log('✅ Calendar notes saved to healthcare database');
+      } catch (error) {
+        console.error('❌ Failed to save calendar notes:', error);
+      }
+    }
+  }, [userId]);
 
-  const setSymptoms = React.useCallback((value: Symptoms) => {
+  const setSymptoms = React.useCallback(async (value: Symptoms) => {
     setSymptomsState(value);
-    storageService.set('symptoms', value);
-  }, []);
+    if (userId) {
+      try {
+        await dataService.setData('symptoms', value, userId);
+        console.log('✅ Symptoms saved to healthcare database');
+      } catch (error) {
+        console.error('❌ Failed to save symptoms:', error);
+      }
+    }
+  }, [userId]);
 
-  const setFavorites = React.useCallback((value: string[]) => {
+  const setFavorites = React.useCallback(async (value: string[]) => {
     setFavoritesState(value);
-    storageService.set('favorites', value);
-  }, []);
+    if (userId) {
+      try {
+        await dataService.setData('favorites', value, userId);
+        console.log('✅ Favorites saved to healthcare database');
+      } catch (error) {
+        console.error('❌ Failed to save favorites:', error);
+      }
+    }
+  }, [userId]);
 
-  const setWordFiles = React.useCallback((value: WordFile[]) => {
+  const setWordFiles = React.useCallback(async (value: WordFile[]) => {
     setWordFilesState(value);
-    storageService.set('wordFiles', value);
-  }, []);
+    if (userId) {
+      try {
+        await dataService.setData('wordFiles', value, userId);
+        console.log('✅ Word files saved to healthcare database');
+      } catch (error) {
+        console.error('❌ Failed to save word files:', error);
+      }
+    }
+  }, [userId]);
 
-  const setSkillsList = React.useCallback((value: Skill[]) => {
+  const setSkillsList = React.useCallback(async (value: Skill[]) => {
     setSkillsListState(value);
-    storageService.set('skillsList', value);
-  }, []);
+    if (userId) {
+      try {
+        await dataService.setData('skillsList', value, userId);
+        console.log('✅ Skills list saved to healthcare database');
+      } catch (error) {
+        console.error('❌ Failed to save skills list:', error);
+      }
+    }
+  }, [userId]);
 
   const addPoints = React.useCallback(
     (amount: number) => {
@@ -119,7 +258,13 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
         const newPoints = currentPoints + amount;
         const audio = new Audio(pointSound);
         audio.play().catch(() => {}); // Falls Browser blockiert, kein Fehler
-        storageService.set('points', newPoints);
+        
+        // Save points to healthcare database
+        if (userId) {
+          dataService.setData('points', newPoints, userId).catch(error => {
+            console.error('❌ Failed to save points:', error);
+          });
+        }
 
         // Achievement logic
         const unlocked: Achievement[] = [];
@@ -144,7 +289,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
         return newPoints;
       });
     },
-    [achievements, setAchievements]
+    [achievements, setAchievements, userId]
   );
 
   // Compute derived state separately to keep the dependency array smaller
@@ -178,6 +323,8 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       addPoints,
       level,
       levelProgress: progress,
+      isLoading,
+      userId,
     }),
     [
       username,
@@ -192,6 +339,8 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       points,
       level,
       progress,
+      isLoading,
+      userId,
       // Setter functions are stable and don't need to be in the dependency array
       setUsername,
       setGoals,

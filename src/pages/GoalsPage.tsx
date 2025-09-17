@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import MoodCompass from '../components/shared/MoodCompass';
-import { Emoji } from '../data/emojis';
 import { useTranslation } from 'react-i18next';
-import { Achievement, CalendarNotes, Goal, Symptoms } from '../types/index';
-import { showErrorToast, showSuccessToast } from '../utils/toastUtils';
+import MoodCompass from '../components/shared/MoodCompass';
 import BackButton from '../components/ui/BackButton';
 import DeleteButton from '../components/ui/DeleteButton';
 import ShareButton from '../components/ui/ShareButton';
+import type { Emoji } from '../data/emojis';
+import type { Achievement, CalendarNotes, Goal, Symptoms } from '../types/index';
+import { showErrorToast, showSuccessToast } from '../utils/toastUtils';
 
 interface DeinWegProps {
   goals: Goal[];
@@ -109,7 +109,7 @@ export default function DeinWeg({
       ...symptoms,
       [selectedDate]: [
         {
-          title: selectedMood || t('journal.categories.general'),
+          title: selectedMood ?? t('journal.categories.general'),
           intensity: symptomScore,
         },
       ],
@@ -125,7 +125,7 @@ export default function DeinWeg({
   };
 
   const currentNote = calendarNotes[selectedDate];
-  const hasCurrentNote = currentNote && currentNote.text;
+  const hasCurrentNote = currentNote?.text;
 
   return (
     <div className="card">

@@ -27,6 +27,7 @@ import OfflineToast from './components/OfflineToast';
 import InstallPromptBanner from './components/InstallPromptBanner';
 import UpdateToast from './components/UpdateToast';
 import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
 import { NovaAssistant } from './components/NovaAssistant';
 import { useLocation } from 'react-router-dom';
 import NovaSettings from './views/NovaSettings';
@@ -230,14 +231,32 @@ export default function App(): React.ReactElement {
     }
   }, [session, setShowWelcome]);
 
-  const SKIP_WELCOME = true;
+  const SKIP_WELCOME = false; // Enable proper authentication flow
 
   if (loading) {
     return <SmartLoading message="Verbindung wird hergestellt..." />;
   }
 
-  if (!session && !SKIP_WELCOME) {
-    return <LandingPage />;
+  // If there's a session, show the authenticated app
+  if (session) {
+    return <AuthenticatedApp />;
   }
-  return <AuthenticatedApp />;
+
+  // If no session, show public routes (landing, login)
+  return (
+    <div>
+      <GlobalStyle />
+      <Suspense fallback={<SmartLoading message="Seite wird geladen..." />}>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          {/* Redirect any other routes to landing when not authenticated */}
+          <Route path="*" element={<LandingPage />} />
+        </Routes>
+      </Suspense>
+      <OfflineToast />
+      <InstallPromptBanner />
+      <UpdateToast />
+    </div>
+  );
 }

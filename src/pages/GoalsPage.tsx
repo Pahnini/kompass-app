@@ -91,6 +91,7 @@ export default function DeinWeg({
 
     const dateSymptoms = symptoms[selectedDate];
     setSymptomScore(dateSymptoms && dateSymptoms.length > 0 ? dateSymptoms[0].intensity : 0);
+    setSelectedMood(dateSymptoms && dateSymptoms.length > 0 ? dateSymptoms[0].title : null);
   }, [selectedDate, calendarNotes, symptoms]);
 
   const saveNote = () => {

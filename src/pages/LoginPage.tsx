@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
 import { Compass, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../utils/supabase';
 
 export default function LoginPage() {
+  const navigate = useNavigate();
   const [isSignUp, setIsSignUp] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -65,6 +66,7 @@ export default function LoginPage() {
           }
         } else {
           showMessage('Registrierung erfolgreich! Du wirst automatisch angemeldet.', 'success');
+          navigate('/');
         }
       } else {
         // Sign in flow
@@ -86,7 +88,7 @@ export default function LoginPage() {
           }
         } else {
           showMessage('Anmeldung erfolgreich!', 'success');
-          // Authentication state change will be handled by App.tsx
+          navigate('/');
         }
       }
     } catch (err) {

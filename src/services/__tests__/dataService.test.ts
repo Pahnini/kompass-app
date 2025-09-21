@@ -1,5 +1,5 @@
 // src/services/__tests__/dataService.test.ts
-import { describe, it, expect, beforeEach } from 'vitest';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { dataService } from '../dataService';
 import { encryptionService } from '../encryptionService';
 
@@ -17,7 +17,7 @@ describe('DataService', () => {
   });
 
   describe('Data Processing Service (Server-Side Encryption)', () => {
-    it('should process data correctly (no client-side encryption)', () => {
+    it('should process data correctly (no client-side encryption)', async () => {
       const testData = { message: 'Hello Healthcare!', sensitive: true };
 
       const processed = encryptionService.encrypt(testData, testUserId);
@@ -26,12 +26,12 @@ describe('DataService', () => {
       // Data is now JSON, not encrypted on client
       expect(processed).toContain('Hello Healthcare!');
 
-      const parsed = encryptionService.decrypt(processed, testUserId);
+      const parsed = encryptionService.decrypt(await processed, testUserId);
       expect(parsed).toEqual(testData);
     });
 
     it('should handle metadata (server-side encryption mode)', () => {
-      const metadata = encryptionService.getEncryptionMetadata(testUserId);
+      const metadata = encryptionService.getEncryptionMetadata();
 
       expect(metadata).toHaveProperty('algorithm');
       expect(metadata.algorithm).toBe('NONE-SERVER-SIDE-ONLY');

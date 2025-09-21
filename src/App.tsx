@@ -1,12 +1,14 @@
 import type { Session } from '@supabase/supabase-js';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import AchievementPopup from './components/AchievementPopup';
 import DatenschutzModal from './components/DatenschutzModal';
 import GlobalStyle from './components/GlobalStyle';
-import HomePage from './pages/HomePage';
-import NotFoundPage from './pages/NotFoundPage';
+import InstallPromptBanner from './components/InstallPromptBanner';
+import { NovaAssistant } from './components/NovaAssistant';
+import OfflineToast from './components/OfflineToast';
 import OnboardingModal from './components/OnboardingModal';
+import UpdateToast from './components/UpdateToast';
 import Sidebar from './components/layout/Sidebar';
 import SmartLoading from './components/ui/SmartLoading';
 import { emojiList } from './data/emojis';
@@ -18,19 +20,16 @@ import { useTheme } from './hooks/useTheme';
 import { useUI } from './hooks/useUI';
 import { useUserData } from './hooks/useUserData';
 import AchievementsPage from './pages/AchievementsPage';
+import HomePage from './pages/HomePage';
+import LandingPage from './pages/LandingPage';
+import LoginPage from './pages/LoginPage';
+import NotFoundPage from './pages/NotFoundPage';
 import { shareAchievement, shareSkill } from './utils/shareUtils';
 import { supabase } from './utils/supabase';
 import MoodCompassView from './views/MoodCompassView';
-import SchoolSupportView from './views/SchoolSupport/SchoolSupportView';
-import PanicScreen from './views/PanicScreen';
-import OfflineToast from './components/OfflineToast';
-import InstallPromptBanner from './components/InstallPromptBanner';
-import UpdateToast from './components/UpdateToast';
-import LandingPage from './pages/LandingPage';
-import LoginPage from './pages/LoginPage';
-import { NovaAssistant } from './components/NovaAssistant';
-import { useLocation } from 'react-router-dom';
 import NovaSettings from './views/NovaSettings';
+import PanicScreen from './views/PanicScreen';
+import SchoolSupportView from './views/SchoolSupport/SchoolSupportView';
 
 // Lazy-loaded Komponenten
 const ChatPage = lazy(() => import('./pages/ChatPage'));
@@ -230,8 +229,6 @@ export default function App(): React.ReactElement {
       setShowWelcome(false);
     }
   }, [session, setShowWelcome]);
-
-  const SKIP_WELCOME = false; // Enable proper authentication flow
 
   if (loading) {
     return <SmartLoading message="Verbindung wird hergestellt..." />;

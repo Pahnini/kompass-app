@@ -1,11 +1,11 @@
 import type { ReactNode } from 'react';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import pointSound from '../assets/sounds/point.wav';
 import { achievementList } from '../data/achievementList';
 import { skillsList as defaultSkills } from '../data/skills';
 import { dataService } from '../services/dataService';
-import { supabase } from '../utils/supabase';
 import type { Achievement, CalendarNotes, Goal, Skill, Symptoms, WordFile } from '../types/index';
+import { supabase } from '../utils/supabase';
 
 /* eslint-disable react-refresh/only-export-components */
 export const UserDataContext = React.createContext<UserDataContextType | undefined>(undefined);
@@ -137,7 +137,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((event, session) => {
+    } = supabase.auth.onAuthStateChange(event => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         loadUserData();
       } else if (event === 'SIGNED_OUT') {

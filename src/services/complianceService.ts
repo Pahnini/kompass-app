@@ -196,7 +196,7 @@ export class ComplianceService {
       dataSensitivity?: DataSensitivity;
       success?: boolean;
       errorMessage?: string;
-      data?: any;
+      data?: unknown;
     } = {}
   ): Promise<void> {
     try {
@@ -253,7 +253,7 @@ export class ComplianceService {
       violations.push(...consentViolations);
 
       // 2. Validate data retention compliance
-      const retentionViolations = await this.validateDataRetention(userId);
+      const retentionViolations = await this.validateDataRetention();
       violations.push(...retentionViolations);
 
       // 3. Validate encryption compliance
@@ -261,7 +261,7 @@ export class ComplianceService {
       violations.push(...encryptionViolations);
 
       // 4. Validate access control compliance
-      const accessViolations = await this.validateAccessControl(userId);
+      const accessViolations = await this.validateAccessControl();
       violations.push(...accessViolations);
 
       // 5. Calculate risk score
@@ -380,7 +380,7 @@ export class ComplianceService {
       });
 
       // Trigger data deletion if required
-      await this.handleConsentWithdrawal(userId, consentType);
+      await this.handleConsentWithdrawal(consentType);
 
       console.log(`✅ Consent withdrawn: ${consentType}`);
     } catch (error) {
@@ -523,7 +523,9 @@ export class ComplianceService {
 
           results.deleted.push(dataType);
         } catch (error) {
-          results.errors.push(`${dataType}: ${error.message}`);
+          results.errors.push(
+            `${dataType}: ${error instanceof Error ? error.message : String(error)}`
+          );
         }
       }
 
@@ -564,7 +566,7 @@ export class ComplianceService {
       // Get data retention status
       const dataRetentionStatus: Record<string, { daysRemaining: number; action: string }> = {};
       for (const policy of this.retentionPolicies) {
-        const daysRemaining = await this.calculateRetentionDaysRemaining(userId, policy.dataType);
+        const daysRemaining = await this.calculateRetentionDaysRemaining(policy.dataType);
         dataRetentionStatus[policy.dataType] = {
           daysRemaining,
           action:
@@ -641,12 +643,12 @@ export class ComplianceService {
     return violations;
   }
 
-  private async validateDataRetention(userId: string): Promise<ComplianceViolation[]> {
+  private async validateDataRetention(): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
 
     for (const policy of this.retentionPolicies) {
       try {
-        const daysRemaining = await this.calculateRetentionDaysRemaining(userId, policy.dataType);
+        const daysRemaining = await this.calculateRetentionDaysRemaining(policy.dataType);
 
         if (daysRemaining <= 0) {
           violations.push({
@@ -698,12 +700,12 @@ export class ComplianceService {
     return violations;
   }
 
-  private async validateAccessControl(userId: string): Promise<ComplianceViolation[]> {
+  private async validateAccessControl(): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
 
     try {
       // Check if RLS is enabled (this would be a more complex check in practice)
-      const { data, error } = await supabase.from('user_profiles').select('id').limit(1);
+      const { error } = await supabase.from('user_profiles').select('id').limit(1);
 
       if (error && error.code !== 'PGRST116') {
         violations.push({
@@ -850,7 +852,7 @@ export class ComplianceService {
     return consent ? consent.granted && !consent.withdrawnAt : false;
   }
 
-  private async calculateRetentionDaysRemaining(userId: string, dataType: string): Promise<number> {
+  private async calculateRetentionDaysRemaining(dataType: string): Promise<number> {
     const policy = this.retentionPolicies.find(p => p.dataType === dataType);
     if (!policy) return Infinity;
 
@@ -865,7 +867,7 @@ export class ComplianceService {
     return Math.ceil((expirationDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
   }
 
-  private async handleConsentWithdrawal(userId: string, consentType: string): Promise<void> {
+  private async handleConsentWithdrawal(consentType: string): Promise<void> {
     // Implement specific actions based on consent type
     switch (consentType) {
       case 'data_processing':

@@ -27,7 +27,7 @@ export interface ErrorInfo {
   severity: ErrorSeverity;
   timestamp: string;
   userId?: string;
-  context?: Record<string, any>;
+  _context?: Record<string, any>;
   stackTrace?: string;
   userAgent?: string;
   url?: string;
@@ -39,7 +39,7 @@ export interface ErrorInfo {
 export interface FallbackStrategy {
   name: string;
   category: ErrorCategory;
-  handler: (error: Error, context?: any) => Promise<any>;
+  handler: (error: Error, _context?: any) => Promise<any>;
   canRetry: boolean;
   maxRetries: number;
   priority: number; // Lower number = higher priority
@@ -101,9 +101,9 @@ export class ErrorHandlingService {
         canRetry: true,
         maxRetries: 3,
         priority: 1,
-        handler: async (_error: Error, context?: any) => {
+        handler: async (_error: Error, __context?: any) => {
           await this.delay(1000 * Math.random() * 2); // Random delay 0-2s
-          return context?.retryFunction ? await context.retryFunction() : null;
+          return __context?.retryFunction ? await __context.retryFunction() : null;
         },
       },
       {
@@ -112,9 +112,9 @@ export class ErrorHandlingService {
         canRetry: false,
         maxRetries: 0,
         priority: 2,
-        handler: async (_error: Error, context?: any) => {
+        handler: async (_error: Error, __context?: any) => {
           console.log('🔌 Switching to offline mode');
-          return { mode: 'offline', data: context?.fallbackData };
+          return { mode: 'offline', data: __context?.fallbackData };
         },
       },
 
@@ -154,7 +154,7 @@ export class ErrorHandlingService {
         canRetry: true,
         maxRetries: 1,
         priority: 1,
-        handler: async (_error: Error, context?: any) => {
+        handler: async (_error: Error, __context?: any) => {
           console.log('🔐 Regenerating encryption keys');
           encryptionService.clearDeviceFingerprint();
           return { keyRegenerated: true };
@@ -166,9 +166,9 @@ export class ErrorHandlingService {
         canRetry: false,
         maxRetries: 0,
         priority: 2,
-        handler: async (_error: Error, context?: any) => {
+        handler: async (_error: Error, __context?: any) => {
           console.warn('⚠️ Encryption fallback - using localStorage without encryption');
-          return { encryptionDisabled: true, data: context?.plainData };
+          return { encryptionDisabled: true, data: __context?.plainData };
         },
       },
 
@@ -191,7 +191,7 @@ export class ErrorHandlingService {
         canRetry: false,
         maxRetries: 0,
         priority: 2,
-        handler: async (_error: Error, context?: any) => {
+        handler: async (_error: Error, __context?: any) => {
           console.log('💾 Using localStorage fallback');
           return { useLocalStorageOnly: true };
         },
@@ -204,7 +204,7 @@ export class ErrorHandlingService {
         canRetry: true,
         maxRetries: 2,
         priority: 1,
-        handler: async (_error: Error, context?: any) => {
+        handler: async (_error: Error, __context?: any) => {
           console.log('🔄 Attempting partial sync');
           // Try to sync priority data only
           return { partialSyncAttempted: true };
@@ -216,7 +216,7 @@ export class ErrorHandlingService {
         canRetry: false,
         maxRetries: 0,
         priority: 2,
-        handler: async (_error: Error, context?: any) => {
+        handler: async (_error: Error, __context?: any) => {
           console.log('⏳ Queuing changes for later sync');
           return { queuedForLater: true };
         },
@@ -231,9 +231,9 @@ export class ErrorHandlingService {
     error: Error,
     category: ErrorCategory,
     severity: ErrorSeverity = 'medium',
-    context?: Record<string, any>
+    _context?: Record<string, any>
   ): Promise<any> {
-    const errorInfo = this.createErrorInfo(error, category, severity, context);
+    const errorInfo = this.createErrorInfo(error, category, severity, _context);
 
     // Log the error
     this.logError(errorInfo);
@@ -251,7 +251,7 @@ export class ErrorHandlingService {
       try {
         console.log(`🛠️ Trying fallback strategy: ${strategy.name}`);
 
-        const result = await strategy.handler(error, context);
+        const result = await strategy.handler(error, _context);
 
         // Mark error as resolved if strategy succeeded
         errorInfo.resolved = true;
@@ -280,7 +280,7 @@ export class ErrorHandlingService {
     error: Error,
     category: ErrorCategory,
     severity: ErrorSeverity,
-    context?: Record<string, any>
+    _context?: Record<string, any>
   ): ErrorInfo {
     return {
       id: this.generateErrorId(),
@@ -288,8 +288,8 @@ export class ErrorHandlingService {
       category,
       severity,
       timestamp: new Date().toISOString(),
-      userId: context?.userId,
-      context: this.sanitizeContext(context),
+      userId: _context?.userId,
+      _context: this.sanitizeContext(_context),
       stackTrace: error.stack,
       userAgent: navigator.userAgent,
       url: window.location.href,
@@ -480,7 +480,7 @@ export class ErrorHandlingService {
       try {
         console.log(`🔄 Retrying error ${errorId} with strategy ${strategy.name}`);
 
-        await strategy.handler(new Error(error.message), error.context);
+        await strategy.handler(new Error(error.message), error._context);
 
         // Success - remove from queue and mark as resolved
         error.resolved = true;
@@ -603,12 +603,12 @@ export class ErrorHandlingService {
     return `error_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
   }
 
-  private sanitizeContext(context?: Record<string, any>): Record<string, any> | undefined {
-    if (!context) return undefined;
+  private sanitizeContext(_context?: Record<string, any>): Record<string, any> | undefined {
+    if (!_context) return undefined;
 
     const sanitized: Record<string, any> = {};
 
-    for (const [key, value] of Object.entries(context)) {
+    for (const [key, value] of Object.entries(_context)) {
       // Remove sensitive data
       if (
         key.toLowerCase().includes('password') ||
@@ -668,7 +668,7 @@ export class ErrorHandlingService {
 
     console.error(
       `${emoji} [${errorInfo.category.toUpperCase()}] ${errorInfo.message}`,
-      errorInfo.context
+      errorInfo._context
     );
   }
 
@@ -750,9 +750,9 @@ export const handleError = (
   error: Error,
   category: ErrorCategory,
   severity: ErrorSeverity = 'medium',
-  context?: Record<string, any>
+  _context?: Record<string, any>
 ) => {
-  return errorHandler.handleError(error, category, severity, context);
+  return errorHandler.handleError(error, category, severity, _context);
 };
 
 // Types are exported with their declarations above

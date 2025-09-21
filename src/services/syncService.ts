@@ -1,7 +1,7 @@
 // src/services/syncService.ts
 import { supabase } from '../utils/supabase';
-import { encryptionService } from './encryptionService';
 import { dataService } from './dataService';
+import { encryptionService } from './encryptionService';
 import * as storageService from './storageService';
 
 // Browser-compatible timer type
@@ -51,7 +51,6 @@ export class SyncService {
   private syncTimer: TimerHandle | null = null;
   private isOnline: boolean = navigator.onLine;
   private pendingConflicts: Map<string, SyncConflict> = new Map();
-  private syncQueue: Map<string, any> = new Map();
   private listeners: Set<(status: SyncStatus, conflicts?: SyncConflict[]) => void> = new Set();
 
   private constructor() {
@@ -261,8 +260,9 @@ export class SyncService {
     try {
       // Get local data and timestamp
       const localData = storageService.get(dataType);
+      const localTimestampRaw = storageService.get(`${dataType}_timestamp`);
       const localTimestamp =
-        storageService.get(`${dataType}_timestamp`) || new Date(0).toISOString();
+        typeof localTimestampRaw === 'string' ? localTimestampRaw : new Date(0).toISOString();
 
       // Get remote data and timestamp
       const remoteData = await this.getRemoteData(dataType, userId);
@@ -516,7 +516,7 @@ export class SyncService {
         // Update error message
         await supabase
           .from('offline_changes_queue')
-          .update({ error_message: error.message })
+          .update({ error_message: error instanceof Error ? error.message : String(error) })
           .eq('id', change.id);
       }
     }

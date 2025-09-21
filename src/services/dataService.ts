@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // src/services/dataService.ts
 /**
  * Healthcare-Grade Data Service for German GDPR Compliance
@@ -16,29 +17,6 @@ import { supabase } from '../utils/supabase';
 import { encryptionService } from './encryptionService';
 import * as storageService from './storageService';
 
-/**
- * Healthcare-grade data service with GDPR compliance
- * Provides seamless switching between Supabase and localStorage
- * with automatic fallback, offline support, and audit logging
- */
-
-// Enhanced error types for healthcare compliance
-interface HealthcareDataError extends Error {
-  code: 'GDPR_VIOLATION' | 'AUDIT_FAILURE' | 'HEALTHCARE_VALIDATION' | 'SYNC_FAILURE';
-  userId?: string;
-  dataType?: string;
-  originalError?: Error;
-}
-
-// Audit logging interface
-interface AuditLogEntry {
-  userId: string;
-  action: string;
-  tableName: string;
-  recordId?: string;
-  metadata: Record<string, any>;
-}
-
 // Storage backend interface
 interface StorageBackend {
   get<T>(key: string, userId: string): Promise<T | null>;
@@ -56,6 +34,7 @@ class SupabaseStorageBackend implements StorageBackend {
     action: string,
     tableName: string,
     userId: string,
+
     metadata: Record<string, any> = {}
   ): Promise<void> {
     try {
@@ -79,6 +58,7 @@ class SupabaseStorageBackend implements StorageBackend {
   /**
    * Safely decrypt data that might be encrypted string or plain JSONB
    */
+
   private async safeDecrypt(encryptedData: any, userId: string): Promise<any> {
     // If data is null or undefined, return null
     if (encryptedData === null || encryptedData === undefined) {
@@ -116,7 +96,7 @@ class SupabaseStorageBackend implements StorageBackend {
   /**
    * Validate healthcare data before processing
    */
-  private validateHealthcareData(data: any, userId: string): void {
+  private validateHealthcareData(data: any): void {
     if (encryptionService.isHealthcareData(data)) {
       console.log('🏥 Healthcare data detected - applying enhanced protection');
 
@@ -171,7 +151,7 @@ class SupabaseStorageBackend implements StorageBackend {
 
       // Validate healthcare data
       if (result !== null) {
-        this.validateHealthcareData(result, userId);
+        this.validateHealthcareData(result);
       }
 
       return result;
@@ -304,7 +284,7 @@ class SupabaseStorageBackend implements StorageBackend {
       const tableName = await this.getTableName(key);
 
       // Validate healthcare data before storage
-      this.validateHealthcareData(data, userId);
+      this.validateHealthcareData(data);
 
       // Log data modification for GDPR audit
       await this.logDataAccess('DATA_MODIFY', tableName, userId, {
@@ -376,7 +356,7 @@ class SupabaseStorageBackend implements StorageBackend {
     const { error } = await supabase.from('user_profiles').upsert({
       user_id: userId,
       ...updateData,
-      device_fingerprint: encryptionService.getEncryptionMetadata(userId).deviceFingerprint,
+      device_fingerprint: encryptionService.getEncryptionMetadata().deviceFingerprint,
     });
 
     if (error) throw error;
@@ -775,8 +755,8 @@ export class HybridDataService {
   /**
    * Get encryption metadata for audit purposes
    */
-  getEncryptionMetadata(userId: string) {
-    return encryptionService.getEncryptionMetadata(userId);
+  getEncryptionMetadata() {
+    return encryptionService.getEncryptionMetadata();
   }
 
   /**

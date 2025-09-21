@@ -13,8 +13,8 @@
  * Compliance: GDPR + German BDSG + Healthcare standards
  */
 
-import { supabase } from '../utils/supabase';
 import type { Session } from '@supabase/supabase-js';
+import { supabase } from '../utils/supabase';
 
 // Browser-compatible Buffer polyfill
 const BufferPolyfill = {
@@ -449,7 +449,7 @@ export class EncryptionService {
   /**
    * Validate encrypted data structure and integrity
    */
-  public validateEncryptedData(encryptedData: string, userId: string): boolean {
+  public validateEncryptedData(encryptedData: string): boolean {
     if (!encryptedData || typeof encryptedData !== 'string') {
       return false;
     }
@@ -471,7 +471,7 @@ export class EncryptionService {
   /**
    * Returns metadata about Supabase encryption implementation
    */
-  public getEncryptionMetadata(userId: string): {
+  public getEncryptionMetadata(): {
     algorithm: string;
     keySize: number;
     iterations: number;

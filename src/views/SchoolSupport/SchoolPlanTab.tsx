@@ -33,7 +33,7 @@ export default function SchoolPlanTab() {
       setPlans(data as SchoolPlan[]);
       setError(null);
     }
-  }, [user]);
+  }, [user, t]);
 
   useEffect(() => {
     void fetchPlans();

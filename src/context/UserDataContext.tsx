@@ -1,4 +1,4 @@
-import type { ReactNode} from 'react';
+import type { ReactNode } from 'react';
 import React, { useState, useEffect } from 'react';
 import pointSound from '../assets/sounds/point.wav';
 import { achievementList } from '../data/achievementList';
@@ -7,6 +7,7 @@ import { dataService } from '../services/dataService';
 import { supabase } from '../utils/supabase';
 import type { Achievement, CalendarNotes, Goal, Skill, Symptoms, WordFile } from '../types/index';
 
+/* eslint-disable react-refresh/only-export-components */
 export const UserDataContext = React.createContext<UserDataContextType | undefined>(undefined);
 
 export interface UserDataContextType {
@@ -68,12 +69,14 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
   useEffect(() => {
     const loadUserData = async () => {
       try {
-        const { data: { session } } = await supabase.auth.getSession();
-        
+        const {
+          data: { session },
+        } = await supabase.auth.getSession();
+
         if (session?.user?.id) {
           setUserId(session.user.id);
           console.log('🔄 Loading user data from healthcare database...');
-          
+
           // Load all user data from the healthcare-compliant database
           const [
             userData_username,
@@ -84,7 +87,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
             userData_favorites,
             userData_wordFiles,
             userData_skillsList,
-            userData_points
+            userData_points,
           ] = await Promise.all([
             dataService.getData<string>('username', session.user.id),
             dataService.getData<Goal[]>('goals', session.user.id),
@@ -94,7 +97,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
             dataService.getData<string[]>('favorites', session.user.id),
             dataService.getData<WordFile[]>('wordFiles', session.user.id),
             dataService.getData<Skill[]>('skillsList', session.user.id),
-            dataService.getData<number>('points', session.user.id)
+            dataService.getData<number>('points', session.user.id),
           ]);
 
           // Update state with loaded data (use defaults if no data found)
@@ -132,7 +135,9 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
     loadUserData();
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
         loadUserData();
       } else if (event === 'SIGNED_OUT') {
@@ -157,101 +162,125 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
   // Calculate level and progress
   const { level, progress } = getLevel(points);
 
-  const setUsername = React.useCallback(async (value: string) => {
-    setUsernameState(value);
-    if (userId) {
-      try {
-        await dataService.setData('username', value, userId);
-        console.log('✅ Username saved to healthcare database');
-      } catch (error) {
-        console.error('❌ Failed to save username:', error);
+  const setUsername = React.useCallback(
+    async (value: string) => {
+      setUsernameState(value);
+      if (userId) {
+        try {
+          await dataService.setData('username', value, userId);
+          console.log('✅ Username saved to healthcare database');
+        } catch (error) {
+          console.error('❌ Failed to save username:', error);
+        }
       }
-    }
-  }, [userId]);
+    },
+    [userId]
+  );
 
-  const setGoals = React.useCallback(async (value: Goal[]) => {
-    setGoalsState(value);
-    if (userId) {
-      try {
-        await dataService.setData('goals', value, userId);
-        console.log('✅ Goals saved to healthcare database');
-      } catch (error) {
-        console.error('❌ Failed to save goals:', error);
+  const setGoals = React.useCallback(
+    async (value: Goal[]) => {
+      setGoalsState(value);
+      if (userId) {
+        try {
+          await dataService.setData('goals', value, userId);
+          console.log('✅ Goals saved to healthcare database');
+        } catch (error) {
+          console.error('❌ Failed to save goals:', error);
+        }
       }
-    }
-  }, [userId]);
+    },
+    [userId]
+  );
 
-  const setAchievements = React.useCallback(async (value: Achievement[]) => {
-    setAchievementsState(value);
-    if (userId) {
-      try {
-        await dataService.setData('achievements', value, userId);
-        console.log('✅ Achievements saved to healthcare database');
-      } catch (error) {
-        console.error('❌ Failed to save achievements:', error);
+  const setAchievements = React.useCallback(
+    async (value: Achievement[]) => {
+      setAchievementsState(value);
+      if (userId) {
+        try {
+          await dataService.setData('achievements', value, userId);
+          console.log('✅ Achievements saved to healthcare database');
+        } catch (error) {
+          console.error('❌ Failed to save achievements:', error);
+        }
       }
-    }
-  }, [userId]);
+    },
+    [userId]
+  );
 
-  const setCalendarNotes = React.useCallback(async (value: CalendarNotes) => {
-    setCalendarNotesState(value);
-    if (userId) {
-      try {
-        await dataService.setData('calendarNotes', value, userId);
-        console.log('✅ Calendar notes saved to healthcare database');
-      } catch (error) {
-        console.error('❌ Failed to save calendar notes:', error);
+  const setCalendarNotes = React.useCallback(
+    async (value: CalendarNotes) => {
+      setCalendarNotesState(value);
+      if (userId) {
+        try {
+          await dataService.setData('calendarNotes', value, userId);
+          console.log('✅ Calendar notes saved to healthcare database');
+        } catch (error) {
+          console.error('❌ Failed to save calendar notes:', error);
+        }
       }
-    }
-  }, [userId]);
+    },
+    [userId]
+  );
 
-  const setSymptoms = React.useCallback(async (value: Symptoms) => {
-    setSymptomsState(value);
-    if (userId) {
-      try {
-        await dataService.setData('symptoms', value, userId);
-        console.log('✅ Symptoms saved to healthcare database');
-      } catch (error) {
-        console.error('❌ Failed to save symptoms:', error);
+  const setSymptoms = React.useCallback(
+    async (value: Symptoms) => {
+      setSymptomsState(value);
+      if (userId) {
+        try {
+          await dataService.setData('symptoms', value, userId);
+          console.log('✅ Symptoms saved to healthcare database');
+        } catch (error) {
+          console.error('❌ Failed to save symptoms:', error);
+        }
       }
-    }
-  }, [userId]);
+    },
+    [userId]
+  );
 
-  const setFavorites = React.useCallback(async (value: string[]) => {
-    setFavoritesState(value);
-    if (userId) {
-      try {
-        await dataService.setData('favorites', value, userId);
-        console.log('✅ Favorites saved to healthcare database');
-      } catch (error) {
-        console.error('❌ Failed to save favorites:', error);
+  const setFavorites = React.useCallback(
+    async (value: string[]) => {
+      setFavoritesState(value);
+      if (userId) {
+        try {
+          await dataService.setData('favorites', value, userId);
+          console.log('✅ Favorites saved to healthcare database');
+        } catch (error) {
+          console.error('❌ Failed to save favorites:', error);
+        }
       }
-    }
-  }, [userId]);
+    },
+    [userId]
+  );
 
-  const setWordFiles = React.useCallback(async (value: WordFile[]) => {
-    setWordFilesState(value);
-    if (userId) {
-      try {
-        await dataService.setData('wordFiles', value, userId);
-        console.log('✅ Word files saved to healthcare database');
-      } catch (error) {
-        console.error('❌ Failed to save word files:', error);
+  const setWordFiles = React.useCallback(
+    async (value: WordFile[]) => {
+      setWordFilesState(value);
+      if (userId) {
+        try {
+          await dataService.setData('wordFiles', value, userId);
+          console.log('✅ Word files saved to healthcare database');
+        } catch (error) {
+          console.error('❌ Failed to save word files:', error);
+        }
       }
-    }
-  }, [userId]);
+    },
+    [userId]
+  );
 
-  const setSkillsList = React.useCallback(async (value: Skill[]) => {
-    setSkillsListState(value);
-    if (userId) {
-      try {
-        await dataService.setData('skillsList', value, userId);
-        console.log('✅ Skills list saved to healthcare database');
-      } catch (error) {
-        console.error('❌ Failed to save skills list:', error);
+  const setSkillsList = React.useCallback(
+    async (value: Skill[]) => {
+      setSkillsListState(value);
+      if (userId) {
+        try {
+          await dataService.setData('skillsList', value, userId);
+          console.log('✅ Skills list saved to healthcare database');
+        } catch (error) {
+          console.error('❌ Failed to save skills list:', error);
+        }
       }
-    }
-  }, [userId]);
+    },
+    [userId]
+  );
 
   const addPoints = React.useCallback(
     (amount: number) => {
@@ -259,7 +288,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
         const newPoints = currentPoints + amount;
         const audio = new Audio(pointSound);
         audio.play().catch(() => {}); // Falls Browser blockiert, kein Fehler
-        
+
         // Save points to healthcare database
         if (userId) {
           dataService.setData('points', newPoints, userId).catch(error => {

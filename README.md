@@ -48,6 +48,17 @@ Die App läuft dann unter `http://localhost:5173`.
 
 ---
 
+## 📚 Documentation
+
+Comprehensive documentation and development resources:
+
+- **[📖 Full Documentation](docs_and_scripts/)** - Complete documentation index
+- **[🤝 Contributing Guide](docs_and_scripts/contributing/)** - How to contribute
+- **[🔧 Development Docs](docs_and_scripts/development/)** - Roadmaps and guides
+- **[✨ Feature Specs](docs_and_scripts/features/)** - Feature documentation
+
+---
+
 ## 🤝 Mitmachen
 
 Du willst helfen? Großartig! Jede Unterstützung ist willkommen – ob UX-Ideen, Bugfixes oder neue Features.
@@ -66,6 +77,26 @@ Du willst helfen? Großartig! Jede Unterstützung ist willkommen – ob UX-Ideen
 - `enhancement`: Verbesserungen
 - `UX`: Design & Benutzerfreundlichkeit
 - `help wanted`: Ideen oder Unterstützung gesucht
+
+### 🤖 Automated Sync Scripts
+
+For contributors: We provide automated scripts to streamline the contribution workflow:
+
+```bash
+cd scripts
+./sync-to-main.sh    # Automated sync to main repository with PR creation
+./quick-sync.sh      # Quick sync for experienced contributors
+./setup-repo.sh      # One-time repository setup
+```
+
+**Features:**
+
+- ✅ Automatic rebase onto upstream/main
+- ✅ Safe force-push with `--force-with-lease`
+- ✅ Automated Pull Request creation (with GitHub CLI)
+- ✅ Comprehensive error handling
+
+📖 **[Full Documentation](scripts/SYNC_SCRIPTS_README.md)**
 
 ---
 

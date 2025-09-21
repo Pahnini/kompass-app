@@ -24,18 +24,18 @@ interface DeinWegProps {
 }
 
 export default function DeinWeg({
-  goals,
+  goals = [],
   setGoals,
-  achievements,
+  achievements = [],
   setAchievements,
-  calendarNotes,
+  calendarNotes = {},
   setCalendarNotes,
-  symptoms,
+  symptoms = {},
   setSymptoms,
   shareAchievement,
   showReminder,
-  emojiList,
-  templates,
+  emojiList = [],
+  templates = [],
 }: DeinWegProps): React.ReactElement {
   const { t } = useTranslation();
   const [goalInput, setGoalInput] = useState('');
@@ -210,32 +210,34 @@ export default function DeinWeg({
         <span style={{ minWidth: 30, display: 'inline-block' }}>{symptomScore}</span>
       </div>
 
-      {emojiList && (
+      {emojiList && Array.isArray(emojiList) && (
         <div className="emoji-row">
-          {emojiList.map(em => (
-            <span
-              key={em.emoji}
-              className={`emoji-selector ${emoji === em.emoji ? 'active' : ''} ${justSelectedEmoji === em.emoji ? 'just-selected' : ''}`}
-              onClick={() => {
-                setEmoji(em.emoji);
-                setJustSelectedEmoji(em.emoji);
-                setTimeout(() => setJustSelectedEmoji(''), 300);
-              }}
-              title={em.label}
-              aria-label={em.label}
-              tabIndex={0}
-              onKeyDown={e => {
-                if (e.key === 'Enter' || e.key === ' ') {
-                  e.preventDefault();
+          {emojiList
+            .filter(em => em && em.emoji && em.label)
+            .map(em => (
+              <span
+                key={em.emoji}
+                className={`emoji-selector ${emoji === em.emoji ? 'active' : ''} ${justSelectedEmoji === em.emoji ? 'just-selected' : ''}`}
+                onClick={() => {
                   setEmoji(em.emoji);
                   setJustSelectedEmoji(em.emoji);
                   setTimeout(() => setJustSelectedEmoji(''), 300);
-                }
-              }}
-            >
-              {em.emoji}
-            </span>
-          ))}
+                }}
+                title={em.label}
+                aria-label={em.label}
+                tabIndex={0}
+                onKeyDown={e => {
+                  if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    setEmoji(em.emoji);
+                    setJustSelectedEmoji(em.emoji);
+                    setTimeout(() => setJustSelectedEmoji(''), 300);
+                  }
+                }}
+              >
+                {em.emoji}
+              </span>
+            ))}
         </div>
       )}
 
@@ -285,17 +287,19 @@ export default function DeinWeg({
 
       <div className="section">
         <h3>{t('journal.sections.achievements')}</h3>
-        {templates && (
+        {templates && Array.isArray(templates) && (
           <div className="templates">
-            {templates.map((value, i) => (
-              <button
-                key={i}
-                className="template-btn"
-                onClick={() => setAchievementInput(t(value))}
-              >
-                {t(value)}
-              </button>
-            ))}
+            {templates
+              .filter(value => value && typeof value === 'string')
+              .map((value, i) => (
+                <button
+                  key={i}
+                  className="template-btn"
+                  onClick={() => setAchievementInput(t(value))}
+                >
+                  {t(value)}
+                </button>
+              ))}
           </div>
         )}
         <div className="form-row">

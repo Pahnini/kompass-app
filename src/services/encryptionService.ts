@@ -1,20 +1,53 @@
 // src/services/encryptionService.ts
 /**
  * Healthcare-Grade Encryption Service for German Compliance
- * 
+ *
  * This service coordinates with Supabase's native AES-256 encryption at rest
  * and server-side pgcrypto functions for additional healthcare data protection.
- * 
+ *
  * Architecture:
  * - Supabase: AES-256 encryption at rest (automatic)
  * - Database: pgcrypto server-side encryption for sensitive fields
  * - Client: Data validation and secure transmission (TLS 1.3)
- * 
+ *
  * Compliance: GDPR + German BDSG + Healthcare standards
  */
 
 import { supabase } from '../utils/supabase';
 import type { Session } from '@supabase/supabase-js';
+
+// Browser-compatible Buffer polyfill
+const BufferPolyfill = {
+  from(data: string, encoding?: string): { toString(encoding: string): string } {
+    if (encoding === 'base64') {
+      // Decode base64 to string
+      return {
+        toString: (targetEncoding: string) => {
+          if (targetEncoding === 'utf-8') {
+            return atob(data);
+          }
+          return data;
+        },
+      };
+    }
+    // Encode string to base64
+    return {
+      toString: (encoding: string) => {
+        if (encoding === 'base64') {
+          return btoa(data);
+        }
+        return data;
+      },
+    };
+  },
+};
+
+// Browser-compatible process polyfill
+const processPolyfill = {
+  env: {
+    NODE_ENV: import.meta.env.MODE || 'development',
+  },
+};
 
 /**
  * Healthcare-compliant encryption service using Supabase native capabilities
@@ -38,14 +71,20 @@ export class EncryptionService {
       supabase.auth.onAuthStateChange((event, session) => {
         this.currentSession = session;
         if (import.meta.env.DEV) {
-          console.log('🔐 Auth state changed:', event, session ? 'authenticated' : 'unauthenticated');
+          console.log(
+            '🔐 Auth state changed:',
+            event,
+            session ? 'authenticated' : 'unauthenticated'
+          );
         }
       });
-      
+
       // Get initial session
-      const { data: { session } } = await supabase.auth.getSession();
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       this.currentSession = session;
-      
+
       this.initialized = true;
       console.log('🔐 Encryption Service initialized with auth context tracking');
     } catch (error) {
@@ -110,21 +149,21 @@ export class EncryptionService {
   private createSafeFallback<T>(expectedType: string = 'object'): T {
     // Safe fallbacks that match app expectations
     const fallbacks: Record<string, any> = {
-      'array': [],
-      'object': {},
-      'string': '',
-      'number': 0,
-      'boolean': false,
-      'goals': [],
-      'achievements': [],
-      'skills': [],
-      'skillsList': [],
-      'calendarNotes': {},
-      'symptoms': {},
-      'wordFiles': [],
-      'favorites': [],
-      'username': '',
-      'points': 0
+      array: [],
+      object: {},
+      string: '',
+      number: 0,
+      boolean: false,
+      goals: [],
+      achievements: [],
+      skills: [],
+      skillsList: [],
+      calendarNotes: {},
+      symptoms: {},
+      wordFiles: [],
+      favorites: [],
+      username: '',
+      points: 0,
     };
 
     if (import.meta.env.DEV) {
@@ -147,20 +186,20 @@ export class EncryptionService {
     // For healthcare data, we use server-side pgcrypto encryption
     const validatedData = this.validateHealthcareData(data);
     const jsonData = JSON.stringify(validatedData);
-    
+
     // Check authentication context before attempting pgcrypto
     if (!this.isAuthenticated()) {
       if (import.meta.env.DEV) {
         console.log('🔄 User not authenticated, using development fallback encryption');
       }
-      return `fallback:${  Buffer.from(jsonData).toString('base64')}`;
+      return `fallback:${BufferPolyfill.from(jsonData).toString('base64')}`;
     }
-    
+
     try {
       // Use server-side encryption function from our migration
       const { data: encryptedData, error } = await supabase.rpc('encrypt_health_data', {
         data: jsonData,
-        user_key: this.generateUserEncryptionKey(userId)
+        user_key: this.generateUserEncryptionKey(userId),
       });
 
       if (error) {
@@ -169,7 +208,7 @@ export class EncryptionService {
           console.log('   Using development fallback encryption');
         }
         // Fallback to base64 encoding for development (NOT secure, but allows development)
-        return `fallback:${  Buffer.from(jsonData).toString('base64')}`;
+        return `fallback:${BufferPolyfill.from(jsonData).toString('base64')}`;
       }
 
       if (import.meta.env.DEV) {
@@ -181,7 +220,7 @@ export class EncryptionService {
         console.log('🔄 Encryption service unavailable, using fallback:', error);
       }
       // Fallback to base64 encoding for development
-      return `fallback:${  Buffer.from(jsonData).toString('base64')}`;
+      return `fallback:${BufferPolyfill.from(jsonData).toString('base64')}`;
     }
   }
 
@@ -199,7 +238,7 @@ export class EncryptionService {
 
     // Detect data format to prevent parsing errors
     const format = this.detectDataFormat(data);
-    
+
     if (import.meta.env.DEV) {
       console.log(`🔍 Detected data format: ${format}`);
     }
@@ -208,7 +247,7 @@ export class EncryptionService {
       // Handle fallback-encoded data
       if (format === 'fallback') {
         const encodedData = data.substring(9); // Remove 'fallback:' prefix
-        const decodedData = Buffer.from(encodedData, 'base64').toString('utf-8');
+        const decodedData = BufferPolyfill.from(encodedData, 'base64').toString('utf-8');
         const parsedData = JSON.parse(decodedData);
         return this.validateDecryptedData(parsedData);
       }
@@ -218,7 +257,9 @@ export class EncryptionService {
         // Only attempt pgcrypto decryption if authenticated
         if (!this.isAuthenticated()) {
           if (import.meta.env.DEV) {
-            console.log('🔄 Binary data detected but user not authenticated, returning safe fallback');
+            console.log(
+              '🔄 Binary data detected but user not authenticated, returning safe fallback'
+            );
           }
           return this.createSafeFallback<T>('object');
         }
@@ -226,7 +267,7 @@ export class EncryptionService {
         // Try server-side decryption for binary data
         const { data: decryptedData, error } = await supabase.rpc('decrypt_health_data', {
           encrypted_data: data,
-          user_key: this.generateUserEncryptionKey(userId)
+          user_key: this.generateUserEncryptionKey(userId),
         });
 
         if (!error && decryptedData) {
@@ -239,7 +280,9 @@ export class EncryptionService {
 
         // If pgcrypto fails, return safe fallback instead of error spam
         if (import.meta.env.DEV) {
-          console.log('🔄 Binary decryption failed (expected without auth context), using safe fallback');
+          console.log(
+            '🔄 Binary decryption failed (expected without auth context), using safe fallback'
+          );
         }
         return this.createSafeFallback<T>('object');
       }
@@ -253,7 +296,7 @@ export class EncryptionService {
       // Handle base64 data (development fallback)
       if (format === 'base64') {
         try {
-          const decodedData = Buffer.from(data, 'base64').toString('utf-8');
+          const decodedData = BufferPolyfill.from(data, 'base64').toString('utf-8');
           const parsedData = JSON.parse(decodedData);
           return this.validateDecryptedData(parsedData);
         } catch {
@@ -267,7 +310,6 @@ export class EncryptionService {
         console.log('🔄 Unknown data format, using safe fallback');
       }
       return this.createSafeFallback<T>('object');
-
     } catch (error) {
       // Instead of throwing errors that spam console, return safe fallbacks
       if (import.meta.env.DEV) {
@@ -293,21 +335,24 @@ export class EncryptionService {
       if (import.meta.env.DEV) {
         console.log('🔄 User not authenticated, using development fallback for field encryption');
       }
-      return `fallback:${  Buffer.from(value).toString('base64')}`;
+      return `fallback:${BufferPolyfill.from(value).toString('base64')}`;
     }
 
     try {
       // Use server-side encryption for field
       const { data: encryptedData, error } = await supabase.rpc('encrypt_health_data', {
         data: value,
-        user_key: this.generateUserEncryptionKey(userId)
+        user_key: this.generateUserEncryptionKey(userId),
       });
 
       if (error) {
         if (import.meta.env.DEV) {
-          console.log('🔄 Field encryption failed (expected in dev), using fallback:', error.message);
+          console.log(
+            '🔄 Field encryption failed (expected in dev), using fallback:',
+            error.message
+          );
         }
-        return `fallback:${  Buffer.from(value).toString('base64')}`;
+        return `fallback:${BufferPolyfill.from(value).toString('base64')}`;
       }
 
       if (import.meta.env.DEV) {
@@ -318,7 +363,7 @@ export class EncryptionService {
       if (import.meta.env.DEV) {
         console.log('🔄 Field encryption unavailable, using fallback:', error);
       }
-      return `fallback:${  Buffer.from(value).toString('base64')}`;
+      return `fallback:${BufferPolyfill.from(value).toString('base64')}`;
     }
   }
 
@@ -328,7 +373,7 @@ export class EncryptionService {
   private generateUserEncryptionKey(userId: string): string {
     // Create a deterministic key based on user ID
     // In production, this would use a more sophisticated key derivation
-    return `healthcare_key_${userId}_${process.env.NODE_ENV || 'development'}`;
+    return `healthcare_key_${userId}_${processPolyfill.env.NODE_ENV || 'development'}`;
   }
 
   /**
@@ -346,7 +391,7 @@ export class EncryptionService {
       // Handle fallback-encoded data
       if (format === 'fallback') {
         const encodedData = encryptedValue.substring(9); // Remove 'fallback:' prefix
-        return Buffer.from(encodedData, 'base64').toString('utf-8');
+        return BufferPolyfill.from(encodedData, 'base64').toString('utf-8');
       }
 
       // Handle binary pgcrypto data
@@ -354,7 +399,9 @@ export class EncryptionService {
         // Only attempt pgcrypto decryption if authenticated
         if (!this.isAuthenticated()) {
           if (import.meta.env.DEV) {
-            console.log('🔄 Binary field data detected but user not authenticated, returning empty');
+            console.log(
+              '🔄 Binary field data detected but user not authenticated, returning empty'
+            );
           }
           return '';
         }
@@ -362,7 +409,7 @@ export class EncryptionService {
         // Try server-side decryption for binary data
         const { data: decryptedData, error } = await supabase.rpc('decrypt_health_data', {
           encrypted_data: encryptedValue,
-          user_key: this.generateUserEncryptionKey(userId)
+          user_key: this.generateUserEncryptionKey(userId),
         });
 
         if (!error && decryptedData) {
@@ -382,7 +429,7 @@ export class EncryptionService {
       // Handle base64 data (development fallback)
       if (format === 'base64') {
         try {
-          return Buffer.from(encryptedValue, 'base64').toString('utf-8');
+          return BufferPolyfill.from(encryptedValue, 'base64').toString('utf-8');
         } catch {
           return encryptedValue; // Return as-is if base64 parsing fails
         }
@@ -390,7 +437,6 @@ export class EncryptionService {
 
       // Handle plain text (assume already decrypted)
       return encryptedValue;
-
     } catch (error) {
       // Instead of throwing errors, return safe fallback
       if (import.meta.env.DEV) {
@@ -410,12 +456,12 @@ export class EncryptionService {
 
     try {
       const parsed = JSON.parse(encryptedData);
-      
+
       // Basic structure validation
       if (typeof parsed === 'object' && parsed !== null) {
         return true;
       }
-      
+
       return false;
     } catch {
       return false;
@@ -437,7 +483,7 @@ export class EncryptionService {
       keySize: 256,
       iterations: 1,
       deviceFingerprint: 'SERVER-SIDE-SUPABASE',
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     };
   }
 
@@ -448,14 +494,23 @@ export class EncryptionService {
     if (typeof data === 'object' && data !== null) {
       // Check for potential PII/healthcare data patterns
       const dataString = JSON.stringify(data).toLowerCase();
-      
+
       // Check for healthcare indicators
       const healthcareIndicators = [
-        'symptoms', 'medication', 'diagnosis', 'treatment', 'medical',
-        'health', 'doctor', 'patient', 'therapy', 'mental', 'emotional'
+        'symptoms',
+        'medication',
+        'diagnosis',
+        'treatment',
+        'medical',
+        'health',
+        'doctor',
+        'patient',
+        'therapy',
+        'mental',
+        'emotional',
       ];
 
-      const isHealthcareData = healthcareIndicators.some(indicator => 
+      const isHealthcareData = healthcareIndicators.some(indicator =>
         dataString.includes(indicator)
       );
 
@@ -463,7 +518,7 @@ export class EncryptionService {
         console.log('🏥 Healthcare data detected - applying enhanced protection');
       }
     }
-    
+
     return data;
   }
 
@@ -475,7 +530,7 @@ export class EncryptionService {
     const sensitivePatterns = [
       /\b\d{3}-\d{2}-\d{4}\b/, // SSN
       /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/, // Email
-      /\b\d{10,}\b/ // Phone
+      /\b\d{10,}\b/, // Phone
     ];
 
     const containsPII = sensitivePatterns.some(pattern => pattern.test(value));
@@ -497,10 +552,19 @@ export class EncryptionService {
    */
   public isHealthcareData(data: any): boolean {
     if (!data || typeof data !== 'object') return false;
-    
+
     const healthcareIndicators = [
-      'symptoms', 'medication', 'diagnosis', 'treatment', 'medical',
-      'health', 'doctor', 'patient', 'therapy', 'mental', 'emotional'
+      'symptoms',
+      'medication',
+      'diagnosis',
+      'treatment',
+      'medical',
+      'health',
+      'doctor',
+      'patient',
+      'therapy',
+      'mental',
+      'emotional',
     ];
 
     const dataString = JSON.stringify(data).toLowerCase();
@@ -515,10 +579,10 @@ export class EncryptionService {
       const testData = { test: 'Healthcare encryption test', timestamp: Date.now() };
       const encrypted = await this.encrypt(testData, userId);
       const decrypted = await this.decrypt(encrypted, userId);
-      
+
       const isValid = JSON.stringify(testData) === JSON.stringify(decrypted);
       console.log(isValid ? '✅ Encryption test passed' : '❌ Encryption test failed');
-      
+
       return isValid;
     } catch (error) {
       console.error('❌ Encryption test failed:', error);
@@ -553,8 +617,8 @@ export class EncryptionService {
         initialized: this.initialized,
         encryption_method: 'pgcrypto_server_side',
         compliance_level: 'gdpr_bdsg_healthcare',
-        last_check: new Date().toISOString()
-      }
+        last_check: new Date().toISOString(),
+      },
     };
   }
 }
@@ -612,5 +676,5 @@ export const EncryptionUtils = {
     const array = new Uint8Array(16);
     crypto.getRandomValues(array);
     return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-  }
+  },
 };

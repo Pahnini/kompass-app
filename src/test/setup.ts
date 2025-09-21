@@ -4,7 +4,7 @@ import { vi, beforeEach } from 'vitest';
 // Mock localStorage with actual storage behavior
 const createLocalStorageMock = () => {
   let store: { [key: string]: string } = {};
-  
+
   return {
     getItem: vi.fn((key: string) => store[key] || null),
     setItem: vi.fn((key: string, value: string) => {
@@ -88,12 +88,14 @@ interface MockQuery {
 }
 
 // Mock Supabase with proper query chaining
-const createMockQuery = (finalResult: MockSupabaseResult = { 
-  data: null, 
-  error: { code: 'MOCK_ERROR', message: 'Mock Supabase error for testing fallback' } 
-}): MockQuery => {
+const createMockQuery = (
+  finalResult: MockSupabaseResult = {
+    data: null,
+    error: { code: 'MOCK_ERROR', message: 'Mock Supabase error for testing fallback' },
+  }
+): MockQuery => {
   const mockQuery = {} as MockQuery;
-  
+
   mockQuery.select = vi.fn().mockReturnValue(mockQuery);
   mockQuery.eq = vi.fn().mockReturnValue(mockQuery);
   mockQuery.order = vi.fn().mockReturnValue(mockQuery);
@@ -101,7 +103,7 @@ const createMockQuery = (finalResult: MockSupabaseResult = {
   mockQuery.insert = vi.fn().mockResolvedValue(finalResult);
   mockQuery.update = vi.fn().mockReturnValue(mockQuery);
   mockQuery.upsert = vi.fn().mockResolvedValue(finalResult);
-  
+
   return mockQuery;
 };
 
@@ -116,7 +118,7 @@ beforeEach(() => {
   vi.clearAllMocks();
   localStorageMock.clear();
   sessionStorageMock.clear();
-  
+
   // Reset navigator.onLine to default
   Object.defineProperty(navigator, 'onLine', {
     writable: true,

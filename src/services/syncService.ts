@@ -4,6 +4,9 @@ import { encryptionService } from './encryptionService';
 import { dataService } from './dataService';
 import * as storageService from './storageService';
 
+// Browser-compatible timer type
+type TimerHandle = ReturnType<typeof setTimeout>;
+
 /**
  * Offline-first sync service with conflict resolution
  * Handles synchronization between local and remote data with encryption
@@ -45,7 +48,7 @@ export class SyncService {
   private syncSettings: SyncSettings;
   private syncStatus: SyncStatus = 'idle';
   private lastSyncTime: Date | null = null;
-  private syncTimer: NodeJS.Timeout | null = null;
+  private syncTimer: TimerHandle | null = null;
   private isOnline: boolean = navigator.onLine;
   private pendingConflicts: Map<string, SyncConflict> = new Map();
   private syncQueue: Map<string, any> = new Map();
@@ -133,9 +136,11 @@ export class SyncService {
 
     try {
       // Get current user ID
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const currentUserId = userId || user?.id;
-      
+
       if (!currentUserId) {
         throw new Error('No authenticated user found');
       }
@@ -154,7 +159,7 @@ export class SyncService {
         syncResult.conflicts.forEach(conflict => {
           this.pendingConflicts.set(conflict.key, conflict);
         });
-        
+
         this.syncStatus = 'conflict';
         this.notifyListeners('conflict', syncResult.conflicts);
       } else {
@@ -171,13 +176,12 @@ export class SyncService {
       return {
         ...syncResult,
         syncDuration,
-        lastSyncTime: this.lastSyncTime.toISOString()
+        lastSyncTime: this.lastSyncTime.toISOString(),
       };
-
     } catch (error) {
       this.syncStatus = 'error';
       this.notifyListeners('error');
-      
+
       console.error('Sync failed:', error);
       throw error;
     }
@@ -186,14 +190,24 @@ export class SyncService {
   /**
    * Sync all data types with conflict detection
    */
-  private async syncAllDataTypes(userId: string): Promise<Omit<SyncResult, 'syncDuration' | 'lastSyncTime'>> {
+  private async syncAllDataTypes(
+    userId: string
+  ): Promise<Omit<SyncResult, 'syncDuration' | 'lastSyncTime'>> {
     const dataTypes = [
-      'username', 'points', 'favorites', 'goals', 'achievements', 
-      'skills', 'skillsList', 'calendarNotes', 'symptoms', 'wordFiles'
+      'username',
+      'points',
+      'favorites',
+      'goals',
+      'achievements',
+      'skills',
+      'skillsList',
+      'calendarNotes',
+      'symptoms',
+      'wordFiles',
     ];
 
     // Prioritize healthcare data if setting is enabled
-    const prioritizedTypes = this.syncSettings.healthcareDataPriority 
+    const prioritizedTypes = this.syncSettings.healthcareDataPriority
       ? this.prioritizeHealthcareData(dataTypes)
       : dataTypes;
 
@@ -203,31 +217,32 @@ export class SyncService {
       conflicts: [],
       totalSynced: 0,
       syncDuration: 0,
-      lastSyncTime: ''
+      lastSyncTime: '',
     };
 
     // Process in batches
     for (let i = 0; i < prioritizedTypes.length; i += this.syncSettings.batchSize) {
       const batch = prioritizedTypes.slice(i, i + this.syncSettings.batchSize);
-      
-      await Promise.all(batch.map(async (dataType) => {
-        try {
-          const result = await this.syncDataType(dataType, userId);
-          
-          if (result.conflict) {
-            results.conflicts.push(result.conflict);
-          } else {
-            results.success.push(dataType);
-            results.totalSynced++;
-          }
 
-        } catch (error) {
-          results.failed.push({ 
-            key: dataType, 
-            error: error instanceof Error ? error.message : 'Unknown error' 
-          });
-        }
-      }));
+      await Promise.all(
+        batch.map(async dataType => {
+          try {
+            const result = await this.syncDataType(dataType, userId);
+
+            if (result.conflict) {
+              results.conflicts.push(result.conflict);
+            } else {
+              results.success.push(dataType);
+              results.totalSynced++;
+            }
+          } catch (error) {
+            results.failed.push({
+              key: dataType,
+              error: error instanceof Error ? error.message : 'Unknown error',
+            });
+          }
+        })
+      );
     }
 
     return results;
@@ -236,14 +251,18 @@ export class SyncService {
   /**
    * Sync individual data type with conflict detection
    */
-  private async syncDataType(dataType: string, userId: string): Promise<{
+  private async syncDataType(
+    dataType: string,
+    userId: string
+  ): Promise<{
     success: boolean;
     conflict?: SyncConflict;
   }> {
     try {
       // Get local data and timestamp
       const localData = storageService.get(dataType);
-      const localTimestamp = storageService.get(`${dataType}_timestamp`) || new Date(0).toISOString();
+      const localTimestamp =
+        storageService.get(`${dataType}_timestamp`) || new Date(0).toISOString();
 
       // Get remote data and timestamp
       const remoteData = await this.getRemoteData(dataType, userId);
@@ -266,8 +285,14 @@ export class SyncService {
       }
 
       // Both exist - check for conflicts
-      const conflict = this.detectConflict(dataType, localData, remoteData, localTimestamp, remoteTimestamp);
-      
+      const conflict = this.detectConflict(
+        dataType,
+        localData,
+        remoteData,
+        localTimestamp,
+        remoteTimestamp
+      );
+
       if (conflict) {
         // Handle automatic resolution based on settings
         if (this.syncSettings.conflictResolution !== 'manual') {
@@ -289,7 +314,6 @@ export class SyncService {
       }
 
       return { success: true };
-
     } catch (error) {
       console.error(`Failed to sync ${dataType}:`, error);
       throw error;
@@ -300,23 +324,23 @@ export class SyncService {
    * Detect conflicts between local and remote data
    */
   private detectConflict(
-    key: string, 
-    localData: any, 
-    remoteData: any, 
-    localTimestamp: string, 
+    key: string,
+    localData: any,
+    remoteData: any,
+    localTimestamp: string,
     remoteTimestamp: string
   ): SyncConflict | null {
     // Simple conflict detection - data differs and both have been modified
     const dataHash = (data: any) => JSON.stringify(data);
-    
+
     if (dataHash(localData) !== dataHash(remoteData)) {
       const localTime = new Date(localTimestamp);
       const remoteTime = new Date(remoteTimestamp);
-      
+
       // Check if timestamps are close (concurrent edit)
       const timeDiff = Math.abs(localTime.getTime() - remoteTime.getTime());
       const conflictType = timeDiff < 60000 ? 'concurrent_edit' : 'update'; // 1 minute threshold
-      
+
       return {
         key,
         table: this.getTableName(key),
@@ -324,7 +348,7 @@ export class SyncService {
         remoteData,
         localTimestamp,
         remoteTimestamp,
-        conflictType
+        conflictType,
       };
     }
 
@@ -344,16 +368,16 @@ export class SyncService {
           winningData = conflict.localData;
           winningTimestamp = conflict.localTimestamp;
           break;
-          
+
         case 'remote_wins':
           winningData = conflict.remoteData;
           winningTimestamp = conflict.remoteTimestamp;
           break;
-          
-        case 'latest_timestamp':
+
+        case 'latest_timestamp': {
           const localTime = new Date(conflict.localTimestamp);
           const remoteTime = new Date(conflict.remoteTimestamp);
-          
+
           if (localTime >= remoteTime) {
             winningData = conflict.localData;
             winningTimestamp = conflict.localTimestamp;
@@ -362,6 +386,7 @@ export class SyncService {
             winningTimestamp = conflict.remoteTimestamp;
           }
           break;
+        }
 
         default:
           return false; // Manual resolution required
@@ -371,9 +396,10 @@ export class SyncService {
       await dataService.setData(conflict.key, winningData, userId);
       storageService.set(`${conflict.key}_timestamp`, winningTimestamp);
 
-      console.log(`🔧 Auto-resolved conflict for ${conflict.key} using ${this.syncSettings.conflictResolution}`);
+      console.log(
+        `🔧 Auto-resolved conflict for ${conflict.key} using ${this.syncSettings.conflictResolution}`
+      );
       return true;
-
     } catch (error) {
       console.error(`Failed to resolve conflict for ${conflict.key}:`, error);
       return false;
@@ -384,8 +410,8 @@ export class SyncService {
    * Manually resolve a specific conflict
    */
   async resolveConflictManually(
-    conflictKey: string, 
-    resolution: 'use_local' | 'use_remote' | 'merge', 
+    conflictKey: string,
+    resolution: 'use_local' | 'use_remote' | 'merge',
     mergedData?: any
   ): Promise<boolean> {
     const conflict = this.pendingConflicts.get(conflictKey);
@@ -394,7 +420,9 @@ export class SyncService {
     }
 
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error('No authenticated user');
 
       let finalData: any;
@@ -430,7 +458,6 @@ export class SyncService {
 
       console.log(`✅ Manually resolved conflict for ${conflictKey}`);
       return true;
-
     } catch (error) {
       console.error(`Failed to manually resolve conflict for ${conflictKey}:`, error);
       return false;
@@ -463,11 +490,15 @@ export class SyncService {
     for (const change of offlineChanges || []) {
       try {
         const decryptedData = encryptionService.decrypt(change.encrypted_data, userId);
-        
+
         switch (change.operation) {
           case 'insert':
           case 'update':
-            await dataService.setData(change.table_name.replace('user_', ''), decryptedData, userId);
+            await dataService.setData(
+              change.table_name.replace('user_', ''),
+              decryptedData,
+              userId
+            );
             break;
           case 'delete':
             await dataService.removeData(change.table_name.replace('user_', ''), userId);
@@ -479,10 +510,9 @@ export class SyncService {
           .from('offline_changes_queue')
           .update({ processed: true, processed_at: new Date().toISOString() })
           .eq('id', change.id);
-
       } catch (error) {
         console.error(`Failed to process offline change ${change.id}:`, error);
-        
+
         // Update error message
         await supabase
           .from('offline_changes_queue')
@@ -526,7 +556,7 @@ export class SyncService {
   updateSyncSettings(settings: Partial<SyncSettings>): void {
     this.syncSettings = { ...this.syncSettings, ...settings };
     this.saveSyncSettings();
-    
+
     // Restart auto sync if settings changed
     if (settings.autoSync !== undefined || settings.syncInterval !== undefined) {
       this.stopAutoSync();
@@ -585,16 +615,16 @@ export class SyncService {
 
   private getTableName(key: string): string {
     const tableMap: Record<string, string> = {
-      'goals': 'user_goals',
-      'achievements': 'user_achievements',
-      'skills': 'user_skills',
-      'skillsList': 'user_skills',
-      'calendarNotes': 'user_calendar_notes',
-      'symptoms': 'user_symptoms',
-      'wordFiles': 'user_word_files',
-      'username': 'user_profiles',
-      'favorites': 'user_profiles',
-      'points': 'user_profiles'
+      goals: 'user_goals',
+      achievements: 'user_achievements',
+      skills: 'user_skills',
+      skillsList: 'user_skills',
+      calendarNotes: 'user_calendar_notes',
+      symptoms: 'user_symptoms',
+      wordFiles: 'user_word_files',
+      username: 'user_profiles',
+      favorites: 'user_profiles',
+      points: 'user_profiles',
     };
     return tableMap[key] || 'user_profiles';
   }
@@ -622,7 +652,7 @@ export class SyncService {
       conflictResolution: 'latest_timestamp',
       maxRetries: 3,
       batchSize: 5,
-      healthcareDataPriority: true
+      healthcareDataPriority: true,
     };
 
     const stored = storageService.get<Partial<SyncSettings>>('sync_settings');
@@ -637,7 +667,7 @@ export class SyncService {
     const state = {
       lastSyncTime: this.lastSyncTime?.toISOString(),
       userId,
-      pendingConflicts: this.pendingConflicts.size
+      pendingConflicts: this.pendingConflicts.size,
     };
     storageService.set('sync_state', state);
   }

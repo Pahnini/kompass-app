@@ -9,13 +9,13 @@ import * as storageService from './storageService';
  */
 
 export type ErrorSeverity = 'low' | 'medium' | 'high' | 'critical';
-export type ErrorCategory = 
-  | 'network' 
-  | 'authentication' 
-  | 'encryption' 
-  | 'storage' 
-  | 'validation' 
-  | 'sync' 
+export type ErrorCategory =
+  | 'network'
+  | 'authentication'
+  | 'encryption'
+  | 'storage'
+  | 'validation'
+  | 'sync'
   | 'compliance'
   | 'user_action'
   | 'system';
@@ -104,7 +104,7 @@ export class ErrorHandlingService {
         handler: async (_error: Error, context?: any) => {
           await this.delay(1000 * Math.random() * 2); // Random delay 0-2s
           return context?.retryFunction ? await context.retryFunction() : null;
-        }
+        },
       },
       {
         name: 'offline_mode',
@@ -115,7 +115,7 @@ export class ErrorHandlingService {
         handler: async (_error: Error, context?: any) => {
           console.log('🔌 Switching to offline mode');
           return { mode: 'offline', data: context?.fallbackData };
-        }
+        },
       },
 
       // Authentication errors
@@ -133,7 +133,7 @@ export class ErrorHandlingService {
           } catch (refreshError) {
             throw new Error('Token refresh failed');
           }
-        }
+        },
       },
       {
         name: 'reauth_required',
@@ -144,7 +144,7 @@ export class ErrorHandlingService {
         handler: async (_error: Error) => {
           console.log('🔑 Re-authentication required');
           return { requiresReauth: true };
-        }
+        },
       },
 
       // Encryption errors
@@ -158,7 +158,7 @@ export class ErrorHandlingService {
           console.log('🔐 Regenerating encryption keys');
           encryptionService.clearDeviceFingerprint();
           return { keyRegenerated: true };
-        }
+        },
       },
       {
         name: 'encryption_fallback',
@@ -169,7 +169,7 @@ export class ErrorHandlingService {
         handler: async (_error: Error, context?: any) => {
           console.warn('⚠️ Encryption fallback - using localStorage without encryption');
           return { encryptionDisabled: true, data: context?.plainData };
-        }
+        },
       },
 
       // Storage errors
@@ -183,7 +183,7 @@ export class ErrorHandlingService {
           console.log('🧹 Cleaning up storage space');
           await this.cleanupStorageSpace();
           return { storageCleanedUp: true };
-        }
+        },
       },
       {
         name: 'localStorage_fallback',
@@ -194,7 +194,7 @@ export class ErrorHandlingService {
         handler: async (_error: Error, context?: any) => {
           console.log('💾 Using localStorage fallback');
           return { useLocalStorageOnly: true };
-        }
+        },
       },
 
       // Sync errors
@@ -208,7 +208,7 @@ export class ErrorHandlingService {
           console.log('🔄 Attempting partial sync');
           // Try to sync priority data only
           return { partialSyncAttempted: true };
-        }
+        },
       },
       {
         name: 'queue_for_later',
@@ -219,8 +219,8 @@ export class ErrorHandlingService {
         handler: async (_error: Error, context?: any) => {
           console.log('⏳ Queuing changes for later sync');
           return { queuedForLater: true };
-        }
-      }
+        },
+      },
     ];
   }
 
@@ -228,16 +228,16 @@ export class ErrorHandlingService {
    * Handle error with automatic fallback strategies
    */
   async handleError(
-    error: Error, 
-    category: ErrorCategory, 
+    error: Error,
+    category: ErrorCategory,
     severity: ErrorSeverity = 'medium',
     context?: Record<string, any>
   ): Promise<any> {
     const errorInfo = this.createErrorInfo(error, category, severity, context);
-    
+
     // Log the error
     this.logError(errorInfo);
-    
+
     // Notify listeners
     this.notifyListeners(errorInfo);
 
@@ -250,19 +250,18 @@ export class ErrorHandlingService {
     for (const strategy of strategies) {
       try {
         console.log(`🛠️ Trying fallback strategy: ${strategy.name}`);
-        
+
         const result = await strategy.handler(error, context);
-        
+
         // Mark error as resolved if strategy succeeded
         errorInfo.resolved = true;
         this.updateErrorInfo(errorInfo);
-        
+
         console.log(`✅ Fallback strategy ${strategy.name} succeeded`);
         return result;
-
       } catch (strategyError) {
         console.warn(`❌ Fallback strategy ${strategy.name} failed:`, strategyError);
-        
+
         // If strategy can retry and hasn't exceeded max retries
         if (strategy.canRetry && errorInfo.retryCount < strategy.maxRetries) {
           this.queueForRetry(errorInfo, strategy);
@@ -278,8 +277,8 @@ export class ErrorHandlingService {
    * Create structured error information
    */
   private createErrorInfo(
-    error: Error, 
-    category: ErrorCategory, 
+    error: Error,
+    category: ErrorCategory,
     severity: ErrorSeverity,
     context?: Record<string, any>
   ): ErrorInfo {
@@ -296,7 +295,7 @@ export class ErrorHandlingService {
       url: window.location.href,
       resolved: false,
       retryCount: 0,
-      maxRetries: this.getMaxRetriesForCategory(category)
+      maxRetries: this.getMaxRetriesForCategory(category),
     };
   }
 
@@ -305,19 +304,19 @@ export class ErrorHandlingService {
    */
   private logError(errorInfo: ErrorInfo): void {
     this.errorLog.set(errorInfo.id, errorInfo);
-    
+
     // Rotate log if it gets too large
     if (this.errorLog.size > this.maxLogSize) {
       const oldestEntries = Array.from(this.errorLog.entries())
         .sort(([, a], [, b]) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime())
         .slice(0, this.errorLog.size - this.maxLogSize);
-      
+
       oldestEntries.forEach(([id]) => this.errorLog.delete(id));
     }
 
     // Persist to localStorage
     this.saveErrorLog();
-    
+
     // Log to console based on severity
     this.logToConsole(errorInfo);
 
@@ -335,22 +334,22 @@ export class ErrorHandlingService {
       case 'critical':
         // Show user notification and offer recovery options
         return this.handleCriticalError(errorInfo);
-        
+
       case 'high':
         // Log warning and provide user feedback
         console.error('🚨 High severity error:', errorInfo.message);
         return { error: true, message: errorInfo.message, canRetry: true };
-        
+
       case 'medium':
         // Log warning
         console.warn('⚠️ Medium severity error:', errorInfo.message);
         return { error: true, message: errorInfo.message, silent: true };
-        
+
       case 'low':
         // Silent log
         console.info('ℹ️ Low severity error:', errorInfo.message);
         return { error: true, silent: true };
-        
+
       default:
         return { error: true, message: errorInfo.message };
     }
@@ -370,7 +369,7 @@ export class ErrorHandlingService {
       critical: true,
       message: errorInfo.message,
       recoveryActions,
-      errorId: errorInfo.id
+      errorId: errorInfo.id,
     };
   }
 
@@ -391,7 +390,7 @@ export class ErrorHandlingService {
             return true;
           },
           isDestructive: true,
-          requiresConfirmation: true
+          requiresConfirmation: true,
         });
         break;
 
@@ -404,7 +403,7 @@ export class ErrorHandlingService {
             return true;
           },
           isDestructive: false,
-          requiresConfirmation: false
+          requiresConfirmation: false,
         });
         break;
 
@@ -418,7 +417,7 @@ export class ErrorHandlingService {
             return true;
           },
           isDestructive: false,
-          requiresConfirmation: true
+          requiresConfirmation: true,
         });
         break;
 
@@ -436,7 +435,7 @@ export class ErrorHandlingService {
             }
           },
           isDestructive: false,
-          requiresConfirmation: false
+          requiresConfirmation: false,
         });
         break;
     }
@@ -450,7 +449,7 @@ export class ErrorHandlingService {
         return true;
       },
       isDestructive: false,
-      requiresConfirmation: true
+      requiresConfirmation: true,
     });
 
     return actions;
@@ -462,7 +461,9 @@ export class ErrorHandlingService {
   private queueForRetry(errorInfo: ErrorInfo, strategy: FallbackStrategy): void {
     errorInfo.retryCount++;
     this.retryQueue.set(errorInfo.id, { error: errorInfo, strategy });
-    console.log(`⏳ Queued error ${errorInfo.id} for retry (attempt ${errorInfo.retryCount}/${errorInfo.maxRetries})`);
+    console.log(
+      `⏳ Queued error ${errorInfo.id} for retry (attempt ${errorInfo.retryCount}/${errorInfo.maxRetries})`
+    );
   }
 
   /**
@@ -474,23 +475,22 @@ export class ErrorHandlingService {
     console.log(`🔄 Processing ${this.retryQueue.size} queued errors`);
 
     const entries = Array.from(this.retryQueue.entries());
-    
+
     for (const [errorId, { error, strategy }] of entries) {
       try {
         console.log(`🔄 Retrying error ${errorId} with strategy ${strategy.name}`);
-        
+
         await strategy.handler(new Error(error.message), error.context);
-        
+
         // Success - remove from queue and mark as resolved
         error.resolved = true;
         this.updateErrorInfo(error);
         this.retryQueue.delete(errorId);
-        
-        console.log(`✅ Successfully retried error ${errorId}`);
 
+        console.log(`✅ Successfully retried error ${errorId}`);
       } catch (retryError) {
         console.warn(`❌ Retry failed for error ${errorId}:`, retryError);
-        
+
         // Check if we should keep trying
         if (error.retryCount >= error.maxRetries) {
           this.retryQueue.delete(errorId);
@@ -511,7 +511,7 @@ export class ErrorHandlingService {
 
     const recoveryActions = this.generateRecoveryActions(errorInfo);
     const action = recoveryActions.find(a => a.name === actionName);
-    
+
     if (!action) {
       throw new Error(`Recovery action ${actionName} not found`);
     }
@@ -519,15 +519,14 @@ export class ErrorHandlingService {
     try {
       console.log(`🔧 Executing recovery action: ${action.name}`);
       const success = await action.action();
-      
+
       if (success) {
         errorInfo.resolved = true;
         this.updateErrorInfo(errorInfo);
         console.log(`✅ Recovery action ${action.name} completed successfully`);
       }
-      
-      return success;
 
+      return success;
     } catch (error) {
       console.error(`❌ Recovery action ${action.name} failed:`, error);
       return false;
@@ -545,19 +544,19 @@ export class ErrorHandlingService {
     unresolved: number;
   } {
     const errors = Array.from(this.errorLog.values());
-    
+
     const stats = {
       total: errors.length,
       bySeverity: { low: 0, medium: 0, high: 0, critical: 0 } as Record<ErrorSeverity, number>,
       byCategory: {} as Record<ErrorCategory, number>,
       resolved: 0,
-      unresolved: 0
+      unresolved: 0,
     };
 
     errors.forEach(error => {
       stats.bySeverity[error.severity]++;
       stats.byCategory[error.category] = (stats.byCategory[error.category] || 0) + 1;
-      
+
       if (error.resolved) {
         stats.resolved++;
       } else {
@@ -608,16 +607,18 @@ export class ErrorHandlingService {
     if (!context) return undefined;
 
     const sanitized: Record<string, any> = {};
-    
+
     for (const [key, value] of Object.entries(context)) {
       // Remove sensitive data
-      if (key.toLowerCase().includes('password') || 
-          key.toLowerCase().includes('token') ||
-          key.toLowerCase().includes('secret') ||
-          key.toLowerCase().includes('key')) {
+      if (
+        key.toLowerCase().includes('password') ||
+        key.toLowerCase().includes('token') ||
+        key.toLowerCase().includes('secret') ||
+        key.toLowerCase().includes('key')
+      ) {
         sanitized[key] = '[REDACTED]';
       } else if (typeof value === 'string' && value.length > 1000) {
-        sanitized[key] = `${value.substring(0, 1000)  }...[TRUNCATED]`;
+        sanitized[key] = `${value.substring(0, 1000)}...[TRUNCATED]`;
       } else {
         sanitized[key] = value;
       }
@@ -636,9 +637,9 @@ export class ErrorHandlingService {
       sync: 3,
       compliance: 1,
       user_action: 0,
-      system: 2
+      system: 2,
     };
-    
+
     return categoryRetries[category] || 1;
   }
 
@@ -662,7 +663,7 @@ export class ErrorHandlingService {
       low: 'ℹ️',
       medium: '⚠️',
       high: '🚨',
-      critical: '💥'
+      critical: '💥',
     }[errorInfo.severity];
 
     console.error(
@@ -681,12 +682,11 @@ export class ErrorHandlingService {
         severity: errorInfo.severity,
         timestamp: errorInfo.timestamp,
         url: errorInfo.url,
-        userAgent: errorInfo.userAgent
+        userAgent: errorInfo.userAgent,
       };
 
       // This would send to your logging service
       console.log('📡 Would send to remote logging:', sanitizedError);
-      
     } catch (error) {
       console.error('Failed to send to remote logging:', error);
     }
@@ -695,12 +695,11 @@ export class ErrorHandlingService {
   private async cleanupStorageSpace(): Promise<void> {
     try {
       // Clear old error logs
-      const oldErrors = Array.from(this.errorLog.entries())
-        .filter(([, error]) => {
-          const errorDate = new Date(error.timestamp);
-          const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-          return errorDate < weekAgo && error.resolved;
-        });
+      const oldErrors = Array.from(this.errorLog.entries()).filter(([, error]) => {
+        const errorDate = new Date(error.timestamp);
+        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+        return errorDate < weekAgo && error.resolved;
+      });
 
       oldErrors.forEach(([id]) => this.errorLog.delete(id));
 
@@ -713,7 +712,6 @@ export class ErrorHandlingService {
       });
 
       console.log(`🧹 Cleaned up ${oldErrors.length} old errors and cache data`);
-
     } catch (error) {
       console.error('Failed to cleanup storage:', error);
     }
@@ -749,8 +747,8 @@ export const errorHandler = ErrorHandlingService.getInstance();
 
 // Convenience function for handling errors
 export const handleError = (
-  error: Error, 
-  category: ErrorCategory, 
+  error: Error,
+  category: ErrorCategory,
   severity: ErrorSeverity = 'medium',
   context?: Record<string, any>
 ) => {

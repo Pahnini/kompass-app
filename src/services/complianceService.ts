@@ -10,21 +10,26 @@ import * as storageService from './storageService';
  * Provides comprehensive audit trails and data validation
  */
 
-export type AuditAction = 
-  | 'login' 
-  | 'logout' 
-  | 'data_access' 
-  | 'data_create' 
-  | 'data_update' 
+export type AuditAction =
+  | 'login'
+  | 'logout'
+  | 'data_access'
+  | 'data_create'
+  | 'data_update'
   | 'data_delete'
-  | 'data_export' 
-  | 'data_sync' 
+  | 'data_export'
+  | 'data_sync'
   | 'encryption_key_change'
   | 'consent_update'
   | 'privacy_setting_change'
   | 'account_deletion';
 
-export type DataSensitivity = 'public' | 'internal' | 'confidential' | 'restricted' | 'healthcare_sensitive';
+export type DataSensitivity =
+  | 'public'
+  | 'internal'
+  | 'confidential'
+  | 'restricted'
+  | 'healthcare_sensitive';
 
 export interface AuditLogEntry {
   id: string;
@@ -114,21 +119,21 @@ export class ComplianceService {
         automaticDeletion: false, // Manual review required
         archiveAfterDays: 1095, // 3 years
         legalBasis: 'Healthcare data retention requirement (7 years)',
-        exceptions: ['ongoing_treatment', 'legal_proceedings']
+        exceptions: ['ongoing_treatment', 'legal_proceedings'],
       },
       {
         dataType: 'goals',
         retentionPeriodDays: 1095, // 3 years
         automaticDeletion: true,
         legalBasis: 'Legitimate interest in providing ongoing support',
-        exceptions: ['user_objection']
+        exceptions: ['user_objection'],
       },
       {
         dataType: 'achievements',
         retentionPeriodDays: 1095, // 3 years
         automaticDeletion: true,
         legalBasis: 'Legitimate interest in providing ongoing support',
-        exceptions: ['user_objection']
+        exceptions: ['user_objection'],
       },
       {
         dataType: 'calendarNotes',
@@ -136,22 +141,22 @@ export class ComplianceService {
         automaticDeletion: false,
         archiveAfterDays: 1095,
         legalBasis: 'Healthcare data retention requirement',
-        exceptions: ['ongoing_treatment']
+        exceptions: ['ongoing_treatment'],
       },
       {
         dataType: 'audit_logs',
         retentionPeriodDays: 2190, // 6 years (compliance requirement)
         automaticDeletion: false,
         legalBasis: 'Legal obligation for audit trail retention',
-        exceptions: []
+        exceptions: [],
       },
       {
         dataType: 'wordFiles',
         retentionPeriodDays: 1095, // 3 years
         automaticDeletion: true,
         legalBasis: 'Legitimate interest',
-        exceptions: ['user_objection']
-      }
+        exceptions: ['user_objection'],
+      },
     ];
   }
 
@@ -195,7 +200,9 @@ export class ComplianceService {
     } = {}
   ): Promise<void> {
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) return; // Can't log without user context
 
       const auditEntry: AuditLogEntry = {
@@ -214,7 +221,7 @@ export class ComplianceService {
         dataHash: options.data ? this.generateDataHash(options.data) : undefined,
         consentStatus: await this.checkConsentStatus(user.id, action),
         retentionPeriod: this.getRetentionPeriod(options.tableName || action),
-        complianceFlags: this.getComplianceFlags(action, options.dataSensitivity)
+        complianceFlags: this.getComplianceFlags(action, options.dataSensitivity),
       };
 
       // Queue for processing
@@ -227,14 +234,8 @@ export class ComplianceService {
 
       // Store locally for offline access
       this.storeAuditLocally(auditEntry);
-
     } catch (error) {
-      await errorHandler.handleError(
-        error as Error, 
-        'compliance', 
-        'high',
-        { action, options }
-      );
+      await errorHandler.handleError(error as Error, 'compliance', 'high', { action, options });
     }
   }
 
@@ -273,29 +274,25 @@ export class ComplianceService {
         isCompliant: violations.length === 0,
         violations,
         recommendations,
-        riskScore
+        riskScore,
       };
-
     } catch (error) {
-      await errorHandler.handleError(
-        error as Error, 
-        'compliance', 
-        'critical',
-        { userId }
-      );
+      await errorHandler.handleError(error as Error, 'compliance', 'critical', { userId });
 
       return {
         isCompliant: false,
-        violations: [{
-          type: 'gdpr',
-          severity: 'critical',
-          description: 'Compliance validation failed due to system error',
-          affectedData: ['all'],
-          remediationSteps: ['Contact system administrator', 'Review system logs'],
-          requiredBy: 'GDPR Article 32'
-        }],
+        violations: [
+          {
+            type: 'gdpr',
+            severity: 'critical',
+            description: 'Compliance validation failed due to system error',
+            affectedData: ['all'],
+            remediationSteps: ['Contact system administrator', 'Review system logs'],
+            requiredBy: 'GDPR Article 32',
+          },
+        ],
         recommendations: ['Immediate system review required'],
-        riskScore: 100
+        riskScore: 100,
       };
     }
   }
@@ -317,14 +314,12 @@ export class ComplianceService {
       timestamp: new Date().toISOString(),
       version: privacyPolicyVersion,
       ipAddress: await this.getClientIP(),
-      parentalConsent
+      parentalConsent,
     };
 
     try {
       // Store in database
-      const { error } = await supabase
-        .from('consent_records')
-        .insert(consentRecord);
+      const { error } = await supabase.from('consent_records').insert(consentRecord);
 
       if (error) throw error;
 
@@ -336,35 +331,30 @@ export class ComplianceService {
       // Log audit event
       await this.logAuditEvent('consent_update', {
         dataSensitivity: 'confidential',
-        data: { consentType, granted, version: privacyPolicyVersion }
+        data: { consentType, granted, version: privacyPolicyVersion },
       });
 
       console.log(`✅ Consent recorded: ${consentType} = ${granted}`);
-
     } catch (error) {
-      await errorHandler.handleError(
-        error as Error, 
-        'compliance', 
-        'high',
-        { userId, consentType, granted }
-      );
+      await errorHandler.handleError(error as Error, 'compliance', 'high', {
+        userId,
+        consentType,
+        granted,
+      });
     }
   }
 
   /**
    * Withdraw consent (GDPR right)
    */
-  async withdrawConsent(
-    userId: string,
-    consentType: ConsentRecord['consentType']
-  ): Promise<void> {
+  async withdrawConsent(userId: string, consentType: ConsentRecord['consentType']): Promise<void> {
     try {
       // Update existing consent record
       const { error } = await supabase
         .from('consent_records')
-        .update({ 
-          granted: false, 
-          withdrawnAt: new Date().toISOString() 
+        .update({
+          granted: false,
+          withdrawnAt: new Date().toISOString(),
         })
         .eq('userId', userId)
         .eq('consentType', consentType)
@@ -377,7 +367,7 @@ export class ComplianceService {
       const consentIndex = userConsents.findIndex(
         c => c.consentType === consentType && c.granted && !c.withdrawnAt
       );
-      
+
       if (consentIndex >= 0) {
         userConsents[consentIndex].granted = false;
         userConsents[consentIndex].withdrawnAt = new Date().toISOString();
@@ -386,21 +376,15 @@ export class ComplianceService {
       // Log audit event
       await this.logAuditEvent('consent_update', {
         dataSensitivity: 'confidential',
-        data: { consentType, granted: false, withdrawn: true }
+        data: { consentType, granted: false, withdrawn: true },
       });
 
       // Trigger data deletion if required
       await this.handleConsentWithdrawal(userId, consentType);
 
       console.log(`✅ Consent withdrawn: ${consentType}`);
-
     } catch (error) {
-      await errorHandler.handleError(
-        error as Error, 
-        'compliance', 
-        'high',
-        { userId, consentType }
-      );
+      await errorHandler.handleError(error as Error, 'compliance', 'high', { userId, consentType });
     }
   }
 
@@ -420,13 +404,20 @@ export class ComplianceService {
     try {
       // Log export request
       await this.logAuditEvent('data_export', {
-        dataSensitivity: 'healthcare_sensitive'
+        dataSensitivity: 'healthcare_sensitive',
       });
 
       // Collect all user data
       const personalData: Record<string, any> = {};
-      
-      const dataTypes = ['goals', 'achievements', 'skills', 'calendarNotes', 'symptoms', 'wordFiles'];
+
+      const dataTypes = [
+        'goals',
+        'achievements',
+        'skills',
+        'calendarNotes',
+        'symptoms',
+        'wordFiles',
+      ];
       for (const dataType of dataTypes) {
         try {
           const data = storageService.get(dataType);
@@ -455,29 +446,23 @@ export class ComplianceService {
       const exportData = {
         personalData,
         auditLog: auditLog || [],
-        consentHistory: consentHistory || []
+        consentHistory: consentHistory || [],
       };
 
       const exportMetadata = {
         exportedAt: new Date().toISOString(),
         exportId: this.generateExportId(),
-        dataIntegrityHash: this.generateDataHash(exportData)
+        dataIntegrityHash: this.generateDataHash(exportData),
       };
 
       console.log(`✅ Data export completed for user ${userId}`);
 
       return {
         ...exportData,
-        exportMetadata
+        exportMetadata,
       };
-
     } catch (error) {
-      await errorHandler.handleError(
-        error as Error, 
-        'compliance', 
-        'high',
-        { userId }
-      );
+      await errorHandler.handleError(error as Error, 'compliance', 'high', { userId });
       throw error;
     }
   }
@@ -486,36 +471,42 @@ export class ComplianceService {
    * Delete user data (GDPR right to erasure)
    */
   async deleteUserData(
-    userId: string, 
+    userId: string,
     options: {
       hardDelete?: boolean;
       retainAuditLog?: boolean;
       retainForLegalReasons?: boolean;
     } = {}
-  ): Promise<{ deleted: string[], retained: string[], errors: string[] }> {
+  ): Promise<{ deleted: string[]; retained: string[]; errors: string[] }> {
     const results = {
       deleted: [] as string[],
       retained: [] as string[],
-      errors: [] as string[]
+      errors: [] as string[],
     };
 
     try {
       // Log deletion request
       await this.logAuditEvent('account_deletion', {
         dataSensitivity: 'healthcare_sensitive',
-        data: options
+        data: options,
       });
 
       // Get retention policies
-      const dataTypes = ['goals', 'achievements', 'skills', 'calendarNotes', 'symptoms', 'wordFiles'];
+      const dataTypes = [
+        'goals',
+        'achievements',
+        'skills',
+        'calendarNotes',
+        'symptoms',
+        'wordFiles',
+      ];
 
       for (const dataType of dataTypes) {
         try {
           const policy = this.retentionPolicies.find(p => p.dataType === dataType);
-          
+
           // Check if data should be retained for legal reasons
-          if (options.retainForLegalReasons && 
-              policy?.exceptions.includes('legal_proceedings')) {
+          if (options.retainForLegalReasons && policy?.exceptions.includes('legal_proceedings')) {
             results.retained.push(dataType);
             continue;
           }
@@ -531,7 +522,6 @@ export class ComplianceService {
           }
 
           results.deleted.push(dataType);
-
         } catch (error) {
           results.errors.push(`${dataType}: ${error.message}`);
         }
@@ -548,14 +538,8 @@ export class ComplianceService {
       console.log(`✅ User data deletion completed for ${userId}`, results);
 
       return results;
-
     } catch (error) {
-      await errorHandler.handleError(
-        error as Error, 
-        'compliance', 
-        'critical',
-        { userId, options }
-      );
+      await errorHandler.handleError(error as Error, 'compliance', 'critical', { userId, options });
       throw error;
     }
   }
@@ -583,8 +567,12 @@ export class ComplianceService {
         const daysRemaining = await this.calculateRetentionDaysRemaining(userId, policy.dataType);
         dataRetentionStatus[policy.dataType] = {
           daysRemaining,
-          action: daysRemaining <= 30 ? 'immediate_action_required' : 
-                  daysRemaining <= 90 ? 'review_needed' : 'monitoring'
+          action:
+            daysRemaining <= 30
+              ? 'immediate_action_required'
+              : daysRemaining <= 90
+                ? 'review_needed'
+                : 'monitoring',
         };
       }
 
@@ -595,11 +583,12 @@ export class ComplianceService {
         .eq('user_id', userId);
 
       const totalEvents = auditData?.length || 0;
-      const recentEvents = auditData?.filter(log => {
-        const logDate = new Date(log.timestamp);
-        const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-        return logDate > weekAgo;
-      }).length || 0;
+      const recentEvents =
+        auditData?.filter(log => {
+          const logDate = new Date(log.timestamp);
+          const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+          return logDate > weekAgo;
+        }).length || 0;
 
       // Get risk assessment
       const riskAssessment = await this.validateCompliance(userId);
@@ -609,18 +598,12 @@ export class ComplianceService {
         dataRetentionStatus,
         auditSummary: {
           totalEvents,
-          recentActivity: recentEvents
+          recentActivity: recentEvents,
         },
-        riskAssessment
+        riskAssessment,
       };
-
     } catch (error) {
-      await errorHandler.handleError(
-        error as Error, 
-        'compliance', 
-        'medium',
-        { userId }
-      );
+      await errorHandler.handleError(error as Error, 'compliance', 'medium', { userId });
       throw error;
     }
   }
@@ -629,11 +612,11 @@ export class ComplianceService {
 
   private async validateConsentCompliance(userId: string): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    
+
     try {
       const consents = await this.getConsentStatus(userId);
       const requiredConsents = ['data_processing', 'healthcare_data'];
-      
+
       for (const required of requiredConsents) {
         const consent = consents.find(c => c.consentType === required);
         if (!consent || !consent.granted || consent.withdrawnAt) {
@@ -645,13 +628,12 @@ export class ComplianceService {
             remediationSteps: [
               'Request updated consent from user',
               'Stop processing data if consent not granted',
-              'Implement consent management workflow'
+              'Implement consent management workflow',
             ],
-            requiredBy: 'GDPR Article 6'
+            requiredBy: 'GDPR Article 6',
           });
         }
       }
-
     } catch (error) {
       console.error('Consent validation error:', error);
     }
@@ -661,11 +643,11 @@ export class ComplianceService {
 
   private async validateDataRetention(userId: string): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    
+
     for (const policy of this.retentionPolicies) {
       try {
         const daysRemaining = await this.calculateRetentionDaysRemaining(userId, policy.dataType);
-        
+
         if (daysRemaining <= 0) {
           violations.push({
             type: 'data_retention',
@@ -675,12 +657,11 @@ export class ComplianceService {
             remediationSteps: [
               'Review data for legal hold requirements',
               'Delete or anonymize expired data',
-              'Update retention policies if needed'
+              'Update retention policies if needed',
             ],
-            requiredBy: policy.legalBasis
+            requiredBy: policy.legalBasis,
           });
         }
-
       } catch (error) {
         console.error(`Retention validation error for ${policy.dataType}:`, error);
       }
@@ -691,11 +672,11 @@ export class ComplianceService {
 
   private async validateEncryptionCompliance(userId: string): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    
+
     try {
       // Test encryption functionality
       const encryptionWorking = encryptionService.testEncryption(userId);
-      
+
       if (!encryptionWorking) {
         violations.push({
           type: 'encryption',
@@ -705,12 +686,11 @@ export class ComplianceService {
           remediationSteps: [
             'Immediately investigate encryption service',
             'Stop processing sensitive data until resolved',
-            'Review encryption key management'
+            'Review encryption key management',
           ],
-          requiredBy: 'GDPR Article 32, HIPAA Security Rule'
+          requiredBy: 'GDPR Article 32, HIPAA Security Rule',
         });
       }
-
     } catch (error) {
       console.error('Encryption validation error:', error);
     }
@@ -720,13 +700,10 @@ export class ComplianceService {
 
   private async validateAccessControl(userId: string): Promise<ComplianceViolation[]> {
     const violations: ComplianceViolation[] = [];
-    
+
     try {
       // Check if RLS is enabled (this would be a more complex check in practice)
-      const { data, error } = await supabase
-        .from('user_profiles')
-        .select('id')
-        .limit(1);
+      const { data, error } = await supabase.from('user_profiles').select('id').limit(1);
 
       if (error && error.code !== 'PGRST116') {
         violations.push({
@@ -737,12 +714,11 @@ export class ComplianceService {
           remediationSteps: [
             'Verify Row Level Security policies',
             'Test access control mechanisms',
-            'Review database permissions'
+            'Review database permissions',
           ],
-          requiredBy: 'GDPR Article 32, HIPAA Access Control'
+          requiredBy: 'GDPR Article 32, HIPAA Access Control',
         });
       }
-
     } catch (error) {
       console.error('Access control validation error:', error);
     }
@@ -752,13 +728,21 @@ export class ComplianceService {
 
   private calculateRiskScore(violations: ComplianceViolation[]): number {
     let score = 0;
-    
+
     violations.forEach(violation => {
       switch (violation.severity) {
-        case 'critical': score += 25; break;
-        case 'high': score += 15; break;
-        case 'medium': score += 5; break;
-        case 'low': score += 1; break;
+        case 'critical':
+          score += 25;
+          break;
+        case 'high':
+          score += 15;
+          break;
+        case 'medium':
+          score += 5;
+          break;
+        case 'low':
+          score += 1;
+          break;
       }
     });
 
@@ -767,7 +751,7 @@ export class ComplianceService {
 
   private generateRecommendations(violations: ComplianceViolation[]): string[] {
     const recommendations = new Set<string>();
-    
+
     violations.forEach(violation => {
       violation.remediationSteps.forEach(step => {
         recommendations.add(step);
@@ -790,26 +774,20 @@ export class ComplianceService {
     if (this.auditQueue.length === 0) return;
 
     const batch = this.auditQueue.splice(0, 10); // Process 10 at a time
-    
+
     try {
-      const { error } = await supabase
-        .from('audit_logs')
-        .insert(batch);
+      const { error } = await supabase.from('audit_logs').insert(batch);
 
       if (error) throw error;
 
       console.log(`✅ Processed ${batch.length} audit log entries`);
-
     } catch (error) {
       // Put failed entries back in queue
       this.auditQueue.unshift(...batch);
-      
-      await errorHandler.handleError(
-        error as Error, 
-        'compliance', 
-        'medium',
-        { batchSize: batch.length }
-      );
+
+      await errorHandler.handleError(error as Error, 'compliance', 'medium', {
+        batchSize: batch.length,
+      });
     }
   }
 
@@ -817,12 +795,12 @@ export class ComplianceService {
     try {
       const localAudits = storageService.get<AuditLogEntry[]>('local_audit_log') || [];
       localAudits.push(entry);
-      
+
       // Keep only last 100 entries locally
       if (localAudits.length > 100) {
         localAudits.splice(0, localAudits.length - 100);
       }
-      
+
       storageService.set('local_audit_log', localAudits);
     } catch (error) {
       console.error('Failed to store audit locally:', error);
@@ -847,7 +825,6 @@ export class ComplianceService {
       const consents = data || [];
       this.consentCache.set(userId, consents);
       return consents;
-
     } catch (error) {
       console.error('Failed to get consent status:', error);
       return [];
@@ -856,14 +833,14 @@ export class ComplianceService {
 
   private async checkConsentStatus(userId: string, action: AuditAction): Promise<boolean> {
     const consents = await this.getConsentStatus(userId);
-    
+
     // Map actions to required consent types
     const consentMapping: Record<string, string> = {
-      'data_access': 'data_processing',
-      'data_create': 'data_processing',
-      'data_update': 'data_processing',
-      'data_delete': 'data_processing',
-      'data_sync': 'data_processing'
+      data_access: 'data_processing',
+      data_create: 'data_processing',
+      data_update: 'data_processing',
+      data_delete: 'data_processing',
+      data_sync: 'data_processing',
     };
 
     const requiredConsent = consentMapping[action];
@@ -880,9 +857,11 @@ export class ComplianceService {
     // This would check the actual data creation date
     // For now, using a placeholder calculation
     const dataCreationDate = new Date('2024-01-01'); // Placeholder
-    const expirationDate = new Date(dataCreationDate.getTime() + policy.retentionPeriodDays * 24 * 60 * 60 * 1000);
+    const expirationDate = new Date(
+      dataCreationDate.getTime() + policy.retentionPeriodDays * 24 * 60 * 60 * 1000
+    );
     const now = new Date();
-    
+
     return Math.ceil((expirationDate.getTime() - now.getTime()) / (24 * 60 * 60 * 1000));
   }
 
@@ -903,18 +882,15 @@ export class ComplianceService {
 
   private async hardDeleteData(userId: string, dataType: string): Promise<void> {
     const tableName = this.getTableName(dataType);
-    
-    const { error } = await supabase
-      .from(tableName)
-      .delete()
-      .eq('user_id', userId);
+
+    const { error } = await supabase.from(tableName).delete().eq('user_id', userId);
 
     if (error) throw error;
   }
 
   private async softDeleteData(userId: string, dataType: string): Promise<void> {
     const tableName = this.getTableName(dataType);
-    
+
     const { error } = await supabase
       .from(tableName)
       .update({ is_deleted: true, deleted_at: new Date().toISOString() })
@@ -926,11 +902,11 @@ export class ComplianceService {
   private async anonymizeAuditLog(userId: string): Promise<void> {
     const { error } = await supabase
       .from('audit_logs')
-      .update({ 
+      .update({
         userId: 'ANONYMIZED',
         ipAddress: null,
         userAgent: 'ANONYMIZED',
-        dataHash: null
+        dataHash: null,
       })
       .eq('user_id', userId);
 
@@ -939,12 +915,12 @@ export class ComplianceService {
 
   private getTableName(dataType: string): string {
     const tableMap: Record<string, string> = {
-      'goals': 'user_goals',
-      'achievements': 'user_achievements',
-      'skills': 'user_skills',
-      'calendarNotes': 'user_calendar_notes',
-      'symptoms': 'user_symptoms',
-      'wordFiles': 'user_word_files'
+      goals: 'user_goals',
+      achievements: 'user_achievements',
+      skills: 'user_skills',
+      calendarNotes: 'user_calendar_notes',
+      symptoms: 'user_symptoms',
+      wordFiles: 'user_word_files',
     };
     return tableMap[dataType] || 'user_profiles';
   }
@@ -956,11 +932,11 @@ export class ComplianceService {
 
   private getComplianceFlags(action: AuditAction, sensitivity?: DataSensitivity): string[] {
     const flags = ['GDPR'];
-    
+
     if (sensitivity === 'healthcare_sensitive') {
       flags.push('HIPAA');
     }
-    
+
     if (['data_export', 'account_deletion'].includes(action)) {
       flags.push('RIGHT_TO_PORTABILITY', 'RIGHT_TO_ERASURE');
     }

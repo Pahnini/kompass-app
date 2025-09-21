@@ -9,7 +9,7 @@ const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
 // Debug-Logging während der Entwicklung
 if (import.meta.env.DEV) {
   console.log('🔧 Supabase URL:', supabaseUrl);
-  console.log('🔧 Supabase Key:', `${supabaseAnonKey?.slice(0, 8)  }...`);
+  console.log('🔧 Supabase Key:', `${supabaseAnonKey?.slice(0, 8)}...`);
 }
 
 // Validierung

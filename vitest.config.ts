@@ -18,13 +18,13 @@ export default defineConfig({
         '**/*.d.ts',
         '**/*.config.*',
         'dist/',
-        'dev-dist/'
-      ]
-    }
+        'dev-dist/',
+      ],
+    },
   },
   resolve: {
     alias: {
-      '@': resolve(__dirname, './src')
-    }
-  }
+      '@': resolve(__dirname, './src'),
+    },
+  },
 });

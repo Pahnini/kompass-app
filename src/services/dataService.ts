@@ -1,12 +1,12 @@
 // src/services/dataService.ts
 /**
  * Healthcare-Grade Data Service for German GDPR Compliance
- * 
+ *
  * Architecture:
  * - Supabase: Primary storage with AES-256 encryption at rest
  * - localStorage: Offline fallback with healthcare validation
  * - GDPR Integration: Automatic audit logging and consent validation
- * 
+ *
  * Compliance: GDPR + German BDSG + Healthcare standards
  * Last Updated: 2025-01-14
  */
@@ -67,8 +67,8 @@ class SupabaseStorageBackend implements StorageBackend {
           ...metadata,
           timestamp: new Date().toISOString(),
           ip_address: 'client_side',
-          user_agent: navigator.userAgent
-        }
+          user_agent: navigator.userAgent,
+        },
       });
     } catch (error) {
       console.warn('⚠️ Audit logging failed:', error);
@@ -98,7 +98,7 @@ class SupabaseStorageBackend implements StorageBackend {
         return await encryptionService.decrypt(encryptedData, userId);
       } catch (error) {
         console.warn('⚠️ Decryption failed, trying JSON parse fallback:', error);
-        
+
         // Fallback: try to parse as JSON (for data stored before encryption)
         try {
           return JSON.parse(encryptedData);
@@ -119,18 +119,18 @@ class SupabaseStorageBackend implements StorageBackend {
   private validateHealthcareData(data: any, userId: string): void {
     if (encryptionService.isHealthcareData(data)) {
       console.log('🏥 Healthcare data detected - applying enhanced protection');
-      
+
       // Additional validation for healthcare data
       if (typeof data === 'object' && data !== null) {
         const serialized = JSON.stringify(data);
-        
+
         // Check for potential PII patterns
         const sensitivePatterns = [
           /\b\d{3}-\d{2}-\d{4}\b/, // SSN
           /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/, // Email
-          /\b\d{10,}\b/ // Phone
+          /\b\d{10,}\b/, // Phone
         ];
-        
+
         const containsPII = sensitivePatterns.some(pattern => pattern.test(serialized));
         if (containsPII) {
           console.warn('⚠️ PII detected in healthcare data - ensure GDPR compliance');
@@ -158,7 +158,7 @@ class SupabaseStorageBackend implements StorageBackend {
   async get<T>(key: string, userId: string): Promise<T | null> {
     try {
       const tableName = await this.getTableName(key);
-      
+
       // Log data access for GDPR audit
       await this.logDataAccess('DATA_ACCESS', tableName, userId, { key });
 
@@ -168,22 +168,22 @@ class SupabaseStorageBackend implements StorageBackend {
       } else {
         result = await this.getUserDataFromTable<T>(key, tableName, userId);
       }
-      
+
       // Validate healthcare data
       if (result !== null) {
         this.validateHealthcareData(result, userId);
       }
-      
+
       return result;
     } catch (error) {
       console.error(`❌ Supabase get failed for ${key}:`, error);
-      
+
       // Log the error for audit purposes
       await this.logDataAccess('DATA_ACCESS_ERROR', await this.getTableName(key), userId, {
         key,
-        error: String(error)
+        error: String(error),
       });
-      
+
       throw error;
     }
   }
@@ -240,25 +240,27 @@ class SupabaseStorageBackend implements StorageBackend {
 
     // Decrypt and transform data based on table
     switch (tableName) {
-      case 'user_goals':
+      case 'user_goals': {
         const goals = await Promise.all(
           data.map(row => this.safeDecrypt(row.encrypted_goal_data, userId))
         );
         return goals as T;
+      }
 
-      case 'user_achievements':
+      case 'user_achievements': {
         const achievements = await Promise.all(
           data.map(row => this.safeDecrypt(row.encrypted_achievement_data, userId))
         );
         return achievements as T;
+      }
 
       case 'user_skills':
         if (data[0]?.encrypted_skills_data) {
-          return await this.safeDecrypt(data[0].encrypted_skills_data, userId) as T;
+          return (await this.safeDecrypt(data[0].encrypted_skills_data, userId)) as T;
         }
         return null;
 
-      case 'user_calendar_notes':
+      case 'user_calendar_notes': {
         const calendarNotes: Record<string, any> = {};
         await Promise.all(
           data.map(async row => {
@@ -267,8 +269,9 @@ class SupabaseStorageBackend implements StorageBackend {
           })
         );
         return calendarNotes as T;
+      }
 
-      case 'user_symptoms':
+      case 'user_symptoms': {
         const symptoms: Record<string, any> = {};
         await Promise.all(
           data.map(async row => {
@@ -277,8 +280,9 @@ class SupabaseStorageBackend implements StorageBackend {
           })
         );
         return symptoms as T;
+      }
 
-      case 'user_word_files':
+      case 'user_word_files': {
         const wordFiles = await Promise.all(
           data.map(async row => ({
             id: row.file_id,
@@ -288,6 +292,7 @@ class SupabaseStorageBackend implements StorageBackend {
           }))
         );
         return wordFiles as T;
+      }
 
       default:
         return null;
@@ -297,14 +302,14 @@ class SupabaseStorageBackend implements StorageBackend {
   async set<T>(key: string, data: T, userId: string): Promise<void> {
     try {
       const tableName = await this.getTableName(key);
-      
+
       // Validate healthcare data before storage
       this.validateHealthcareData(data, userId);
-      
+
       // Log data modification for GDPR audit
-      await this.logDataAccess('DATA_MODIFY', tableName, userId, { 
-        key, 
-        is_healthcare: encryptionService.isHealthcareData(data)
+      await this.logDataAccess('DATA_MODIFY', tableName, userId, {
+        key,
+        is_healthcare: encryptionService.isHealthcareData(data),
       });
 
       if (tableName === 'user_profiles') {
@@ -317,18 +322,17 @@ class SupabaseStorageBackend implements StorageBackend {
       await this.updateSyncStatus(tableName, userId, 'completed', undefined, {
         healthcare_data: encryptionService.isHealthcareData(data),
         encryption_used: true,
-        gdpr_compliant: true
+        gdpr_compliant: true,
       });
-      
     } catch (error) {
       console.error(`❌ Supabase set failed for ${key}:`, error);
-      
+
       // Log the error for audit purposes
       await this.logDataAccess('DATA_MODIFY_ERROR', await this.getTableName(key), userId, {
         key,
-        error: String(error)
+        error: String(error),
       });
-      
+
       await this.updateSyncStatus(await this.getTableName(key), userId, 'failed', String(error));
       throw error;
     }
@@ -346,7 +350,7 @@ class SupabaseStorageBackend implements StorageBackend {
         updateData.points = data;
         break;
 
-      case 'favorites':
+      case 'favorites': {
         // Get existing preferences or create new
         const { data: existingProfile } = await supabase
           .from('user_profiles')
@@ -362,6 +366,7 @@ class SupabaseStorageBackend implements StorageBackend {
         preferences.favorites = data;
         updateData.encrypted_preferences = await encryptionService.encrypt(preferences, userId);
         break;
+      }
 
       default:
         return;
@@ -384,16 +389,16 @@ class SupabaseStorageBackend implements StorageBackend {
     userId: string
   ): Promise<void> {
     switch (tableName) {
-      case 'user_goals':
+      case 'user_goals': {
         const goals = data as Goal[];
-        
+
         // First, mark all existing goals as deleted
         await supabase
           .from('user_goals')
-          .update({ 
-            is_deleted: true, 
+          .update({
+            is_deleted: true,
             deleted_at: new Date().toISOString(),
-            deletion_reason: 'replaced_by_update'
+            deletion_reason: 'replaced_by_update',
           })
           .eq('user_id', userId)
           .eq('is_deleted', false);
@@ -411,27 +416,26 @@ class SupabaseStorageBackend implements StorageBackend {
           );
 
           // Use upsert to handle existing goal_ids
-          const { error } = await supabase
-            .from('user_goals')
-            .upsert(goalRows, { 
-              onConflict: 'user_id,goal_id',
-              ignoreDuplicates: false 
-            });
+          const { error } = await supabase.from('user_goals').upsert(goalRows, {
+            onConflict: 'user_id,goal_id',
+            ignoreDuplicates: false,
+          });
 
           if (error) throw error;
         }
         break;
+      }
 
-      case 'user_achievements':
+      case 'user_achievements': {
         const achievements = data as Achievement[];
-        
+
         // First, mark all existing achievements as deleted
         await supabase
           .from('user_achievements')
-          .update({ 
-            is_deleted: true, 
+          .update({
+            is_deleted: true,
             deleted_at: new Date().toISOString(),
-            deletion_reason: 'replaced_by_update'
+            deletion_reason: 'replaced_by_update',
           })
           .eq('user_id', userId)
           .eq('is_deleted', false);
@@ -450,18 +454,17 @@ class SupabaseStorageBackend implements StorageBackend {
           );
 
           // Use upsert to handle existing achievement_ids
-          const { error } = await supabase
-            .from('user_achievements')
-            .upsert(achievementRows, { 
-              onConflict: 'user_id,achievement_id',
-              ignoreDuplicates: false 
-            });
+          const { error } = await supabase.from('user_achievements').upsert(achievementRows, {
+            onConflict: 'user_id,achievement_id',
+            ignoreDuplicates: false,
+          });
 
           if (error) throw error;
         }
         break;
+      }
 
-      case 'user_skills':
+      case 'user_skills': {
         const skills = data as Skill[];
         if (skills) {
           const { error } = await supabase.from('user_skills').insert({
@@ -474,8 +477,9 @@ class SupabaseStorageBackend implements StorageBackend {
           if (error) throw error;
         }
         break;
+      }
 
-      case 'user_calendar_notes':
+      case 'user_calendar_notes': {
         const calendarNotes = data as CalendarNotes;
         if (calendarNotes && Object.keys(calendarNotes).length > 0) {
           const noteRows = await Promise.all(
@@ -492,8 +496,9 @@ class SupabaseStorageBackend implements StorageBackend {
           if (error) throw error;
         }
         break;
+      }
 
-      case 'user_symptoms':
+      case 'user_symptoms': {
         const symptoms = data as Symptoms;
         if (symptoms && Object.keys(symptoms).length > 0) {
           const symptomRows = await Promise.all(
@@ -511,8 +516,9 @@ class SupabaseStorageBackend implements StorageBackend {
           if (error) throw error;
         }
         break;
+      }
 
-      case 'user_word_files':
+      case 'user_word_files': {
         const wordFiles = data as WordFile[];
         if (wordFiles && wordFiles.length > 0) {
           const fileRows = await Promise.all(
@@ -530,27 +536,28 @@ class SupabaseStorageBackend implements StorageBackend {
           if (error) throw error;
         }
         break;
+      }
     }
   }
 
   async remove(key: string, userId: string): Promise<void> {
     try {
       const tableName = await this.getTableName(key);
-      
+
       // Log data deletion for GDPR audit (important for Right to Erasure)
-      await this.logDataAccess('DATA_DELETE', tableName, userId, { 
+      await this.logDataAccess('DATA_DELETE', tableName, userId, {
         key,
         deletion_type: 'soft_delete',
-        gdpr_basis: 'user_request'
+        gdpr_basis: 'user_request',
       });
 
       // Soft delete by marking as deleted (GDPR compliant)
       const { error } = await supabase
         .from(tableName)
-        .update({ 
-          is_deleted: true, 
+        .update({
+          is_deleted: true,
           deleted_at: new Date().toISOString(),
-          deletion_reason: 'user_request'
+          deletion_reason: 'user_request',
         })
         .eq('user_id', userId);
 
@@ -558,18 +565,17 @@ class SupabaseStorageBackend implements StorageBackend {
 
       await this.updateSyncStatus(tableName, userId, 'completed', undefined, {
         operation: 'soft_delete',
-        gdpr_compliant: true
+        gdpr_compliant: true,
       });
-      
     } catch (error) {
       console.error(`❌ Supabase remove failed for ${key}:`, error);
-      
+
       // Log the error for audit purposes
       await this.logDataAccess('DATA_DELETE_ERROR', await this.getTableName(key), userId, {
         key,
-        error: String(error)
+        error: String(error),
       });
-      
+
       throw error;
     }
   }
@@ -594,7 +600,7 @@ class SupabaseStorageBackend implements StorageBackend {
         error_message: errorMessage || null,
         updated_at: new Date().toISOString(),
         compliance_metadata: metadata || null,
-        encryption_status: encryptionService.getHealthStatus()
+        encryption_status: encryptionService.getHealthStatus(),
       });
     } catch (error) {
       console.error('⚠️ Failed to update sync status:', error);
@@ -779,11 +785,11 @@ export class HybridDataService {
   async exportUserDataGDPR(userId: string): Promise<any> {
     try {
       const { data, error } = await supabase.rpc('gdpr_export_user_data', {
-        user_uuid: userId
+        user_uuid: userId,
       });
 
       if (error) throw error;
-      
+
       console.log('📋 GDPR data export completed for user:', userId);
       return data;
     } catch (error) {
@@ -799,21 +805,29 @@ export class HybridDataService {
     try {
       const { data, error } = await supabase.rpc('gdpr_erase_user_data', {
         user_uuid: userId,
-        erasure_reason: reason
+        erasure_reason: reason,
       });
 
       if (error) throw error;
-      
+
       // Clear local storage as well
       const dataKeys = [
-        'username', 'goals', 'achievements', 'skills', 'skillsList',
-        'calendarNotes', 'symptoms', 'wordFiles', 'favorites', 'points'
+        'username',
+        'goals',
+        'achievements',
+        'skills',
+        'skillsList',
+        'calendarNotes',
+        'symptoms',
+        'wordFiles',
+        'favorites',
+        'points',
       ];
-      
+
       for (const key of dataKeys) {
         await this.localStorageBackend.remove(key, userId);
       }
-      
+
       console.log('🗑️ GDPR data erasure completed for user:', userId);
       return data;
     } catch (error) {
@@ -829,11 +843,11 @@ export class HybridDataService {
     try {
       const { data, error } = await supabase.rpc('gdpr_export_portable_data', {
         user_uuid: userId,
-        format
+        format,
       });
 
       if (error) throw error;
-      
+
       console.log('📦 GDPR portable data export completed for user:', userId);
       return data;
     } catch (error) {
@@ -856,11 +870,11 @@ export class HybridDataService {
         consent_type_param: consentType,
         consent_granted_param: granted,
         is_minor_param: isMinor,
-        parental_consent_param: parentalConsent
+        parental_consent_param: parentalConsent,
       });
 
       if (error) throw error;
-      
+
       console.log('✅ Healthcare consent recorded:', { consentType, granted });
       return data;
     } catch (error) {
@@ -875,11 +889,11 @@ export class HybridDataService {
   async withdrawConsent(consentType: string): Promise<any> {
     try {
       const { data, error } = await supabase.rpc('withdraw_user_consent', {
-        consent_type_param: consentType
+        consent_type_param: consentType,
       });
 
       if (error) throw error;
-      
+
       console.log('🚫 Consent withdrawn:', consentType);
       return data;
     } catch (error) {

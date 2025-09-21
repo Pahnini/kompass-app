@@ -33,6 +33,13 @@ export default [
       '*.tsbuildinfo',
       '.DS_Store',
       'Thumbs.db',
+      // Development and testing scripts
+      'scripts/**',
+      // Supabase configuration and migrations
+      'supabase/**',
+      // Configuration files that cause parsing issues
+      'vitest.config.ts',
+      'vite.config.ts',
     ],
   },
 
@@ -85,13 +92,16 @@ export default [
       'react/react-in-jsx-scope': 'off',
       'react/jsx-no-duplicate-props': 'error',
       'react/no-unescaped-entities': 'warn',
-      
+
       // Enhanced TypeScript rules
-      '@typescript-eslint/no-unused-vars': ['error', { 
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_',
-        ignoreRestSiblings: true 
-      }],
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          ignoreRestSiblings: true,
+        },
+      ],
       '@typescript-eslint/no-explicit-any': 'warn',
       '@typescript-eslint/no-non-null-assertion': 'warn',
       '@typescript-eslint/prefer-nullish-coalescing': 'error',
@@ -104,7 +114,7 @@ export default [
       '@typescript-eslint/return-await': ['error', 'in-try-catch'],
       '@typescript-eslint/consistent-type-imports': ['error', { prefer: 'type-imports' }],
       '@typescript-eslint/consistent-type-exports': 'error',
-      
+
       // General code quality
       'no-console': ['warn', { allow: ['warn', 'error', 'info'] }],
       'prefer-const': 'error',

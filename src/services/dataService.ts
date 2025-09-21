@@ -653,6 +653,20 @@ export class HybridDataService {
   }
 
   /**
+   * Get data with safe fallbacks for initial app loading
+   * Returns appropriate defaults when decryption fails instead of throwing errors
+   */
+  async getDataSafe<T>(key: string, userId: string, defaultValue: T): Promise<T> {
+    try {
+      const data = await this.getData<T>(key, userId);
+      return data ?? defaultValue;
+    } catch (error) {
+      console.warn(`Failed to load ${key}, using default value:`, error);
+      return defaultValue;
+    }
+  }
+
+  /**
    * Set data with automatic sync
    */
   async setData<T>(key: string, data: T, userId: string): Promise<void> {

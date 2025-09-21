@@ -77,7 +77,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
           setUserId(session.user.id);
           console.log('🔄 Loading user data from healthcare database...');
 
-          // Load all user data from the healthcare-compliant database
+          // Load all user data from the healthcare-compliant database with safe fallbacks
           const [
             userData_username,
             userData_goals,
@@ -89,27 +89,32 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
             userData_skillsList,
             userData_points,
           ] = await Promise.all([
-            dataService.getData<string>('username', session.user.id),
-            dataService.getData<Goal[]>('goals', session.user.id),
-            dataService.getData<Achievement[]>('achievements', session.user.id),
-            dataService.getData<CalendarNotes>('calendarNotes', session.user.id),
-            dataService.getData<Symptoms>('symptoms', session.user.id),
-            dataService.getData<string[]>('favorites', session.user.id),
-            dataService.getData<WordFile[]>('wordFiles', session.user.id),
-            dataService.getData<Skill[]>('skillsList', session.user.id),
-            dataService.getData<number>('points', session.user.id),
+            dataService.getDataSafe<string>('username', session.user.id, ''),
+            dataService.getDataSafe<Goal[]>('goals', session.user.id, []),
+            dataService.getDataSafe<Achievement[]>('achievements', session.user.id, []),
+            dataService.getDataSafe<CalendarNotes>('calendarNotes', session.user.id, {}),
+            dataService.getDataSafe<Symptoms>('symptoms', session.user.id, {}),
+            dataService.getDataSafe<string[]>('favorites', session.user.id, [
+              'home',
+              'skills',
+              'notfall',
+              'guide',
+            ]),
+            dataService.getDataSafe<WordFile[]>('wordFiles', session.user.id, []),
+            dataService.getDataSafe<Skill[]>('skillsList', session.user.id, defaultSkills),
+            dataService.getDataSafe<number>('points', session.user.id, 0),
           ]);
 
-          // Update state with loaded data (use defaults if no data found)
-          setUsernameState(userData_username ?? '');
-          setGoalsState(userData_goals ?? []);
-          setAchievementsState(userData_achievements ?? []);
-          setCalendarNotesState(userData_calendarNotes ?? {});
-          setSymptomsState(userData_symptoms ?? {});
-          setFavoritesState(userData_favorites ?? ['home', 'skills', 'notfall', 'guide']);
-          setWordFilesState(userData_wordFiles ?? []);
-          setSkillsListState(userData_skillsList ?? defaultSkills);
-          setPoints(userData_points ?? 0);
+          // Update state with safely loaded data
+          setUsernameState(userData_username);
+          setGoalsState(userData_goals);
+          setAchievementsState(userData_achievements);
+          setCalendarNotesState(userData_calendarNotes);
+          setSymptomsState(userData_symptoms);
+          setFavoritesState(userData_favorites);
+          setWordFilesState(userData_wordFiles);
+          setSkillsListState(userData_skillsList);
+          setPoints(userData_points);
 
           console.log('✅ User data loaded from healthcare database');
         } else {

@@ -120,8 +120,20 @@ export default function DeinWeg({
   };
 
   const formatDateGerman = (dateString: string): string => {
-    const [year, month, day] = dateString.split('-');
-    return `${day}.${month}.${year}`;
+    if (!dateString || typeof dateString !== 'string') {
+      return new Date().toLocaleDateString('de-DE'); // Return today's date as fallback
+    }
+    try {
+      const parts = dateString.split('-');
+      if (parts.length !== 3) {
+        return new Date().toLocaleDateString('de-DE'); // Return today's date as fallback
+      }
+      const [year, month, day] = parts;
+      return `${day}.${month}.${year}`;
+    } catch (error) {
+      console.warn('Date formatting error:', error);
+      return new Date().toLocaleDateString('de-DE'); // Return today's date as fallback
+    }
   };
 
   const currentNote = calendarNotes[selectedDate];
@@ -146,8 +158,8 @@ export default function DeinWeg({
 
       <div className="stat-banner">
         {t('journal.weeklyProgress')
-          .replace('{count}', goals.filter(g => g.completed).length.toString())
-          .replace('{plural}', goals.filter(g => g.completed).length !== 1 ? 'e' : '')}
+          .replace('{count}', goals.filter(g => g && g.completed).length.toString())
+          .replace('{plural}', goals.filter(g => g && g.completed).length !== 1 ? 'e' : '')}
       </div>
 
       <div className="section">
@@ -250,18 +262,24 @@ export default function DeinWeg({
           </button>
         </div>
         <ul>
-          {goals.map((g, i) => (
-            <li key={i} className={g.completed ? 'done' : ''}>
-              <input type="checkbox" checked={g.completed} onChange={() => toggleGoal(i)} />
-              <span className="text-content">{g.text}</span>
-              <div className="actions">
-                <DeleteButton
-                  onDelete={() => setGoals(goals.filter((_, idx) => idx !== i))}
-                  ariaLabel={t('ariaLabels.removeGoal')}
+          {goals
+            .filter(g => g && g.text)
+            .map((g, i) => (
+              <li key={i} className={g.completed ? 'done' : ''}>
+                <input
+                  type="checkbox"
+                  checked={g.completed || false}
+                  onChange={() => toggleGoal(i)}
                 />
-              </div>
-            </li>
-          ))}
+                <span className="text-content">{g.text}</span>
+                <div className="actions">
+                  <DeleteButton
+                    onDelete={() => setGoals(goals.filter((_, idx) => idx !== i))}
+                    ariaLabel={t('ariaLabels.removeGoal')}
+                  />
+                </div>
+              </li>
+            ))}
         </ul>
       </div>
 
@@ -289,23 +307,25 @@ export default function DeinWeg({
           <button onClick={addAchievement}>+</button>
         </div>
         <ul>
-          {achievements.map((achievement, i) => (
-            <li key={i}>
-              <span className="text-content">
-                {formatDateGerman(achievement.date)}: {achievement.text}
-              </span>
-              <div className="actions">
-                <ShareButton
-                  onClick={() => shareAchievement(achievement)}
-                  ariaLabel={t('ariaLabels.shareAchievement')}
-                />
-                <DeleteButton
-                  onDelete={() => setAchievements(achievements.filter((_, idx) => idx !== i))}
-                  ariaLabel={t('ariaLabels.removeAchievement')}
-                />
-              </div>
-            </li>
-          ))}
+          {achievements
+            .filter(achievement => achievement && achievement.date && achievement.text)
+            .map((achievement, i) => (
+              <li key={i}>
+                <span className="text-content">
+                  {formatDateGerman(achievement.date)}: {achievement.text}
+                </span>
+                <div className="actions">
+                  <ShareButton
+                    onClick={() => shareAchievement(achievement)}
+                    ariaLabel={t('ariaLabels.shareAchievement')}
+                  />
+                  <DeleteButton
+                    onDelete={() => setAchievements(achievements.filter((_, idx) => idx !== i))}
+                    ariaLabel={t('ariaLabels.removeAchievement')}
+                  />
+                </div>
+              </li>
+            ))}
         </ul>
       </div>
     </div>

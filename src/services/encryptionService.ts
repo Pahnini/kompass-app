@@ -114,32 +114,168 @@ export class EncryptionService {
   /**
    * Detect the format of encrypted data to prevent parsing errors
    */
-  private detectDataFormat(data: string): 'binary' | 'base64' | 'json' | 'fallback' | 'unknown' {
+  private detectDataFormat(
+    data: string
+  ): 'pgcrypto_base64' | 'binary' | 'base64' | 'json' | 'fallback' | 'unknown' {
+    console.log(
+      '🔍 detectDataFormat called with data:',
+      data?.substring(0, 50),
+      'length:',
+      data?.length
+    );
+
     if (!data || typeof data !== 'string') {
+      console.log('❌ Data is invalid:', { data, type: typeof data });
       return 'unknown';
     }
 
     // Check for fallback prefix
     if (data.startsWith('fallback:')) {
+      console.log('✅ Detected as fallback');
       return 'fallback';
     }
 
     // Check for binary pgcrypto data (starts with \x followed by hex)
     if (data.startsWith('\\x') && /^\\x[0-9a-fA-F]+$/.test(data)) {
+      console.log('✅ Detected as binary');
       return 'binary';
     }
 
-    // Check for base64 (no special chars except +/= and proper length)
-    if (/^[A-Za-z0-9+/]+=*$/.test(data) && data.length % 4 === 0) {
-      return 'base64';
+    // Check for pgcrypto base64 encrypted data (our database format)
+    // pgcrypto data always starts with 'ww0ECQMC' pattern - let's check this first
+    if (data.startsWith('ww0ECQMC') && data.length > 20) {
+      console.log('✅ Detected as pgcrypto_base64 (by ww0ECQMC prefix)');
+      return 'pgcrypto_base64';
+    }
+
+    // Check for other pgcrypto patterns
+    if (data.startsWith('ww0') && data.length > 40) {
+      console.log('✅ Detected as pgcrypto_base64 (by ww0 prefix + length)');
+      return 'pgcrypto_base64';
+    }
+
+    // Fallback to regex-based detection for other base64 data
+    const base64Regex = /^[A-Za-z0-9+/=]+$/;
+    const isBase64Like = base64Regex.test(data);
+    console.log('🔍 Base64 regex test:', isBase64Like, 'length > 20:', data.length > 20);
+
+    // Log any invalid characters for debugging
+    if (!isBase64Like && data.length < 100) {
+      console.log('🔍 Invalid characters found in:', data.substring(0, 50));
+      for (let i = 0; i < Math.min(data.length, 50); i++) {
+        const char = data[i];
+        const isValid = /[A-Za-z0-9+/=]/.test(char);
+        if (!isValid) {
+          console.log(`❌ Invalid char at position ${i}: '${char}' (code: ${char.charCodeAt(0)})`);
+        }
+      }
+    }
+
+    if (isBase64Like && data.length > 20) {
+      // Additional check: pgcrypto encrypted data often starts with specific patterns
+      const includes_ECQMC = data.includes('ECQMC');
+      const lengthOver40 = data.length > 40;
+
+      console.log('🔍 Additional base64 checks:', {
+        includes_ECQMC,
+        lengthOver40,
+        actualLength: data.length,
+        lengthMod4: data.length % 4,
+      });
+
+      if (includes_ECQMC || lengthOver40) {
+        console.log('✅ Detected as pgcrypto_base64 (by pattern match)');
+        return 'pgcrypto_base64';
+      }
+
+      // Only require length % 4 === 0 for regular base64, not pgcrypto
+      const lengthMod4 = data.length % 4 === 0;
+      console.log('🔍 Regular base64 check - length % 4 === 0:', lengthMod4);
+      if (lengthMod4) {
+        console.log('✅ Detected as regular base64');
+        return 'base64';
+      }
     }
 
     // Try to parse as JSON to see if it's valid
     try {
       JSON.parse(data);
+      console.log('✅ Detected as JSON');
       return 'json';
     } catch {
+      console.log('❌ Detected as unknown - not JSON, not base64');
       return 'unknown';
+    }
+  }
+
+  /**
+   * Test function to validate format detection with real Supabase data
+   */
+  async testFormatDetection(userId?: string) {
+    if (!userId) {
+      const { data: user } = await supabase.auth.getUser();
+      userId = user?.user?.id;
+    }
+
+    if (!userId) {
+      console.log('❌ No user ID available for testing');
+      return;
+    }
+
+    console.log('🧪 Testing format detection with real Supabase data...');
+
+    try {
+      // Get some real encrypted data from the database
+      const { data: userData, error } = await supabase
+        .from('user_data')
+        .select('encrypted_goals, encrypted_achievements, encrypted_notes')
+        .eq('user_id', userId)
+        .single();
+
+      if (error) {
+        console.log('❌ Error fetching test data:', error);
+        return;
+      }
+
+      console.log('📊 Raw data from database:', {
+        encrypted_goals: userData?.encrypted_goals?.substring(0, 50),
+        encrypted_achievements: userData?.encrypted_achievements?.substring(0, 50),
+        encrypted_notes: userData?.encrypted_notes?.substring(0, 50),
+      });
+
+      // Test format detection on each field
+      const fields = ['encrypted_goals', 'encrypted_achievements', 'encrypted_notes'] as const;
+
+      for (const field of fields) {
+        const data = userData?.[field] as string;
+        if (data) {
+          console.log(`🔍 Testing ${field}:`, data.substring(0, 50), '...');
+          const format = this.detectDataFormat(data);
+          console.log(`📋 Format detected for ${field}:`, format);
+
+          // Try to decrypt it
+          try {
+            if (format === 'pgcrypto_base64') {
+              const { data: decrypted, error: decryptError } = await supabase.rpc('decrypt_data', {
+                encrypted_data: data,
+                user_key: this.generateUserEncryptionKey(userId),
+              });
+
+              if (decryptError) {
+                console.log(`❌ Decryption error for ${field}:`, decryptError);
+              } else {
+                console.log(`✅ Successfully decrypted ${field}:`, decrypted?.substring(0, 100));
+              }
+            }
+          } catch (decryptError) {
+            console.log(`❌ Decryption failed for ${field}:`, decryptError);
+          }
+        } else {
+          console.log(`ℹ️ No data in ${field}`);
+        }
+      }
+    } catch (error) {
+      console.log('❌ Test failed:', error);
     }
   }
 
@@ -197,8 +333,8 @@ export class EncryptionService {
 
     try {
       // Use server-side encryption function from our migration
-      const { data: encryptedData, error } = await supabase.rpc('encrypt_health_data', {
-        data: jsonData,
+      const { data: encryptedData, error } = await supabase.rpc('encrypt_data', {
+        data_to_encrypt: jsonData,
         user_key: this.generateUserEncryptionKey(userId),
       });
 
@@ -230,10 +366,7 @@ export class EncryptionService {
    */
   public async decrypt<T = any>(data: string, userId: string): Promise<T> {
     if (!data || typeof data !== 'string') {
-      if (import.meta.env.DEV) {
-        console.log('🔄 No data to decrypt, returning safe fallback');
-      }
-      return this.createSafeFallback<T>('object');
+      throw new Error('Invalid data for decryption: data must be a non-empty string');
     }
 
     // Detect data format to prevent parsing errors
@@ -252,39 +385,32 @@ export class EncryptionService {
         return this.validateDecryptedData(parsedData);
       }
 
-      // Handle binary pgcrypto data (don't try to parse as JSON!)
-      if (format === 'binary') {
+      // Handle pgcrypto base64 encrypted data (our database format)
+      if (format === 'pgcrypto_base64' || format === 'binary') {
         // Only attempt pgcrypto decryption if authenticated
         if (!this.isAuthenticated()) {
-          if (import.meta.env.DEV) {
-            console.log(
-              '🔄 Binary data detected but user not authenticated, returning safe fallback'
-            );
-          }
-          return this.createSafeFallback<T>('object');
+          throw new Error('User must be authenticated for server-side decryption');
         }
 
-        // Try server-side decryption for binary data
-        const { data: decryptedData, error } = await supabase.rpc('decrypt_health_data', {
+        // Try server-side decryption for pgcrypto encrypted data
+        const { data: decryptedData, error } = await supabase.rpc('decrypt_data', {
           encrypted_data: data,
           user_key: this.generateUserEncryptionKey(userId),
         });
 
         if (!error && decryptedData) {
           if (import.meta.env.DEV) {
-            console.log('✅ Server-side binary decryption successful');
+            console.log('✅ Server-side pgcrypto decryption successful');
           }
           const parsedData = JSON.parse(decryptedData);
           return this.validateDecryptedData(parsedData);
         }
 
-        // If pgcrypto fails, return safe fallback instead of error spam
+        // If pgcrypto fails, throw error instead of returning fallback
         if (import.meta.env.DEV) {
-          console.log(
-            '🔄 Binary decryption failed (expected without auth context), using safe fallback'
-          );
+          console.error('❌ pgcrypto decryption failed:', error?.message || 'Unknown error');
         }
-        return this.createSafeFallback<T>('object');
+        throw new Error(`Server-side decryption failed: ${error?.message || 'Unknown error'}`);
       }
 
       // Handle JSON data (already decrypted)
@@ -305,15 +431,23 @@ export class EncryptionService {
         }
       }
 
-      // Unknown format - return safe fallback instead of throwing
+      // Unknown format - log it but return safe fallback
       if (import.meta.env.DEV) {
-        console.log('🔄 Unknown data format, using safe fallback');
+        console.warn('⚠️ Unknown data format, using safe fallback:', data.substring(0, 50));
       }
       return this.createSafeFallback<T>('object');
     } catch (error) {
-      // Instead of throwing errors that spam console, return safe fallbacks
+      // For development, provide more detailed error info but still return safe fallback
       if (import.meta.env.DEV) {
-        console.log('🔄 Decryption error, using safe fallback:', error);
+        console.error('❌ Decryption failed:', error);
+        console.log('🔧 Using safe fallback to prevent app crash');
+      }
+      // Only throw for authentication/network errors, not data format issues
+      if (
+        error instanceof Error &&
+        (error.message.includes('user_id') || error.message.includes('auth'))
+      ) {
+        throw error;
       }
       return this.createSafeFallback<T>('object');
     }
@@ -340,8 +474,8 @@ export class EncryptionService {
 
     try {
       // Use server-side encryption for field
-      const { data: encryptedData, error } = await supabase.rpc('encrypt_health_data', {
-        data: value,
+      const { data: encryptedData, error } = await supabase.rpc('encrypt_data', {
+        data_to_encrypt: value,
         user_key: this.generateUserEncryptionKey(userId),
       });
 
@@ -394,20 +528,20 @@ export class EncryptionService {
         return BufferPolyfill.from(encodedData, 'base64').toString('utf-8');
       }
 
-      // Handle binary pgcrypto data
-      if (format === 'binary') {
+      // Handle pgcrypto base64 encrypted data
+      if (format === 'pgcrypto_base64' || format === 'binary') {
         // Only attempt pgcrypto decryption if authenticated
         if (!this.isAuthenticated()) {
           if (import.meta.env.DEV) {
             console.log(
-              '🔄 Binary field data detected but user not authenticated, returning empty'
+              '🔄 pgcrypto field data detected but user not authenticated, returning empty'
             );
           }
           return '';
         }
 
-        // Try server-side decryption for binary data
-        const { data: decryptedData, error } = await supabase.rpc('decrypt_health_data', {
+        // Try server-side decryption for pgcrypto data
+        const { data: decryptedData, error } = await supabase.rpc('decrypt_data', {
           encrypted_data: encryptedValue,
           user_key: this.generateUserEncryptionKey(userId),
         });
@@ -421,7 +555,9 @@ export class EncryptionService {
 
         // If pgcrypto fails, return empty string instead of error spam
         if (import.meta.env.DEV) {
-          console.log('🔄 Binary field decryption failed (expected without auth), returning empty');
+          console.log(
+            '🔄 pgcrypto field decryption failed (expected without auth), returning empty'
+          );
         }
         return '';
       }
@@ -678,3 +814,11 @@ export const EncryptionUtils = {
     return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
   },
 };
+
+// // Expose test function in development
+// if (import.meta.env.DEV) {
+//   (window as any).testEncryption = () => {
+//     const service = new EncryptionService();
+//     return service.testFormatDetection();
+//   };
+// }

@@ -100,7 +100,8 @@ export default function Skills({
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {skillsList.map((skill, i) => {
           const skillKey = skill.startsWith('skills.defaultSkills.') ? t(skill) : skill;
-          const isCompleted = skillsCompleted[skillKey] || false;
+          // Use the original skill (translation key) as the key in skillsCompleted, not the translated text
+          const isCompleted = skillsCompleted[skill] || false;
 
           return (
             <li
@@ -119,9 +120,9 @@ export default function Skills({
                 onChange={() => {
                   const newCompleted = { ...skillsCompleted };
                   if (isCompleted) {
-                    delete newCompleted[skillKey];
+                    delete newCompleted[skill];
                   } else {
-                    newCompleted[skillKey] = true;
+                    newCompleted[skill] = true;
                   }
                   setSkillsCompleted(newCompleted);
                 }}
@@ -152,7 +153,7 @@ export default function Skills({
 
                     // Remove the completed status for this skill
                     const newCompleted = { ...skillsCompleted };
-                    delete newCompleted[skillKey];
+                    delete newCompleted[skill];
                     setSkillsCompleted(newCompleted);
                   }}
                   ariaLabel={t('ariaLabels.deleteSkill')}

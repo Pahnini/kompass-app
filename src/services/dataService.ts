@@ -570,13 +570,18 @@ class SupabaseStorageBackend implements StorageBackend {
         } else if (_key === 'skillsCompleted') {
           const skillsCompleted = data as Record<string, boolean>;
           if (skillsCompleted) {
+            // For skills completion, we need to provide both columns
+            // encrypted_skills_data is required (NOT NULL) so we'll set it to empty array if not exists
             const { error } = await supabase.from('user_skills').upsert(
               {
                 user_id: userId,
+                encrypted_skills_data: JSON.stringify([]), // Empty array for backwards compatibility
                 encrypted_skills_completed: await encryptionService.encrypt(
                   skillsCompleted,
                   userId
                 ),
+                skills_count: Object.keys(skillsCompleted).length,
+                version: 1,
               },
               {
                 onConflict: 'user_id',
@@ -812,6 +817,20 @@ export class HybridDataService {
   async getDataSafe<T>(key: string, userId: string, defaultValue: T): Promise<T> {
     try {
       const data = await this.getData<T>(key, userId);
+
+      // Special handling for skillsList - merge custom skills with defaults
+      if (key === 'skillsList' && Array.isArray(data) && Array.isArray(defaultValue)) {
+        if (data.length === 0) {
+          // If no custom skills, use defaults
+          return defaultValue;
+        } else {
+          // If we have custom skills, merge them with defaults (avoiding duplicates)
+          const combined = [...(defaultValue as any[]), ...data];
+          const unique = Array.from(new Set(combined));
+          return unique as T;
+        }
+      }
+
       return data ?? defaultValue;
     } catch (error) {
       // If it's a critical auth error, we need to know about it

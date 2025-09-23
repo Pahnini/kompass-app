@@ -333,8 +333,6 @@ export class ComplianceService {
         dataSensitivity: 'confidential',
         data: { consentType, granted, version: privacyPolicyVersion },
       });
-
-      console.log(`✅ Consent recorded: ${consentType} = ${granted}`);
     } catch (error) {
       await errorHandler.handleError(error as Error, 'compliance', 'high', {
         userId,
@@ -381,8 +379,6 @@ export class ComplianceService {
 
       // Trigger data deletion if required
       await this.handleConsentWithdrawal(consentType);
-
-      console.log(`✅ Consent withdrawn: ${consentType}`);
     } catch (error) {
       await errorHandler.handleError(error as Error, 'compliance', 'high', { userId, consentType });
     }
@@ -454,8 +450,6 @@ export class ComplianceService {
         exportId: this.generateExportId(),
         dataIntegrityHash: this.generateDataHash(exportData),
       };
-
-      console.log(`✅ Data export completed for user ${userId}`);
 
       return {
         ...exportData,
@@ -536,8 +530,6 @@ export class ComplianceService {
       } else {
         results.retained.push('audit_logs');
       }
-
-      console.log(`✅ User data deletion completed for ${userId}`, results);
 
       return results;
     } catch (error) {
@@ -781,8 +773,6 @@ export class ComplianceService {
       const { error } = await supabase.from('audit_logs').insert(batch);
 
       if (error) throw error;
-
-      console.log(`✅ Processed ${batch.length} audit log entries`);
     } catch (error) {
       // Put failed entries back in queue
       this.auditQueue.unshift(...batch);
@@ -868,17 +858,33 @@ export class ComplianceService {
   }
 
   private async handleConsentWithdrawal(consentType: string): Promise<void> {
-    // Implement specific actions based on consent type
     switch (consentType) {
       case 'data_processing':
-        console.log('🛑 Data processing consent withdrawn - stopping all data processing');
+        console.log('🛑 Data processing consent withdrawn - implementing data processing halt');
+        // TODO: Implement actual data processing halt mechanisms
+        // - Stop background sync operations
+        // - Disable automatic data collection
+        // - Flag user account for processing restrictions
         break;
+
       case 'analytics':
-        console.log('📊 Analytics consent withdrawn - disabling analytics');
+        console.log('📊 Analytics consent withdrawn - disabling analytics tracking');
+        // TODO: Implement analytics disabling
+        // - Remove analytics trackers
+        // - Delete existing analytics data
+        // - Update user preferences
         break;
+
       case 'healthcare_data':
-        console.log('🏥 Healthcare data consent withdrawn - reviewing data retention');
+        console.log('🏥 Healthcare data consent withdrawn - initiating data review process');
+        // TODO: Implement healthcare data handling
+        // - Mark data for review/deletion
+        // - Notify compliance team
+        // - Begin data retention policy review
         break;
+
+      default:
+        console.warn(`Unknown consent type for withdrawal: ${consentType}`);
     }
   }
 

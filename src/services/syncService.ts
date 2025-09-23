@@ -144,8 +144,6 @@ export class SyncService {
         throw new Error('No authenticated user found');
       }
 
-      console.log(`🔄 Starting sync for user ${currentUserId}`);
-
       // Step 1: Process offline changes queue
       await this.processOfflineQueue(currentUserId);
 
@@ -170,7 +168,6 @@ export class SyncService {
       this.saveSyncState(currentUserId);
 
       const syncDuration = Date.now() - startTime;
-      console.log(`✅ Sync completed in ${syncDuration}ms`);
 
       return {
         ...syncResult,
@@ -396,9 +393,6 @@ export class SyncService {
       await dataService.setData(conflict.key, winningData, userId);
       storageService.set(`${conflict.key}_timestamp`, winningTimestamp);
 
-      console.log(
-        `🔧 Auto-resolved conflict for ${conflict.key} using ${this.syncSettings.conflictResolution}`
-      );
       return true;
     } catch (error) {
       console.error(`Failed to resolve conflict for ${conflict.key}:`, error);
@@ -456,7 +450,6 @@ export class SyncService {
         this.notifyListeners('idle');
       }
 
-      console.log(`✅ Manually resolved conflict for ${conflictKey}`);
       return true;
     } catch (error) {
       console.error(`Failed to manually resolve conflict for ${conflictKey}:`, error);

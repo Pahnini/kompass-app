@@ -27,6 +27,8 @@ export interface UserDataContextType {
   setWordFiles: (files: WordFile[]) => void;
   skillsList: Skill[];
   setSkillsList: (skills: Skill[]) => void;
+  skillsCompleted: Record<string, boolean>;
+  setSkillsCompleted: (completed: Record<string, boolean>) => void;
   hasGoalsReminder: boolean;
   points: number;
   addPoints: (amount: number) => void;
@@ -63,6 +65,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
   const [favorites, setFavoritesState] = useState<string[]>(['home', 'skills', 'notfall', 'guide']);
   const [wordFiles, setWordFilesState] = useState<WordFile[]>([]);
   const [skillsList, setSkillsListState] = useState<Skill[]>(defaultSkills);
+  const [skillsCompleted, setSkillsCompletedState] = useState<Record<string, boolean>>({});
   const [points, setPoints] = useState<number>(0);
 
   // Load user data when authentication changes
@@ -75,8 +78,6 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
 
         if (session?.user?.id) {
           setUserId(session.user.id);
-          console.log('🔄 Loading user data from healthcare database...');
-
           // Load all user data from the healthcare-compliant database with safe fallbacks
           const [
             userData_username,
@@ -87,6 +88,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
             userData_favorites,
             userData_wordFiles,
             userData_skillsList,
+            userData_skillsCompleted,
             userData_points,
           ] = await Promise.all([
             dataService.getDataSafe<string>('username', session.user.id, ''),
@@ -102,6 +104,11 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
             ]),
             dataService.getDataSafe<WordFile[]>('wordFiles', session.user.id, []),
             dataService.getDataSafe<Skill[]>('skillsList', session.user.id, defaultSkills),
+            dataService.getDataSafe<Record<string, boolean>>(
+              'skillsCompleted',
+              session.user.id,
+              {}
+            ),
             dataService.getDataSafe<number>('points', session.user.id, 0),
           ]);
 
@@ -113,10 +120,20 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
           setSymptomsState(userData_symptoms);
           setFavoritesState(userData_favorites);
           setWordFilesState(userData_wordFiles);
-          setSkillsListState(userData_skillsList);
-          setPoints(userData_points);
+          // Merge skillsList with any skills from skillsCompleted that aren't in the list
+          const allSkills = [...userData_skillsList];
+          const completedSkillKeys = Object.keys(userData_skillsCompleted);
 
-          console.log('✅ User data loaded from healthcare database');
+          // Add any completed skills that aren't already in the skillsList
+          completedSkillKeys.forEach(skill => {
+            if (!allSkills.includes(skill)) {
+              allSkills.push(skill);
+            }
+          });
+
+          setSkillsListState(allSkills);
+          setSkillsCompletedState(userData_skillsCompleted);
+          setPoints(userData_points);
         } else {
           // No user logged in, reset to defaults
           setUserId(null);
@@ -173,7 +190,6 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       if (userId) {
         try {
           await dataService.setData('username', value, userId);
-          console.log('✅ Username saved to healthcare database');
         } catch (error) {
           console.error('❌ Failed to save username:', error);
         }
@@ -188,7 +204,6 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       if (userId) {
         try {
           await dataService.setData('goals', value, userId);
-          console.log('✅ Goals saved to healthcare database');
         } catch (error) {
           console.error('❌ Failed to save goals:', error);
         }
@@ -203,7 +218,6 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       if (userId) {
         try {
           await dataService.setData('achievements', value, userId);
-          console.log('✅ Achievements saved to healthcare database');
         } catch (error) {
           console.error('❌ Failed to save achievements:', error);
         }
@@ -218,7 +232,6 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       if (userId) {
         try {
           await dataService.setData('calendarNotes', value, userId);
-          console.log('✅ Calendar notes saved to healthcare database');
         } catch (error) {
           console.error('❌ Failed to save calendar notes:', error);
         }
@@ -233,7 +246,6 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       if (userId) {
         try {
           await dataService.setData('symptoms', value, userId);
-          console.log('✅ Symptoms saved to healthcare database');
         } catch (error) {
           console.error('❌ Failed to save symptoms:', error);
         }
@@ -248,7 +260,6 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       if (userId) {
         try {
           await dataService.setData('favorites', value, userId);
-          console.log('✅ Favorites saved to healthcare database');
         } catch (error) {
           console.error('❌ Failed to save favorites:', error);
         }
@@ -263,7 +274,6 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       if (userId) {
         try {
           await dataService.setData('wordFiles', value, userId);
-          console.log('✅ Word files saved to healthcare database');
         } catch (error) {
           console.error('❌ Failed to save word files:', error);
         }
@@ -278,9 +288,22 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       if (userId) {
         try {
           await dataService.setData('skillsList', value, userId);
-          console.log('✅ Skills list saved to healthcare database');
         } catch (error) {
           console.error('❌ Failed to save skills list:', error);
+        }
+      }
+    },
+    [userId]
+  );
+
+  const setSkillsCompleted = React.useCallback(
+    async (value: Record<string, boolean>) => {
+      setSkillsCompletedState(value);
+      if (userId) {
+        try {
+          await dataService.setData('skillsCompleted', value, userId);
+        } catch (error) {
+          console.error('❌ Failed to save skills completion status:', error);
         }
       }
     },
@@ -353,6 +376,8 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       setWordFiles,
       skillsList,
       setSkillsList,
+      skillsCompleted,
+      setSkillsCompleted,
       hasGoalsReminder,
       points,
       addPoints,
@@ -363,29 +388,30 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
     }),
     [
       username,
+      setUsername,
       goals,
+      setGoals,
       achievements,
+      setAchievements,
       calendarNotes,
+      setCalendarNotes,
       symptoms,
+      setSymptoms,
       favorites,
+      setFavorites,
       wordFiles,
+      setWordFiles,
       skillsList,
+      setSkillsList,
+      skillsCompleted,
+      setSkillsCompleted,
       hasGoalsReminder,
       points,
+      addPoints,
       level,
       progress,
       isLoading,
       userId,
-      // Setter functions are stable and don't need to be in the dependency array
-      setUsername,
-      setGoals,
-      setAchievements,
-      setCalendarNotes,
-      setSymptoms,
-      setFavorites,
-      setWordFiles,
-      setSkillsList,
-      addPoints,
     ]
   );
 

@@ -86,7 +86,6 @@ export class EncryptionService {
       this.currentSession = session;
 
       this.initialized = true;
-      console.log('🔐 Encryption Service initialized with auth context tracking');
     } catch (error) {
       console.warn('⚠️ Encryption service initialization warning:', error);
       // Continue with pass-through mode for development
@@ -117,82 +116,47 @@ export class EncryptionService {
   private detectDataFormat(
     data: string
   ): 'pgcrypto_base64' | 'binary' | 'base64' | 'json' | 'fallback' | 'unknown' {
-    console.log(
-      '🔍 detectDataFormat called with data:',
-      data?.substring(0, 50),
-      'length:',
-      data?.length
-    );
-
     if (!data || typeof data !== 'string') {
-      console.log('❌ Data is invalid:', { data, type: typeof data });
       return 'unknown';
     }
 
     // Check for fallback prefix
     if (data.startsWith('fallback:')) {
-      console.log('✅ Detected as fallback');
       return 'fallback';
     }
 
     // Check for binary pgcrypto data (starts with \x followed by hex)
     if (data.startsWith('\\x') && /^\\x[0-9a-fA-F]+$/.test(data)) {
-      console.log('✅ Detected as binary');
       return 'binary';
     }
 
     // Check for pgcrypto base64 encrypted data (our database format)
     // pgcrypto data always starts with 'ww0ECQMC' pattern - let's check this first
     if (data.startsWith('ww0ECQMC') && data.length > 20) {
-      console.log('✅ Detected as pgcrypto_base64 (by ww0ECQMC prefix)');
       return 'pgcrypto_base64';
     }
 
     // Check for other pgcrypto patterns
     if (data.startsWith('ww0') && data.length > 40) {
-      console.log('✅ Detected as pgcrypto_base64 (by ww0 prefix + length)');
       return 'pgcrypto_base64';
     }
 
     // Fallback to regex-based detection for other base64 data
     const base64Regex = /^[A-Za-z0-9+/=]+$/;
     const isBase64Like = base64Regex.test(data);
-    console.log('🔍 Base64 regex test:', isBase64Like, 'length > 20:', data.length > 20);
-
-    // Log any invalid characters for debugging
-    if (!isBase64Like && data.length < 100) {
-      console.log('🔍 Invalid characters found in:', data.substring(0, 50));
-      for (let i = 0; i < Math.min(data.length, 50); i++) {
-        const char = data[i];
-        const isValid = /[A-Za-z0-9+/=]/.test(char);
-        if (!isValid) {
-          console.log(`❌ Invalid char at position ${i}: '${char}' (code: ${char.charCodeAt(0)})`);
-        }
-      }
-    }
 
     if (isBase64Like && data.length > 20) {
       // Additional check: pgcrypto encrypted data often starts with specific patterns
       const includes_ECQMC = data.includes('ECQMC');
       const lengthOver40 = data.length > 40;
 
-      console.log('🔍 Additional base64 checks:', {
-        includes_ECQMC,
-        lengthOver40,
-        actualLength: data.length,
-        lengthMod4: data.length % 4,
-      });
-
       if (includes_ECQMC || lengthOver40) {
-        console.log('✅ Detected as pgcrypto_base64 (by pattern match)');
         return 'pgcrypto_base64';
       }
 
       // Only require length % 4 === 0 for regular base64, not pgcrypto
       const lengthMod4 = data.length % 4 === 0;
-      console.log('🔍 Regular base64 check - length % 4 === 0:', lengthMod4);
       if (lengthMod4) {
-        console.log('✅ Detected as regular base64');
         return 'base64';
       }
     }
@@ -200,10 +164,8 @@ export class EncryptionService {
     // Try to parse as JSON to see if it's valid
     try {
       JSON.parse(data);
-      console.log('✅ Detected as JSON');
       return 'json';
     } catch {
-      console.log('❌ Detected as unknown - not JSON, not base64');
       return 'unknown';
     }
   }
@@ -211,73 +173,6 @@ export class EncryptionService {
   /**
    * Test function to validate format detection with real Supabase data
    */
-  async testFormatDetection(userId?: string) {
-    if (!userId) {
-      const { data: user } = await supabase.auth.getUser();
-      userId = user?.user?.id;
-    }
-
-    if (!userId) {
-      console.log('❌ No user ID available for testing');
-      return;
-    }
-
-    console.log('🧪 Testing format detection with real Supabase data...');
-
-    try {
-      // Get some real encrypted data from the database
-      const { data: userData, error } = await supabase
-        .from('user_data')
-        .select('encrypted_goals, encrypted_achievements, encrypted_notes')
-        .eq('user_id', userId)
-        .single();
-
-      if (error) {
-        console.log('❌ Error fetching test data:', error);
-        return;
-      }
-
-      console.log('📊 Raw data from database:', {
-        encrypted_goals: userData?.encrypted_goals?.substring(0, 50),
-        encrypted_achievements: userData?.encrypted_achievements?.substring(0, 50),
-        encrypted_notes: userData?.encrypted_notes?.substring(0, 50),
-      });
-
-      // Test format detection on each field
-      const fields = ['encrypted_goals', 'encrypted_achievements', 'encrypted_notes'] as const;
-
-      for (const field of fields) {
-        const data = userData?.[field] as string;
-        if (data) {
-          console.log(`🔍 Testing ${field}:`, data.substring(0, 50), '...');
-          const format = this.detectDataFormat(data);
-          console.log(`📋 Format detected for ${field}:`, format);
-
-          // Try to decrypt it
-          try {
-            if (format === 'pgcrypto_base64') {
-              const { data: decrypted, error: decryptError } = await supabase.rpc('decrypt_data', {
-                encrypted_data: data,
-                user_key: this.generateUserEncryptionKey(userId),
-              });
-
-              if (decryptError) {
-                console.log(`❌ Decryption error for ${field}:`, decryptError);
-              } else {
-                console.log(`✅ Successfully decrypted ${field}:`, decrypted?.substring(0, 100));
-              }
-            }
-          } catch (decryptError) {
-            console.log(`❌ Decryption failed for ${field}:`, decryptError);
-          }
-        } else {
-          console.log(`ℹ️ No data in ${field}`);
-        }
-      }
-    } catch (error) {
-      console.log('❌ Test failed:', error);
-    }
-  }
 
   /**
    * Create safe fallback data when decryption fails
@@ -708,7 +603,8 @@ export class EncryptionService {
   }
 
   /**
-   * Test encryption functionality
+   * Test encryption functionality for compliance validation
+   * Used by compliance service to verify encryption is working
    */
   public async testEncryption(userId: string): Promise<boolean> {
     try {
@@ -717,20 +613,30 @@ export class EncryptionService {
       const decrypted = await this.decrypt(encrypted, userId);
 
       const isValid = JSON.stringify(testData) === JSON.stringify(decrypted);
-      console.log(isValid ? '✅ Encryption test passed' : '❌ Encryption test failed');
+
+      // Only log in development mode
+      if (import.meta.env.DEV) {
+        console.log(isValid ? '✅ Encryption test passed' : '❌ Encryption test failed');
+      }
 
       return isValid;
     } catch (error) {
-      console.error('❌ Encryption test failed:', error);
+      // Always log critical encryption failures (even in production)
+      console.error('❌ Critical: Encryption test failed:', error);
       return false;
     }
   }
 
   /**
    * Clear any cached encryption metadata (no-op for server-side encryption)
+   * This is called during error recovery but does nothing since we use server-side encryption
    */
   public clearDeviceFingerprint(): void {
-    console.log('🔐 Encryption metadata cleared (server-side encryption active)');
+    // No-op: Server-side encryption doesn't use device fingerprints
+    // This method exists for compatibility with error handling workflows
+    if (import.meta.env.DEV) {
+      console.log('🔐 clearDeviceFingerprint() called (no-op for server-side encryption)');
+    }
   }
 
   /**
@@ -814,11 +720,3 @@ export const EncryptionUtils = {
     return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
   },
 };
-
-// // Expose test function in development
-// if (import.meta.env.DEV) {
-//   (window as any).testEncryption = () => {
-//     const service = new EncryptionService();
-//     return service.testFormatDetection();
-//   };
-// }

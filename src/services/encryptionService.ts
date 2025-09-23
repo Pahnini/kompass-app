@@ -86,7 +86,6 @@ export class EncryptionService {
       this.currentSession = session;
 
       this.initialized = true;
-      console.log('🔐 Encryption Service initialized with auth context tracking');
     } catch (error) {
       console.warn('⚠️ Encryption service initialization warning:', error);
       // Continue with pass-through mode for development
@@ -114,7 +113,9 @@ export class EncryptionService {
   /**
    * Detect the format of encrypted data to prevent parsing errors
    */
-  private detectDataFormat(data: string): 'binary' | 'base64' | 'json' | 'fallback' | 'unknown' {
+  private detectDataFormat(
+    data: string
+  ): 'pgcrypto_base64' | 'binary' | 'base64' | 'json' | 'fallback' | 'unknown' {
     if (!data || typeof data !== 'string') {
       return 'unknown';
     }
@@ -129,9 +130,35 @@ export class EncryptionService {
       return 'binary';
     }
 
-    // Check for base64 (no special chars except +/= and proper length)
-    if (/^[A-Za-z0-9+/]+=*$/.test(data) && data.length % 4 === 0) {
-      return 'base64';
+    // Check for pgcrypto base64 encrypted data (our database format)
+    // pgcrypto data always starts with 'ww0ECQMC' pattern - let's check this first
+    if (data.startsWith('ww0ECQMC') && data.length > 20) {
+      return 'pgcrypto_base64';
+    }
+
+    // Check for other pgcrypto patterns
+    if (data.startsWith('ww0') && data.length > 40) {
+      return 'pgcrypto_base64';
+    }
+
+    // Fallback to regex-based detection for other base64 data
+    const base64Regex = /^[A-Za-z0-9+/=]+$/;
+    const isBase64Like = base64Regex.test(data);
+
+    if (isBase64Like && data.length > 20) {
+      // Additional check: pgcrypto encrypted data often starts with specific patterns
+      const includes_ECQMC = data.includes('ECQMC');
+      const lengthOver40 = data.length > 40;
+
+      if (includes_ECQMC || lengthOver40) {
+        return 'pgcrypto_base64';
+      }
+
+      // Only require length % 4 === 0 for regular base64, not pgcrypto
+      const lengthMod4 = data.length % 4 === 0;
+      if (lengthMod4) {
+        return 'base64';
+      }
     }
 
     // Try to parse as JSON to see if it's valid
@@ -142,6 +169,10 @@ export class EncryptionService {
       return 'unknown';
     }
   }
+
+  /**
+   * Test function to validate format detection with real Supabase data
+   */
 
   /**
    * Create safe fallback data when decryption fails
@@ -197,8 +228,8 @@ export class EncryptionService {
 
     try {
       // Use server-side encryption function from our migration
-      const { data: encryptedData, error } = await supabase.rpc('encrypt_health_data', {
-        data: jsonData,
+      const { data: encryptedData, error } = await supabase.rpc('encrypt_data', {
+        data_to_encrypt: jsonData,
         user_key: this.generateUserEncryptionKey(userId),
       });
 
@@ -230,10 +261,7 @@ export class EncryptionService {
    */
   public async decrypt<T = any>(data: string, userId: string): Promise<T> {
     if (!data || typeof data !== 'string') {
-      if (import.meta.env.DEV) {
-        console.log('🔄 No data to decrypt, returning safe fallback');
-      }
-      return this.createSafeFallback<T>('object');
+      throw new Error('Invalid data for decryption: data must be a non-empty string');
     }
 
     // Detect data format to prevent parsing errors
@@ -252,39 +280,32 @@ export class EncryptionService {
         return this.validateDecryptedData(parsedData);
       }
 
-      // Handle binary pgcrypto data (don't try to parse as JSON!)
-      if (format === 'binary') {
+      // Handle pgcrypto base64 encrypted data (our database format)
+      if (format === 'pgcrypto_base64' || format === 'binary') {
         // Only attempt pgcrypto decryption if authenticated
         if (!this.isAuthenticated()) {
-          if (import.meta.env.DEV) {
-            console.log(
-              '🔄 Binary data detected but user not authenticated, returning safe fallback'
-            );
-          }
-          return this.createSafeFallback<T>('object');
+          throw new Error('User must be authenticated for server-side decryption');
         }
 
-        // Try server-side decryption for binary data
-        const { data: decryptedData, error } = await supabase.rpc('decrypt_health_data', {
+        // Try server-side decryption for pgcrypto encrypted data
+        const { data: decryptedData, error } = await supabase.rpc('decrypt_data', {
           encrypted_data: data,
           user_key: this.generateUserEncryptionKey(userId),
         });
 
         if (!error && decryptedData) {
           if (import.meta.env.DEV) {
-            console.log('✅ Server-side binary decryption successful');
+            console.log('✅ Server-side pgcrypto decryption successful');
           }
           const parsedData = JSON.parse(decryptedData);
           return this.validateDecryptedData(parsedData);
         }
 
-        // If pgcrypto fails, return safe fallback instead of error spam
+        // If pgcrypto fails, throw error instead of returning fallback
         if (import.meta.env.DEV) {
-          console.log(
-            '🔄 Binary decryption failed (expected without auth context), using safe fallback'
-          );
+          console.error('❌ pgcrypto decryption failed:', error?.message || 'Unknown error');
         }
-        return this.createSafeFallback<T>('object');
+        throw new Error(`Server-side decryption failed: ${error?.message || 'Unknown error'}`);
       }
 
       // Handle JSON data (already decrypted)
@@ -305,15 +326,23 @@ export class EncryptionService {
         }
       }
 
-      // Unknown format - return safe fallback instead of throwing
+      // Unknown format - log it but return safe fallback
       if (import.meta.env.DEV) {
-        console.log('🔄 Unknown data format, using safe fallback');
+        console.warn('⚠️ Unknown data format, using safe fallback:', data.substring(0, 50));
       }
       return this.createSafeFallback<T>('object');
     } catch (error) {
-      // Instead of throwing errors that spam console, return safe fallbacks
+      // For development, provide more detailed error info but still return safe fallback
       if (import.meta.env.DEV) {
-        console.log('🔄 Decryption error, using safe fallback:', error);
+        console.error('❌ Decryption failed:', error);
+        console.log('🔧 Using safe fallback to prevent app crash');
+      }
+      // Only throw for authentication/network errors, not data format issues
+      if (
+        error instanceof Error &&
+        (error.message.includes('user_id') || error.message.includes('auth'))
+      ) {
+        throw error;
       }
       return this.createSafeFallback<T>('object');
     }
@@ -340,8 +369,8 @@ export class EncryptionService {
 
     try {
       // Use server-side encryption for field
-      const { data: encryptedData, error } = await supabase.rpc('encrypt_health_data', {
-        data: value,
+      const { data: encryptedData, error } = await supabase.rpc('encrypt_data', {
+        data_to_encrypt: value,
         user_key: this.generateUserEncryptionKey(userId),
       });
 
@@ -394,20 +423,20 @@ export class EncryptionService {
         return BufferPolyfill.from(encodedData, 'base64').toString('utf-8');
       }
 
-      // Handle binary pgcrypto data
-      if (format === 'binary') {
+      // Handle pgcrypto base64 encrypted data
+      if (format === 'pgcrypto_base64' || format === 'binary') {
         // Only attempt pgcrypto decryption if authenticated
         if (!this.isAuthenticated()) {
           if (import.meta.env.DEV) {
             console.log(
-              '🔄 Binary field data detected but user not authenticated, returning empty'
+              '🔄 pgcrypto field data detected but user not authenticated, returning empty'
             );
           }
           return '';
         }
 
-        // Try server-side decryption for binary data
-        const { data: decryptedData, error } = await supabase.rpc('decrypt_health_data', {
+        // Try server-side decryption for pgcrypto data
+        const { data: decryptedData, error } = await supabase.rpc('decrypt_data', {
           encrypted_data: encryptedValue,
           user_key: this.generateUserEncryptionKey(userId),
         });
@@ -421,7 +450,9 @@ export class EncryptionService {
 
         // If pgcrypto fails, return empty string instead of error spam
         if (import.meta.env.DEV) {
-          console.log('🔄 Binary field decryption failed (expected without auth), returning empty');
+          console.log(
+            '🔄 pgcrypto field decryption failed (expected without auth), returning empty'
+          );
         }
         return '';
       }
@@ -572,7 +603,8 @@ export class EncryptionService {
   }
 
   /**
-   * Test encryption functionality
+   * Test encryption functionality for compliance validation
+   * Used by compliance service to verify encryption is working
    */
   public async testEncryption(userId: string): Promise<boolean> {
     try {
@@ -581,20 +613,30 @@ export class EncryptionService {
       const decrypted = await this.decrypt(encrypted, userId);
 
       const isValid = JSON.stringify(testData) === JSON.stringify(decrypted);
-      console.log(isValid ? '✅ Encryption test passed' : '❌ Encryption test failed');
+
+      // Only log in development mode
+      if (import.meta.env.DEV) {
+        console.log(isValid ? '✅ Encryption test passed' : '❌ Encryption test failed');
+      }
 
       return isValid;
     } catch (error) {
-      console.error('❌ Encryption test failed:', error);
+      // Always log critical encryption failures (even in production)
+      console.error('❌ Critical: Encryption test failed:', error);
       return false;
     }
   }
 
   /**
    * Clear any cached encryption metadata (no-op for server-side encryption)
+   * This is called during error recovery but does nothing since we use server-side encryption
    */
   public clearDeviceFingerprint(): void {
-    console.log('🔐 Encryption metadata cleared (server-side encryption active)');
+    // No-op: Server-side encryption doesn't use device fingerprints
+    // This method exists for compatibility with error handling workflows
+    if (import.meta.env.DEV) {
+      console.log('🔐 clearDeviceFingerprint() called (no-op for server-side encryption)');
+    }
   }
 
   /**

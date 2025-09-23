@@ -113,7 +113,6 @@ export class ErrorHandlingService {
         maxRetries: 0,
         priority: 2,
         handler: async (_error: Error, __context?: any) => {
-          console.log('🔌 Switching to offline mode');
           return { mode: 'offline', data: __context?.fallbackData };
         },
       },
@@ -142,7 +141,6 @@ export class ErrorHandlingService {
         maxRetries: 0,
         priority: 2,
         handler: async (_error: Error) => {
-          console.log('🔑 Re-authentication required');
           return { requiresReauth: true };
         },
       },
@@ -155,7 +153,6 @@ export class ErrorHandlingService {
         maxRetries: 1,
         priority: 1,
         handler: async (_error: Error, __context?: any) => {
-          console.log('🔐 Regenerating encryption keys');
           encryptionService.clearDeviceFingerprint();
           return { keyRegenerated: true };
         },
@@ -167,7 +164,6 @@ export class ErrorHandlingService {
         maxRetries: 0,
         priority: 2,
         handler: async (_error: Error, __context?: any) => {
-          console.warn('⚠️ Encryption fallback - using localStorage without encryption');
           return { encryptionDisabled: true, data: __context?.plainData };
         },
       },
@@ -192,7 +188,6 @@ export class ErrorHandlingService {
         maxRetries: 0,
         priority: 2,
         handler: async (_error: Error, __context?: any) => {
-          console.log('💾 Using localStorage fallback');
           return { useLocalStorageOnly: true };
         },
       },
@@ -205,7 +200,6 @@ export class ErrorHandlingService {
         maxRetries: 2,
         priority: 1,
         handler: async (_error: Error, __context?: any) => {
-          console.log('🔄 Attempting partial sync');
           // Try to sync priority data only
           return { partialSyncAttempted: true };
         },
@@ -217,7 +211,6 @@ export class ErrorHandlingService {
         maxRetries: 0,
         priority: 2,
         handler: async (_error: Error, __context?: any) => {
-          console.log('⏳ Queuing changes for later sync');
           return { queuedForLater: true };
         },
       },
@@ -249,15 +242,12 @@ export class ErrorHandlingService {
     // Try each strategy
     for (const strategy of strategies) {
       try {
-        console.log(`🛠️ Trying fallback strategy: ${strategy.name}`);
-
         const result = await strategy.handler(error, _context);
 
         // Mark error as resolved if strategy succeeded
         errorInfo.resolved = true;
         this.updateErrorInfo(errorInfo);
 
-        console.log(`✅ Fallback strategy ${strategy.name} succeeded`);
         return result;
       } catch (strategyError) {
         console.warn(`❌ Fallback strategy ${strategy.name} failed:`, strategyError);

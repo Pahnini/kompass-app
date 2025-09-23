@@ -70,6 +70,8 @@ function AuthenticatedApp() {
     setWordFiles,
     skillsList,
     setSkillsList,
+    skillsCompleted,
+    setSkillsCompleted,
     hasGoalsReminder,
   } = useUserData();
 
@@ -154,6 +156,8 @@ function AuthenticatedApp() {
                   setWordFiles={setWordFiles}
                   skillsList={skillsList}
                   setSkillsList={setSkillsList}
+                  skillsCompleted={skillsCompleted}
+                  setSkillsCompleted={setSkillsCompleted}
                 />
               }
             />

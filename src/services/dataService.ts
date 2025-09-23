@@ -34,10 +34,20 @@ class SupabaseStorageBackend implements StorageBackend {
     action: string,
     tableName: string,
     userId: string,
-
     metadata: Record<string, any> = {}
   ): Promise<void> {
     try {
+      // Validate current session matches the requested userId to prevent cross-user access
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session?.user?.id !== userId) {
+        console.error(
+          `🚨 SECURITY: Session user ID (${session?.user?.id}) does not match requested user ID (${userId})`
+        );
+        throw new Error('Session user ID mismatch - potential cross-user data access attempt');
+      }
+
       await supabase.from('audit_logs').insert({
         user_id: userId,
         action,
@@ -47,50 +57,55 @@ class SupabaseStorageBackend implements StorageBackend {
           timestamp: new Date().toISOString(),
           ip_address: 'client_side',
           user_agent: navigator.userAgent,
+          session_verified: true,
         },
       });
     } catch (error) {
       console.warn('⚠️ Audit logging failed:', error);
-      // Don't fail the main operation if audit logging fails
+      // Re-throw security errors
+      if (error instanceof Error && error.message.includes('Session user ID mismatch')) {
+        throw error;
+      }
+      // Don't fail the main operation if audit logging fails for other reasons
     }
   }
 
   /**
-   * Safely decrypt data that might be encrypted string or plain JSONB
+   * Decrypt encrypted data with proper error handling
    */
-
-  private async safeDecrypt(encryptedData: any, userId: string): Promise<any> {
+  private async decryptData(encryptedData: any, userId: string): Promise<any> {
     // If data is null or undefined, return null
     if (encryptedData === null || encryptedData === undefined) {
       return null;
     }
 
-    // If data is already an object (JSONB), return it directly
-    // This handles cases where data was stored before encryption was implemented
-    if (typeof encryptedData === 'object') {
-      console.log('🔄 Found JSONB data (pre-encryption), using directly');
-      return encryptedData;
-    }
-
-    // If data is a string, try to decrypt it
+    // Data must be a string (encrypted)
     if (typeof encryptedData === 'string') {
       try {
-        return await encryptionService.decrypt(encryptedData, userId);
+        const decrypted = await encryptionService.decrypt(encryptedData, userId);
+        return decrypted;
       } catch (error) {
-        console.warn('⚠️ Decryption failed, trying JSON parse fallback:', error);
-
-        // Fallback: try to parse as JSON (for data stored before encryption)
-        try {
-          return JSON.parse(encryptedData);
-        } catch (parseError) {
-          console.error('❌ Failed to parse data as JSON:', parseError);
-          throw new Error(`Failed to decrypt or parse data: ${error}`);
+        console.error(`❌ Decryption failed for user ${userId}:`, error);
+        // For development, log details but continue with fallback
+        if (import.meta.env.DEV) {
+          console.log('🔧 Continuing with fallback behavior to prevent app crash');
         }
+        // Re-throw only for critical auth errors
+        if (
+          error instanceof Error &&
+          (error.message.includes('user_id') || error.message.includes('auth'))
+        ) {
+          throw error;
+        }
+        // For other errors, return null to indicate no data
+        return null;
       }
     }
 
-    // If we get here, we don't know how to handle this data type
-    throw new Error(`Unknown data type for decryption: ${typeof encryptedData}`);
+    // If we get here, data is not encrypted (invalid state)
+    throw new Error(
+      `Invalid data type for decryption: expected encrypted string, got ${typeof encryptedData}`
+    );
   }
 
   /**
@@ -124,6 +139,7 @@ class SupabaseStorageBackend implements StorageBackend {
       achievements: 'user_achievements',
       skills: 'user_skills',
       skillsList: 'user_skills',
+      skillsCompleted: 'user_skills',
       calendarNotes: 'user_calendar_notes',
       symptoms: 'user_symptoms',
       wordFiles: 'user_word_files',
@@ -137,17 +153,28 @@ class SupabaseStorageBackend implements StorageBackend {
 
   async get<T>(key: string, userId: string): Promise<T | null> {
     try {
+      // Validate userId first to prevent cross-user data access
+      if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+        throw new Error('Invalid userId provided for data access');
+      }
+
+      console.log(`🔍 DEBUG: Getting data for key: ${key}, userId: ${userId}`);
       const tableName = await this.getTableName(key);
+      console.log(`🔍 DEBUG: Using table: ${tableName}`);
 
       // Log data access for GDPR audit
       await this.logDataAccess('DATA_ACCESS', tableName, userId, { key });
 
       let result: T | null;
       if (tableName === 'user_profiles') {
+        console.log(`🔍 DEBUG: Getting profile data for key: ${key}`);
         result = await this.getUserProfileData<T>(key, userId);
       } else {
+        console.log(`🔍 DEBUG: Getting table data for key: ${key}`);
         result = await this.getUserDataFromTable<T>(key, tableName, userId);
       }
+
+      console.log(`🔍 DEBUG: Result for ${key}:`, result ? 'data found' : 'no data', typeof result);
 
       // Validate healthcare data
       if (result !== null) {
@@ -184,17 +211,28 @@ class SupabaseStorageBackend implements StorageBackend {
     // Handle different profile fields
     switch (key) {
       case 'username':
-        return data.encrypted_username
-          ? (encryptionService.decryptField(data.encrypted_username, userId) as T)
-          : null;
+        if (data.encrypted_username) {
+          try {
+            return (await encryptionService.decryptField(data.encrypted_username, userId)) as T;
+          } catch (error) {
+            console.error(`❌ Failed to decrypt username for user ${userId}:`, error);
+            throw error;
+          }
+        }
+        return null;
 
       case 'points':
         return data.points as T;
 
       case 'favorites':
         if (data.encrypted_preferences) {
-          const preferences = await this.safeDecrypt(data.encrypted_preferences, userId);
-          return (preferences.favorites || null) as T;
+          try {
+            const preferences = await this.decryptData(data.encrypted_preferences, userId);
+            return (preferences.favorites || null) as T;
+          } catch (error) {
+            console.error(`❌ Failed to decrypt preferences for user ${userId}:`, error);
+            throw error;
+          }
         }
         return null;
 
@@ -221,57 +259,69 @@ class SupabaseStorageBackend implements StorageBackend {
     // Decrypt and transform data based on table
     switch (tableName) {
       case 'user_goals': {
-        const goals = data.map(row => {
-          const goal = JSON.parse(row.encrypted_goal_data); // Temporarily disable decryption for testing
-          // Ensure all required fields are properly typed
-          return {
-            ...goal,
-            id: typeof goal.id === 'string' ? goal.id : '',
-            text: typeof goal.text === 'string' ? goal.text : '',
-            title: typeof goal.title === 'string' ? goal.title : '',
-            completed: typeof goal.completed === 'boolean' ? goal.completed : false,
-          };
-        });
+        const goals = await Promise.all(
+          data.map(async row => {
+            const goal = await this.decryptData(row.encrypted_goal_data, userId);
+            // Ensure all required fields are properly typed
+            return {
+              ...goal,
+              id: typeof goal.id === 'string' ? goal.id : '',
+              text: typeof goal.text === 'string' ? goal.text : '',
+              title: typeof goal.title === 'string' ? goal.title : '',
+              completed: typeof goal.completed === 'boolean' ? goal.completed : false,
+            };
+          })
+        );
         return goals as T;
       }
 
       case 'user_achievements': {
-        const achievements = data.map(row => {
-          const achievement = JSON.parse(row.encrypted_achievement_data); // Temporarily disable decryption
-          // Ensure all required fields are properly typed
-          return {
-            ...achievement,
-            id: typeof achievement.id === 'string' ? achievement.id : '',
-            text: typeof achievement.text === 'string' ? achievement.text : '',
-            title: typeof achievement.title === 'string' ? achievement.title : '',
-            date: typeof achievement.date === 'string' ? achievement.date : '',
-            type: typeof achievement.type === 'string' ? achievement.type : 'achievement',
-          };
-        });
+        const achievements = await Promise.all(
+          data.map(async row => {
+            const achievement = await this.decryptData(row.encrypted_achievement_data, userId);
+            // Ensure all required fields are properly typed
+            return {
+              ...achievement,
+              id: typeof achievement.id === 'string' ? achievement.id : '',
+              text: typeof achievement.text === 'string' ? achievement.text : '',
+              title: typeof achievement.title === 'string' ? achievement.title : '',
+              date: typeof achievement.date === 'string' ? achievement.date : '',
+              type: typeof achievement.type === 'string' ? achievement.type : 'achievement',
+            };
+          })
+        );
         return achievements as T;
       }
 
       case 'user_skills':
-        if (data[0]?.encrypted_skills_data) {
-          return (await this.safeDecrypt(data[0].encrypted_skills_data, userId)) as T;
+        // Handle different key types for the skills table
+        if (_key === 'skillsList' && data[0]?.encrypted_skills_data) {
+          return (await this.decryptData(data[0].encrypted_skills_data, userId)) as T;
+        }
+        if (_key === 'skillsCompleted' && data[0]?.encrypted_skills_completed) {
+          return (await this.decryptData(data[0].encrypted_skills_completed, userId)) as T;
         }
         return null;
 
       case 'user_calendar_notes': {
         const calendarNotes: Record<string, any> = {};
-        data.forEach(row => {
-          const noteData = JSON.parse(row.encrypted_note_data); // Temporarily disable decryption
-          calendarNotes[row.note_date] = noteData;
-        });
+        await Promise.all(
+          data.map(async row => {
+            const noteData = await this.decryptData(row.encrypted_note_data, userId);
+            calendarNotes[row.note_date] = noteData;
+          })
+        );
         return calendarNotes as T;
       }
 
       case 'user_symptoms': {
         const symptoms: Record<string, any> = {};
-        data.forEach(row => {
-          const symptomData = JSON.parse(row.encrypted_symptom_data); // Temporarily disable decryption
-          symptoms[row.symptom_date] = symptomData;
-        });
+        await Promise.all(
+          data.map(async row => {
+            const symptomData = await this.decryptData(row.encrypted_symptom_data, userId);
+            symptoms[row.symptom_date] = symptomData;
+          })
+        );
         return symptoms as T;
       }
 
@@ -353,7 +403,17 @@ class SupabaseStorageBackend implements StorageBackend {
 
         let preferences: any = {};
         if (existingProfile?.encrypted_preferences) {
-          preferences = await this.safeDecrypt(existingProfile.encrypted_preferences, userId);
+          try {
+            preferences = await this.decryptData(existingProfile.encrypted_preferences, userId);
+            // Ensure preferences is an object
+            if (typeof preferences !== 'object' || preferences === null) {
+              console.warn('⚠️ Decrypted preferences is not an object, using empty object');
+              preferences = {};
+            }
+          } catch (error) {
+            console.warn('⚠️ Failed to decrypt preferences, using empty object:', error);
+            preferences = {};
+          }
         }
 
         preferences.favorites = data;
@@ -412,14 +472,16 @@ class SupabaseStorageBackend implements StorageBackend {
           .eq('is_deleted', false);
 
         if (validGoals && validGoals.length > 0) {
-          const goalRows = validGoals.map(goal => ({
-            user_id: userId,
-            goal_id: goal.id,
-            encrypted_goal_data: JSON.stringify(goal), // Temporarily disable encryption for testing
-            completed: goal.completed,
-            version: 1,
-            is_deleted: false, // Explicitly set as not deleted
-          }));
+          const goalRows = await Promise.all(
+            validGoals.map(async goal => ({
+              user_id: userId,
+              goal_id: goal.id,
+              encrypted_goal_data: await encryptionService.encrypt(goal, userId),
+              completed: goal.completed,
+              version: 1,
+              is_deleted: false, // Explicitly set as not deleted
+            }))
+          );
 
           // Use upsert to handle existing goal_ids
           const { error } = await supabase.from('user_goals').upsert(goalRows, {
@@ -463,15 +525,17 @@ class SupabaseStorageBackend implements StorageBackend {
           .eq('is_deleted', false);
 
         if (validAchievements && validAchievements.length > 0) {
-          const achievementRows = validAchievements.map(achievement => ({
-            user_id: userId,
-            achievement_id: achievement.id,
-            encrypted_achievement_data: JSON.stringify(achievement), // Temporarily disable encryption
-            achievement_date: achievement.date,
-            achievement_type: achievement.type || 'general',
-            version: 1,
-            is_deleted: false, // Explicitly set as not deleted
-          }));
+          const achievementRows = await Promise.all(
+            validAchievements.map(async achievement => ({
+              user_id: userId,
+              achievement_id: achievement.id,
+              encrypted_achievement_data: await encryptionService.encrypt(achievement, userId),
+              achievement_date: achievement.date,
+              achievement_type: achievement.type || 'general',
+              version: 1,
+              is_deleted: false, // Explicitly set as not deleted
+            }))
+          );
 
           // Use upsert to handle existing achievement_ids
           const { error } = await supabase.from('user_achievements').upsert(achievementRows, {
@@ -485,16 +549,48 @@ class SupabaseStorageBackend implements StorageBackend {
       }
 
       case 'user_skills': {
-        const skills = data as Skill[];
-        if (skills) {
-          const { error } = await supabase.from('user_skills').insert({
-            user_id: userId,
-            encrypted_skills_data: await encryptionService.encrypt(skills, userId),
-            skills_count: Array.isArray(skills) ? skills.length : 0,
-            version: 1,
-          });
+        if (_key === 'skillsList') {
+          const skills = data as Skill[];
+          if (skills) {
+            const { error } = await supabase.from('user_skills').upsert(
+              {
+                user_id: userId,
+                encrypted_skills_data: await encryptionService.encrypt(skills, userId),
+                skills_count: Array.isArray(skills) ? skills.length : 0,
+                version: 1,
+              },
+              {
+                onConflict: 'user_id',
+                ignoreDuplicates: false,
+              }
+            );
 
-          if (error) throw error;
+            if (error) throw error;
+          }
+        } else if (_key === 'skillsCompleted') {
+          const skillsCompleted = data as Record<string, boolean>;
+          if (skillsCompleted) {
+            // For skills completion, we need to provide both columns
+            // encrypted_skills_data is required (NOT NULL) so we'll set it to empty array if not exists
+            const { error } = await supabase.from('user_skills').upsert(
+              {
+                user_id: userId,
+                encrypted_skills_data: JSON.stringify([]), // Empty array for backwards compatibility
+                encrypted_skills_completed: await encryptionService.encrypt(
+                  skillsCompleted,
+                  userId
+                ),
+                skills_count: Object.keys(skillsCompleted).length,
+                version: 1,
+              },
+              {
+                onConflict: 'user_id',
+                ignoreDuplicates: false,
+              }
+            );
+
+            if (error) throw error;
+          }
         }
         break;
       }
@@ -502,12 +598,14 @@ class SupabaseStorageBackend implements StorageBackend {
       case 'user_calendar_notes': {
         const calendarNotes = data as CalendarNotes;
         if (calendarNotes && Object.keys(calendarNotes).length > 0) {
-          const noteRows = Object.entries(calendarNotes).map(([date, noteData]) => ({
-            user_id: userId,
-            note_date: date,
-            encrypted_note_data: JSON.stringify(noteData), // Temporarily disable encryption
-            version: 1,
-          }));
+          const noteRows = await Promise.all(
+            Object.entries(calendarNotes).map(async ([date, noteData]) => ({
+              user_id: userId,
+              note_date: date,
+              encrypted_note_data: await encryptionService.encrypt(noteData, userId),
+              version: 1,
+            }))
+          );
 
           const { error } = await supabase.from('user_calendar_notes').upsert(noteRows, {
             onConflict: 'user_id,note_date',
@@ -522,13 +620,15 @@ class SupabaseStorageBackend implements StorageBackend {
       case 'user_symptoms': {
         const symptoms = data as Symptoms;
         if (symptoms && Object.keys(symptoms).length > 0) {
-          const symptomRows = Object.entries(symptoms).map(([date, symptomData]) => ({
-            user_id: userId,
-            symptom_date: date,
-            encrypted_symptom_data: JSON.stringify(symptomData), // Temporarily disable encryption
-            symptom_count: Array.isArray(symptomData) ? symptomData.length : 0,
-            version: 1,
-          }));
+          const symptomRows = await Promise.all(
+            Object.entries(symptoms).map(async ([date, symptomData]) => ({
+              user_id: userId,
+              symptom_date: date,
+              encrypted_symptom_data: await encryptionService.encrypt(symptomData, userId),
+              symptom_count: Array.isArray(symptomData) ? symptomData.length : 0,
+              version: 1,
+            }))
+          );
 
           const { error } = await supabase.from('user_symptoms').upsert(symptomRows, {
             onConflict: 'user_id,symptom_date',
@@ -672,9 +772,14 @@ export class HybridDataService {
   }
 
   /**
-   * Get data with automatic fallback
+   * Get data with proper error handling
    */
   async getData<T>(key: string, userId: string): Promise<T | null> {
+    // Validate userId to prevent cross-user data access
+    if (!userId || typeof userId !== 'string' || userId.trim() === '') {
+      throw new Error(`Invalid userId provided for getData: ${userId}`);
+    }
+
     try {
       if (this.isOnline) {
         // Try Supabase first
@@ -686,9 +791,20 @@ export class HybridDataService {
         }
       }
 
-      // Fallback to localStorage
+      // Fallback to localStorage only if no decryption errors occurred
       return await this.localStorageBackend.get<T>(key, userId);
     } catch (error) {
+      // Check if this is a critical auth error - if so, don't fallback to localStorage
+      if (
+        error instanceof Error &&
+        (error.message.includes('Session user ID mismatch') ||
+          error.message.includes('Invalid userId'))
+      ) {
+        console.error(`❌ Critical auth error for ${key}, cannot fallback:`, error);
+        throw error;
+      }
+
+      // For other errors (network, etc.), fallback to localStorage
       console.warn(`Supabase unavailable for ${key}, using localStorage:`, error);
       return this.localStorageBackend.get<T>(key, userId);
     }
@@ -696,37 +812,80 @@ export class HybridDataService {
 
   /**
    * Get data with safe fallbacks for initial app loading
-   * Returns appropriate defaults when decryption fails instead of throwing errors
+   * Only returns defaults for network errors, not decryption failures
    */
   async getDataSafe<T>(key: string, userId: string, defaultValue: T): Promise<T> {
     try {
       const data = await this.getData<T>(key, userId);
+
+      // Special handling for skillsList - merge custom skills with defaults
+      if (key === 'skillsList' && Array.isArray(data) && Array.isArray(defaultValue)) {
+        if (data.length === 0) {
+          // If no custom skills, use defaults
+          return defaultValue;
+        } else {
+          // If we have custom skills, merge them with defaults (avoiding duplicates)
+          const combined = [...(defaultValue as any[]), ...data];
+          const unique = Array.from(new Set(combined));
+          return unique as T;
+        }
+      }
+
       return data ?? defaultValue;
     } catch (error) {
+      // If it's a critical auth error, we need to know about it
+      if (
+        error instanceof Error &&
+        (error.message.includes('Session user ID mismatch') ||
+          error.message.includes('Invalid userId'))
+      ) {
+        console.error(`❌ Critical: Auth error for ${key}. This indicates session/user mismatch.`);
+        throw error;
+      }
+
+      // For other errors, log but continue with defaults in development
+      if (import.meta.env.DEV) {
+        console.warn(`⚠️ Failed to load ${key}, using default value:`, error);
+      }
+
       console.warn(`Failed to load ${key}, using default value:`, error);
       return defaultValue;
     }
   }
 
   /**
-   * Set data with automatic sync
+   * Set data with Supabase-first approach for healthcare compliance
    */
   async setData<T>(key: string, data: T, userId: string): Promise<void> {
-    // Always save locally first (immediate response)
-    await this.localStorageBackend.set(key, data, userId);
-
+    // Healthcare-first: Always try Supabase first for data integrity
     if (this.isOnline) {
       try {
-        // Try to sync to Supabase immediately
+        // Save to Supabase first (primary storage for healthcare data)
         await this.supabaseBackend.set(key, data, userId);
+
+        // Cache in localStorage after successful Supabase save
+        await this.localStorageBackend.set(key, data, userId);
+
+        console.log(`✅ Healthcare data ${key} saved to Supabase and cached locally`);
       } catch (error) {
-        console.warn(`Failed to sync ${key} to Supabase:`, error);
-        // Queue for later sync
+        console.warn(`⚠️ Failed to save ${key} to Supabase:`, error);
+
+        // For healthcare data, we still want to cache locally but warn user
+        await this.localStorageBackend.set(key, data, userId);
+
+        // Queue for retry when connection is restored
         this.queueForSync(key, data, userId);
+
+        if (import.meta.env.DEV) {
+          console.log(`💾 ${key} cached locally, will retry Supabase sync when online`);
+        }
       }
     } else {
-      // Queue for sync when online
+      // Offline: Save to localStorage and queue for sync
+      await this.localStorageBackend.set(key, data, userId);
       this.queueForSync(key, data, userId);
+
+      console.log(`📴 Offline: ${key} saved locally, queued for Supabase sync`);
     }
   }
 
@@ -759,6 +918,7 @@ export class HybridDataService {
       'achievements',
       'skills',
       'skillsList',
+      'skillsCompleted',
       'calendarNotes',
       'symptoms',
       'wordFiles',
@@ -853,6 +1013,7 @@ export class HybridDataService {
         'achievements',
         'skills',
         'skillsList',
+        'skillsCompleted',
         'calendarNotes',
         'symptoms',
         'wordFiles',
@@ -970,6 +1131,7 @@ export type DataKey =
   | 'achievements'
   | 'skills'
   | 'skillsList'
+  | 'skillsCompleted'
   | 'calendarNotes'
   | 'symptoms'
   | 'wordFiles'

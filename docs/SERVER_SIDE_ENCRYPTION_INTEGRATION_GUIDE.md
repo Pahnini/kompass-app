@@ -196,7 +196,6 @@ export class EncryptionService {
       this.currentSession = session;
 
       this.initialized = true;
-      console.log('🔐 Encryption Service initialized');
     } catch (error) {
       console.warn('⚠️ Encryption service initialization warning:', error);
       this.initialized = true; // Continue with fallback mode
@@ -357,7 +356,6 @@ export class EncryptionService {
       const decrypted = await this.decrypt(encrypted, userId);
 
       const isValid = JSON.stringify(testData) === JSON.stringify(decrypted);
-      console.log(isValid ? '✅ Encryption test passed' : '❌ Encryption test failed');
 
       return isValid;
     } catch (error) {
@@ -799,7 +797,6 @@ await encryptionService.testEncryption(userId);
 
 // Check service health
 const health = encryptionService.getHealthStatus();
-console.log(health);
 
 // Enable debug mode
 if (import.meta.env.DEV) {

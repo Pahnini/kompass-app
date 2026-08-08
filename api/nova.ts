@@ -11,10 +11,14 @@ import {
 } from 'ai';
 import { z } from 'zod';
 import type { NovaUIMessage } from '../src/ai/novaTypes';
-import { getLatestUserText, hasCrisisSignal, NOVA_SYSTEM_PROMPT } from './_lib/novaPolicy';
-import { checkNovaRateLimit } from './_lib/rateLimit';
-import { createNovaRuleReply, type NovaRuleReply, type NovaRuleToolName } from './_lib/novaRules';
-import { novaDestinations, novaTools } from './_lib/novaTools';
+import { getLatestUserText, hasCrisisSignal, NOVA_SYSTEM_PROMPT } from './_lib/novaPolicy.js';
+import { checkNovaRateLimit } from './_lib/rateLimit.js';
+import {
+  createNovaRuleReply,
+  type NovaRuleReply,
+  type NovaRuleToolName,
+} from './_lib/novaRules.js';
+import { novaDestinations, novaTools } from './_lib/novaTools.js';
 
 const MAX_MESSAGES_PER_REQUEST = 40;
 const MAX_MESSAGES_FOR_MODEL = 12;

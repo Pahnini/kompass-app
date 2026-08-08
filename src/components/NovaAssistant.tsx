@@ -1,5 +1,6 @@
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import novaAvatar from '../assets/nova-avatar.png';
 
 type NovaProps = {
@@ -35,7 +36,7 @@ export function NovaAssistant({ context }: NovaProps) {
   };
 
   return (
-    <div className="relative w-fit pointer-events-none">
+    <div className="relative w-fit">
       {/* 🌀 Sprechblase mit Framer Motion */}
       <AnimatePresence>
         {visible && (
@@ -44,7 +45,7 @@ export function NovaAssistant({ context }: NovaProps) {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
             transition={{ duration: 0.4 }}
-            className="absolute bottom-16 right-0 bg-white shadow-md rounded-lg px-4 py-2 text-sm text-gray-800 max-w-[200px] z-50"
+            className="absolute bottom-16 right-0 bg-white shadow-md rounded-lg px-4 py-2 text-sm text-gray-800 max-w-[200px] z-50 pointer-events-none"
           >
             {getMessage()}
             <div className="absolute bottom-[-6px] right-4 w-3 h-3 bg-white rotate-45 z-40" />
@@ -53,11 +54,13 @@ export function NovaAssistant({ context }: NovaProps) {
       </AnimatePresence>
 
       {/* Avatar */}
-      <img
-        src={novaAvatar}
-        alt="Nova"
-        className="w-16 h-16 rounded-full shadow-xl border border-blue-400 bg-white p-1"
-      />
+      <Link to="/nova" aria-label="Nova-Chat öffnen">
+        <img
+          src={novaAvatar}
+          alt="Nova"
+          className="w-16 h-16 rounded-full shadow-xl border border-blue-400 bg-white p-1"
+        />
+      </Link>
     </div>
   );
 }

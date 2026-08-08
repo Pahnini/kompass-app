@@ -127,7 +127,8 @@ function AuthenticatedApp() {
             <Route path="/mood" element={<MoodCompassView />} />
             <Route path="/school" element={<SchoolSupportView />} />
             <Route path="/panic" element={<PanicScreen />} />
-            <Route path="/nova" element={<NovaSettings />} />
+            <Route path="/nova" element={<ChatPage />} />
+            <Route path="/nova/settings" element={<NovaSettings />} />
             <Route
               path="/deinweg"
               element={
@@ -184,7 +185,7 @@ function AuthenticatedApp() {
       {!onboarding && showDS && (
         <DatenschutzModal
           onClose={() => setShowDS(false)}
-          dsHinweis="Diese App speichert deine Daten lokal in deinem Browser. Es werden keine Daten an externe Server übertragen. Durch die Nutzung stimmst du der lokalen Speicherung zu."
+          dsHinweis="Wenn du Nova nutzt, werden deine Eingaben verschlüsselt an unseren KI-Dienst übertragen, um eine Antwort zu erzeugen. Der Nova-Chat wird in Version 0.1 nicht von uns gespeichert. Andere App-Daten werden entsprechend der jeweiligen Funktion verarbeitet."
         />
       )}
       {latestAchievement && (

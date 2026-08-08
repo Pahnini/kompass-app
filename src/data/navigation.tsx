@@ -4,7 +4,6 @@ import {
   Compass,
   Home,
   Info,
-  MessageCircle,
   Paintbrush,
   Settings,
   Sparkles,
@@ -29,7 +28,6 @@ export const sidebarItems: SidebarItem[] = [
   { key: 'designs', label: 'navigation.designs', icon: <Paintbrush size={18} /> },
   { key: 'notfall', label: 'navigation.notfall', icon: <AlertCircle size={18} /> },
   { key: 'guide', label: 'navigation.guide', icon: <Info size={18} /> },
-  { key: 'chat', label: 'navigation.chat', icon: <MessageCircle size={18} /> },
   {
     key: 'quickedit',
     label: 'navigation.quickedit',

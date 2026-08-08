@@ -116,7 +116,7 @@
     // "skipDefaultLibCheck": true,                      /* Skip type checking .d.ts files that are included with TypeScript. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */
   },
-  "include": ["src"] /* Only include source files in the src directory */,
+  "include": ["src", "api"] /* Include browser and Vercel server files */,
   "exclude": ["node_modules", "dist"] /* Exclude node_modules and build output */,
   "references": [{ "path": "./tsconfig.node.json" }]
 }

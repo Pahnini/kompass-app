@@ -386,7 +386,10 @@ class SupabaseStorageBackend implements StorageBackend {
 
     switch (key) {
       case 'username':
-        updateData.encrypted_username = encryptionService.encryptField(data as string, userId);
+        updateData.encrypted_username = await encryptionService.encryptField(
+          data as string,
+          userId
+        );
         break;
 
       case 'points':

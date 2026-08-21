@@ -6,6 +6,7 @@ import { skillsList as defaultSkills } from '../data/skills';
 import { dataService } from '../services/dataService';
 import type { Achievement, CalendarNotes, Goal, Skill, Symptoms, WordFile } from '../types/index';
 import { supabase } from '../utils/supabase';
+import { normalizeUsername } from '../utils/username';
 
 /* eslint-disable react-refresh/only-export-components */
 export const UserDataContext = React.createContext<UserDataContextType | undefined>(undefined);
@@ -91,7 +92,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
             userData_skillsCompleted,
             userData_points,
           ] = await Promise.all([
-            dataService.getDataSafe<string>('username', session.user.id, ''),
+            dataService.getDataSafe<unknown>('username', session.user.id, ''),
             dataService.getDataSafe<Goal[]>('goals', session.user.id, []),
             dataService.getDataSafe<Achievement[]>('achievements', session.user.id, []),
             dataService.getDataSafe<CalendarNotes>('calendarNotes', session.user.id, {}),
@@ -113,7 +114,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
           ]);
 
           // Update state with safely loaded data
-          setUsernameState(userData_username);
+          setUsernameState(normalizeUsername(userData_username));
           setGoalsState(userData_goals);
           setAchievementsState(userData_achievements);
           setCalendarNotesState(userData_calendarNotes);
@@ -186,10 +187,11 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
 
   const setUsername = React.useCallback(
     async (value: string) => {
-      setUsernameState(value);
-      if (userId) {
+      const normalizedValue = normalizeUsername(value);
+      setUsernameState(normalizedValue);
+      if (userId && normalizedValue) {
         try {
-          await dataService.setData('username', value, userId);
+          await dataService.setData('username', normalizedValue, userId);
         } catch (error) {
           console.error('❌ Failed to save username:', error);
         }

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
+import { APP_NAME } from '../config/brand';
 
 // Page title mapping
 interface PageTitles {
@@ -7,22 +8,30 @@ interface PageTitles {
 }
 
 const pageTitles: PageTitles = {
-  '/': 'KompassApp - Startseite',
-  '/skills': 'KompassApp - Skills & Achtsamkeit',
-  '/deinweg': 'KompassApp - Mein Kompass',
-  '/designs': 'KompassApp - Designs',
-  '/notfall': 'KompassApp - Notfall & Hilfe',
-  '/guide': 'KompassApp - Psychotherapeut:in finden',
-  '/chat': 'KompassApp - Chatbot',
-  '/quickedit': 'KompassApp - Schnellzugriff bearbeiten',
+  '/': 'Startseite',
+  '/login': 'Anmeldung',
+  '/skills': 'Skills & Achtsamkeit',
+  '/deinweg': 'Mein Kompass',
+  '/designs': 'Designs',
+  '/barrierefreiheit': 'Barrierefreiheit',
+  '/testen': 'Testen & Feedback',
+  '/notfall': 'Notfall & Hilfe',
+  '/guide': 'Psychotherapeut:in finden',
+  '/nova': 'Nova',
+  '/chat': 'Nova',
+  '/quickedit': 'Schnellzugriff bearbeiten',
 };
+
+export function getPageTitle(pathname: string): string {
+  return pageTitles[pathname] || 'Seite nicht gefunden';
+}
 
 export function usePageTitle(): void {
   const location = useLocation();
 
   useEffect(() => {
-    const title = pageTitles[location.pathname] || 'KompassApp - Seite nicht gefunden';
-    document.title = title;
+    const pageTitle = getPageTitle(location.pathname);
+    document.title = `${APP_NAME} – ${pageTitle}`;
   }, [location.pathname]);
 }
 

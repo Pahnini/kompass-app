@@ -135,13 +135,13 @@ ignores: [
 1. **`VITE_SUPABASE_URL`** - Supabase Backend URL
    - **Verwendung:** `src/utils/supabase.ts` (Line 5)
    - **Status:** ⚠️ **ERFORDERLICH** - Wirft Error wenn fehlt
-2. **`VITE_SUPABASE_ANON_KEY`** - Supabase Anonymous Key
+2. **`VITE_SUPABASE_PUBLISHABLE_KEY`** - Supabase Publishable Key
    - **Verwendung:** `src/utils/supabase.ts` (Line 6)
    - **Status:** ⚠️ **ERFORDERLICH** - Wirft Error wenn fehlt
 
-3. **`VITE_OPENAI_API_KEY`** - OpenAI GPT API Key
-   - **Verwendung:** `src/services/gptService.ts` (Lines 16, 27)
-   - **Status:** ✅ **OPTIONAL** - Graceful Fallback zu Mock-Responses
+3. **`OPENAI_API_KEY`** - OpenAI API Key (nur serverseitig)
+   - **Verwendung:** `api/nova.ts`
+   - **Status:** ⚠️ **ERFORDERLICH FÜR NOVA** - niemals als `VITE_...`-Variable anlegen
 
 4. **`import.meta.env.DEV`** - Vite Development Mode
    - **Verwendung:** Debug-Logs, SW-Updates, Error-Boundary

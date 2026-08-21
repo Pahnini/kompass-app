@@ -5,13 +5,11 @@ export default function GlobalStyle(): React.ReactElement | null {
   useEffect((): (() => void) => {
     const styleTag = document.createElement('style');
     styleTag.innerHTML = `
-      @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
-
       html, body {
         min-height: 100%;
         margin: 0;
         padding: 0;
-        font-family: 'Poppins', sans-serif;
+        font-family: 'Poppins', 'Segoe UI', Arial, sans-serif;
         background: #2f4f4f;
         color: #e0e0e0;
         font-size: 17px;
@@ -41,7 +39,7 @@ export default function GlobalStyle(): React.ReactElement | null {
       }
 
       .main-area {
-        background: #2f4f4f !important;
+        background: #2f4f4f;
         padding: 16px 12px 80px;
         transition: background 0.3s ease;
         min-height: 100vh;
@@ -139,6 +137,53 @@ export default function GlobalStyle(): React.ReactElement | null {
         overflow-y: auto;
         display: flex;
         flex-direction: column;
+      }
+
+      .sidebar-brand {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 10px 12px 6px !important;
+        padding: 11px 12px !important;
+        width: auto !important;
+        border: 1px solid rgba(185, 234, 213, 0.28) !important;
+        border-radius: 14px;
+        color: #d8ffec !important;
+        background: rgba(185, 234, 213, 0.08) !important;
+        font-size: 1.08rem !important;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      .sidebar-brand__icon {
+        display: grid;
+        width: 34px;
+        height: 34px;
+        place-items: center;
+        border-radius: 11px;
+        color: #204d45;
+        background: #b9ead5;
+      }
+
+      .sidebar-brand__copy {
+        display: flex;
+        min-width: 0;
+        flex: 1;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+      }
+
+      .sidebar-brand__copy small {
+        flex: 0 0 auto;
+        padding: 2px 7px;
+        border-radius: 999px;
+        color: #173d37;
+        background: #b9ead5;
+        font-size: 0.65rem;
+        font-weight: 800;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
       }
       
       .logout-button {

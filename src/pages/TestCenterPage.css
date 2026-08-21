@@ -1,0 +1,480 @@
+.melforia-test-page {
+  width: min(980px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 24px 0 120px;
+  color: #183b3b;
+}
+
+.melforia-test-hero,
+.melforia-test-card,
+.melforia-test-alert {
+  border: 1px solid rgba(35, 86, 80, 0.16);
+  border-radius: 26px;
+  box-shadow: 0 18px 45px rgba(28, 70, 67, 0.13);
+  backdrop-filter: blur(14px);
+}
+
+.melforia-test-hero {
+  display: flex;
+  gap: 18px;
+  padding: clamp(24px, 5vw, 40px);
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.melforia-test-hero__icon {
+  display: grid;
+  flex: 0 0 52px;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 16px;
+  color: #1d5b50;
+  background: #b9ead5;
+}
+
+.melforia-test-badge {
+  display: inline-flex;
+  margin-bottom: 8px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  color: #173d37;
+  background: #b9ead5;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.melforia-test-hero h1,
+.melforia-test-card h2,
+.melforia-test-alert h2 {
+  margin: 0;
+  color: #183b3b;
+  line-height: 1.2;
+}
+
+.melforia-test-hero h1 {
+  font-size: clamp(1.7rem, 5vw, 2.6rem);
+}
+
+.melforia-test-hero p {
+  margin: 10px 0 0;
+  color: #315d59;
+}
+
+.melforia-test-alert {
+  display: flex;
+  gap: 15px;
+  margin-top: 20px;
+  padding: 21px 24px;
+  color: #5a3a12;
+  background: rgba(255, 239, 199, 0.96);
+  border-color: rgba(154, 105, 31, 0.28);
+}
+
+.melforia-test-alert > svg {
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+
+.melforia-test-alert h2 {
+  color: #5a3a12;
+  font-size: 1.15rem;
+}
+
+.melforia-test-alert p {
+  margin: 7px 0 0;
+  color: #68491f;
+  font-size: 0.92rem;
+}
+
+.melforia-test-card {
+  margin-top: 20px;
+  padding: clamp(22px, 4vw, 34px);
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.melforia-test-section-heading {
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.melforia-test-section-heading > strong {
+  color: #267160;
+  white-space: nowrap;
+}
+
+.melforia-test-section-heading > svg {
+  color: #267160;
+}
+
+.melforia-test-eyebrow {
+  margin: 0 0 4px;
+  color: #267160 !important;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.melforia-test-progress {
+  height: 10px;
+  margin-top: 20px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #dce9e5;
+}
+
+.melforia-test-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #267160;
+  transition: width 180ms ease;
+}
+
+.melforia-test-local-note {
+  margin: 9px 0 18px;
+  color: #4a6e69 !important;
+  font-size: 0.82rem;
+}
+
+.melforia-test-task-list {
+  display: grid;
+  gap: 11px;
+}
+
+.melforia-test-task {
+  display: flex;
+  gap: 15px;
+  padding: 15px;
+  align-items: center;
+  justify-content: space-between;
+  border: 1px solid #d7e5e1;
+  border-radius: 15px;
+  background: #f7fbf9;
+}
+
+.melforia-test-task.is-complete {
+  border-color: #9fd4bf;
+  background: #eef9f4;
+}
+
+.melforia-test-task > label {
+  display: flex;
+  flex: 1;
+  gap: 12px;
+  align-items: flex-start;
+  cursor: pointer;
+}
+
+.melforia-test-task input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.melforia-test-task__check {
+  display: grid;
+  flex: 0 0 31px;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  border: 2px solid #6e958d;
+  border-radius: 10px;
+  color: #315d59;
+  font-size: 0.8rem;
+  font-weight: 800;
+  background: #fff;
+}
+
+.melforia-test-task input:focus-visible + .melforia-test-task__check {
+  outline: 4px solid #ffd166;
+  outline-offset: 3px;
+}
+
+.melforia-test-task.is-complete .melforia-test-task__check {
+  color: #fff;
+  border-color: #267160;
+  background: #267160;
+}
+
+.melforia-test-task label > span:last-child {
+  display: grid;
+  gap: 3px;
+}
+
+.melforia-test-task strong {
+  color: #183b3b;
+}
+
+.melforia-test-task small {
+  color: #4a6e69;
+  line-height: 1.45;
+}
+
+.melforia-test-task__link {
+  display: inline-flex;
+  flex: 0 0 auto;
+  gap: 6px;
+  padding: 8px 11px;
+  align-items: center;
+  border-radius: 10px;
+  color: #174d43;
+  background: #ccefe0;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.melforia-test-privacy-summary,
+.melforia-test-login-note {
+  display: flex;
+  gap: 12px;
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 14px;
+}
+
+.melforia-test-privacy-summary {
+  color: #214f47;
+  background: #eaf7f1;
+}
+
+.melforia-test-privacy-summary svg,
+.melforia-test-login-note svg {
+  flex: 0 0 auto;
+  margin-top: 3px;
+}
+
+.melforia-test-privacy-summary p,
+.melforia-test-login-note p {
+  margin: 0;
+  color: inherit;
+  font-size: 0.87rem;
+}
+
+.melforia-test-login-note {
+  color: #68491f;
+  background: #fff1d3;
+}
+
+.melforia-test-login-note strong {
+  color: #5a3a12;
+}
+
+.melforia-test-login-note p {
+  margin: 3px 0 7px;
+}
+
+.melforia-test-login-note a {
+  color: #68410e;
+  font-weight: 800;
+}
+
+.melforia-test-form {
+  display: grid;
+  gap: 18px;
+  margin-top: 22px;
+}
+
+.melforia-test-form__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.melforia-test-form label,
+.melforia-test-rating legend {
+  color: #183b3b;
+  font-weight: 700;
+}
+
+.melforia-test-form select,
+.melforia-test-form textarea {
+  margin: 7px 0 0;
+  color: #183b3b;
+  border: 1px solid #86aaa3;
+  background: #fff;
+}
+
+.melforia-test-rating {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.melforia-test-rating > div {
+  display: flex;
+  gap: 9px;
+  margin: 8px 0 4px;
+}
+
+.melforia-test-rating label {
+  cursor: pointer;
+}
+
+.melforia-test-rating input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.melforia-test-rating span {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  border: 2px solid #86aaa3;
+  border-radius: 12px;
+  color: #315d59;
+  background: #fff;
+}
+
+.melforia-test-rating input:checked + span {
+  color: #fff;
+  border-color: #267160;
+  background: #267160;
+}
+
+.melforia-test-rating input:focus-visible + span {
+  outline: 4px solid #ffd166;
+  outline-offset: 3px;
+}
+
+.melforia-test-rating small,
+.melforia-test-message small {
+  color: #4a6e69;
+  font-weight: 400;
+}
+
+.melforia-test-message {
+  display: grid;
+}
+
+.melforia-test-message small {
+  text-align: right;
+}
+
+.melforia-test-consent {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-size: 0.88rem;
+  line-height: 1.5;
+  cursor: pointer;
+}
+
+.melforia-test-consent input {
+  flex: 0 0 auto;
+  width: 20px;
+  min-height: 20px;
+  margin: 2px 0 0;
+  accent-color: #267160;
+}
+
+.melforia-test-status {
+  margin: 0;
+  padding: 12px 14px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.melforia-test-status.is-success {
+  color: #155b3d;
+  background: #dbf5e8;
+}
+
+.melforia-test-status.is-error {
+  color: #782f2f;
+  background: #ffe2e2;
+}
+
+.melforia-test-submit {
+  justify-self: start;
+  color: #fff;
+  background: #267160;
+  font-weight: 800;
+}
+
+.melforia-test-submit:hover {
+  background: #1d5b50;
+}
+
+.melforia-test-submit:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+body.night .melforia-test-hero,
+body.night .melforia-test-card {
+  border-color: rgba(255, 255, 255, 0.13);
+  background: rgba(24, 39, 44, 0.94);
+}
+
+body.night .melforia-test-hero h1,
+body.night .melforia-test-card h2,
+body.night .melforia-test-task strong,
+body.night .melforia-test-form label,
+body.night .melforia-test-rating legend {
+  color: #f3fff9;
+}
+
+body.night .melforia-test-hero p,
+body.night .melforia-test-local-note {
+  color: #c7ded7 !important;
+}
+
+body.night .melforia-test-task {
+  border-color: #48655f;
+  background: #233b3b;
+}
+
+body.night .melforia-test-task small {
+  color: #c7ded7;
+}
+
+@media (max-width: 700px) {
+  .melforia-test-page {
+    width: min(100% - 20px, 980px);
+    padding-top: 72px;
+  }
+
+  .melforia-test-hero,
+  .melforia-test-card,
+  .melforia-test-alert {
+    padding: 20px 17px;
+    border-radius: 20px;
+  }
+
+  .melforia-test-hero {
+    gap: 12px;
+  }
+
+  .melforia-test-hero__icon {
+    flex-basis: 44px;
+    width: 44px;
+    height: 44px;
+  }
+
+  .melforia-test-task {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .melforia-test-task__link {
+    justify-content: center;
+  }
+
+  .melforia-test-form__row {
+    grid-template-columns: 1fr;
+  }
+
+  .melforia-test-submit {
+    width: 100%;
+  }
+}

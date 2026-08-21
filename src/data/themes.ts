@@ -16,14 +16,14 @@ export type Theme = {
 
 export const modernBlueGrey: Theme = {
   name: 'Modern Blue-Grey',
-  bg: '#f0f4f8',
-  primary: '#2f4f4f',
-  accent: '#5dade2',
-  font: "'Poppins', sans-serif",
-  dark: false,
-  secondary: '',
-  text: '',
-  background: '',
+  bg: '#203247',
+  primary: '#2d4259',
+  accent: '#72adf0',
+  font: "'Poppins', 'Segoe UI', sans-serif",
+  dark: true,
+  secondary: '#a9ccf5',
+  text: '#f4f7fb',
+  background: '#203247',
 };
 
 export const themes: Theme[] = [
@@ -35,9 +35,9 @@ export const themes: Theme[] = [
     accent: '#69c86a',
     font: "'Poppins', Arial, sans-serif",
     dark: false,
-    secondary: '',
-    text: '',
-    background: '',
+    secondary: '#b9ead5',
+    text: '#173d37',
+    background: '#f6fefa',
   },
   {
     name: 'Classic',
@@ -46,9 +46,9 @@ export const themes: Theme[] = [
     accent: '#9acaaa',
     font: "'Roboto', Arial, sans-serif",
     dark: false,
-    secondary: '',
-    text: '',
-    background: '',
+    secondary: '#d7eadc',
+    text: '#20352a',
+    background: '#ffffff',
   },
   {
     name: 'Night',
@@ -57,9 +57,9 @@ export const themes: Theme[] = [
     accent: '#12b985',
     font: "'Share Tech Mono', monospace",
     dark: true,
-    secondary: '',
-    text: '',
-    background: '',
+    secondary: '#8ce9ca',
+    text: '#f4fff9',
+    background: '#22252a',
   },
 ];
 

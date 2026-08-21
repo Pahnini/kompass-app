@@ -1,0 +1,365 @@
+:root {
+  --melforia-navy-950: #162333;
+  --melforia-navy-900: #203247;
+  --melforia-navy-850: #293d54;
+  --melforia-navy-800: #30465f;
+  --melforia-blue: #72adf0;
+  --melforia-blue-soft: #a9ccf5;
+  --melforia-text: #f4f7fb;
+  --melforia-muted: #aebed0;
+  --melforia-border: rgba(190, 214, 241, 0.15);
+  --melforia-glass: rgba(35, 53, 73, 0.9);
+}
+
+.melforia-app-shell {
+  min-height: 100vh;
+  color: var(--melforia-text);
+  background: var(--melforia-navy-900);
+}
+
+.melforia-app-shell .melforia-main-area {
+  position: relative;
+  min-width: 0;
+  padding: 30px clamp(22px, 4vw, 54px) 110px;
+  color: var(--melforia-text);
+  isolation: isolate;
+}
+
+.melforia-app-shell .melforia-main-area::before {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 78% 10%, rgba(114, 173, 240, 0.13), transparent 32%),
+    linear-gradient(180deg, rgba(21, 34, 50, 0.22), rgba(21, 34, 50, 0.48));
+  content: '';
+}
+
+.melforia-app-shell .card {
+  width: min(1120px, 100%);
+  margin: 0 auto 24px;
+  padding: clamp(20px, 3vw, 34px);
+  color: var(--melforia-text);
+  border: 1px solid var(--melforia-border);
+  border-radius: 28px;
+  background: rgba(30, 47, 66, 0.9);
+  box-shadow: 0 24px 70px rgba(7, 17, 29, 0.25);
+  backdrop-filter: blur(18px);
+}
+
+.melforia-app-shell .card h1,
+.melforia-app-shell .card h2,
+.melforia-app-shell .card h3,
+.melforia-app-shell .card p,
+.melforia-app-shell .card li {
+  color: inherit;
+}
+
+.melforia-sidebar {
+  position: fixed !important;
+  inset: 0 auto 0 0;
+  z-index: 520 !important;
+  display: flex !important;
+  width: 272px !important;
+  height: 100dvh !important;
+  overflow: hidden !important;
+  flex-direction: column;
+  color: var(--melforia-text) !important;
+  border-right: 1px solid var(--melforia-border);
+  background: rgba(22, 35, 51, 0.97) !important;
+  box-shadow: 18px 0 60px rgba(5, 14, 24, 0.22) !important;
+  backdrop-filter: blur(20px);
+}
+
+.melforia-sidebar__top {
+  display: flex;
+  gap: 8px;
+  padding: 15px 13px 8px;
+  align-items: center;
+}
+
+.melforia-sidebar .sidebar-brand {
+  display: flex !important;
+  min-width: 0;
+  margin: 0 !important;
+  padding: 10px 11px !important;
+  flex: 1;
+  align-items: center;
+  color: var(--melforia-text) !important;
+  border: 1px solid var(--melforia-border) !important;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.045) !important;
+  text-decoration: none;
+}
+
+.melforia-sidebar .sidebar-brand__icon {
+  flex: 0 0 36px;
+  width: 36px;
+  height: 36px;
+  color: var(--melforia-navy-950);
+  border-radius: 12px;
+  background: var(--melforia-blue);
+  box-shadow: 0 0 22px rgba(114, 173, 240, 0.26);
+}
+
+.melforia-sidebar .sidebar-brand__copy {
+  gap: 7px;
+  font-size: 1rem;
+}
+
+.melforia-sidebar .sidebar-brand__copy small {
+  color: #dbeafb;
+  background: rgba(114, 173, 240, 0.16);
+}
+
+.melforia-sidebar__close {
+  display: none !important;
+  width: 42px !important;
+  min-height: 42px !important;
+  padding: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 13px !important;
+  background: rgba(255, 255, 255, 0.07) !important;
+}
+
+.melforia-sidebar__points {
+  display: flex;
+  gap: 8px;
+  margin: 5px 18px 9px;
+  padding: 9px 12px;
+  align-items: center;
+  color: var(--melforia-blue-soft);
+  border-radius: 12px;
+  background: rgba(114, 173, 240, 0.08);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.melforia-sidebar__nav {
+  display: block !important;
+  padding: 5px 13px 18px;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(169, 204, 245, 0.34) transparent;
+}
+
+.melforia-sidebar__group + .melforia-sidebar__group {
+  margin-top: 15px;
+}
+
+.melforia-sidebar__group > p {
+  margin: 0 10px 6px;
+  color: #7f96ad !important;
+  font-size: 0.68rem !important;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.melforia-sidebar .sidebar-item {
+  display: flex !important;
+  width: 100% !important;
+  min-height: 43px;
+  margin: 2px 0 !important;
+  padding: 9px 12px !important;
+  gap: 11px;
+  align-items: center;
+  color: #b8c8d8 !important;
+  border: 1px solid transparent !important;
+  border-radius: 12px !important;
+  background: transparent !important;
+  font-size: 0.88rem !important;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.melforia-sidebar .sidebar-item:hover {
+  color: #f4f8fc !important;
+  background: rgba(255, 255, 255, 0.055) !important;
+}
+
+.melforia-sidebar .sidebar-item.active {
+  color: #f7fbff !important;
+  border-color: rgba(114, 173, 240, 0.18) !important;
+  background: rgba(114, 173, 240, 0.14) !important;
+  box-shadow: inset 3px 0 var(--melforia-blue);
+}
+
+.melforia-sidebar .sidebar-item .icon {
+  display: grid;
+  flex: 0 0 31px;
+  width: 31px;
+  height: 31px;
+  place-items: center;
+  color: #8ca5bd;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.melforia-sidebar .sidebar-item.active .icon {
+  color: var(--melforia-blue);
+  background: rgba(114, 173, 240, 0.12);
+}
+
+.melforia-sidebar__footer {
+  padding: 9px 13px 14px;
+  border-top: 1px solid var(--melforia-border);
+}
+
+.melforia-sidebar .sidebar-language-toggle {
+  display: grid !important;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px !important;
+  margin: 0 0 8px !important;
+}
+
+.melforia-sidebar .sidebar-language-toggle button {
+  display: grid !important;
+  width: 100% !important;
+  min-height: 32px !important;
+  padding: 4px !important;
+  place-items: center;
+  color: #8fa3b7 !important;
+  border-radius: 9px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  font-size: 0.72rem !important;
+  font-weight: 800;
+}
+
+.melforia-sidebar .sidebar-language-toggle button[aria-pressed='true'] {
+  color: #f3f8fd !important;
+  background: rgba(114, 173, 240, 0.17) !important;
+}
+
+.melforia-sidebar .logout-button {
+  color: #f1b3ba !important;
+}
+
+.melforia-sidebar-overlay {
+  display: none;
+}
+
+.melforia-bottom-nav {
+  display: none;
+}
+
+.melforia-nova-assistant {
+  position: fixed;
+  bottom: 24px;
+  left: 292px;
+  z-index: 220;
+  max-width: 240px;
+}
+
+@media (min-width: 701px) {
+  .melforia-app-shell .melforia-main-area {
+    margin-left: 272px !important;
+  }
+}
+
+@media (max-width: 700px) {
+  .melforia-app-shell .melforia-main-area {
+    margin-left: 0 !important;
+    padding: 18px 12px calc(126px + env(safe-area-inset-bottom));
+  }
+
+  .melforia-sidebar {
+    width: min(88vw, 330px) !important;
+    transform: translateX(-105%) !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: transform 220ms ease !important;
+  }
+
+  .melforia-sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  .melforia-sidebar__close {
+    display: inline-flex !important;
+  }
+
+  .melforia-sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 510;
+    display: block;
+    pointer-events: none;
+    border: 0;
+    border-radius: 0;
+    background: rgba(5, 13, 22, 0.68);
+    opacity: 0;
+    transition: opacity 200ms ease;
+  }
+
+  .melforia-sidebar-overlay.is-visible {
+    pointer-events: auto;
+    opacity: 1;
+  }
+
+  .melforia-bottom-nav {
+    position: fixed;
+    right: 10px;
+    bottom: max(10px, env(safe-area-inset-bottom));
+    left: 10px;
+    z-index: 480;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    min-height: 72px;
+    padding: 7px;
+    border: 1px solid rgba(190, 214, 241, 0.18);
+    border-radius: 24px;
+    background: rgba(35, 53, 73, 0.95);
+    box-shadow: 0 18px 44px rgba(4, 12, 21, 0.42);
+    backdrop-filter: blur(22px);
+  }
+
+  .melforia-bottom-nav a,
+  .melforia-bottom-nav button {
+    display: flex;
+    min-width: 0;
+    min-height: 58px;
+    margin: 0;
+    padding: 7px 3px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: #91a6bc;
+    border: 0;
+    border-radius: 17px;
+    background: transparent;
+    font: inherit;
+    font-size: 0.66rem;
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .melforia-bottom-nav a.is-active,
+  .melforia-bottom-nav button.is-active {
+    color: #d9ebff;
+    background: rgba(114, 173, 240, 0.15);
+  }
+
+  .melforia-bottom-nav a.is-active svg,
+  .melforia-bottom-nav button.is-active svg {
+    color: var(--melforia-blue);
+    filter: drop-shadow(0 0 8px rgba(114, 173, 240, 0.5));
+  }
+
+  .melforia-nova-assistant {
+    display: none;
+  }
+
+  .melforia-app-shell .melforia-reading-toolbar {
+    right: 14px;
+    bottom: calc(94px + env(safe-area-inset-bottom));
+  }
+
+  .melforia-app-shell .card {
+    padding: 18px 15px;
+    border-radius: 22px;
+  }
+}

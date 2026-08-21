@@ -120,7 +120,7 @@ export default function ChatPage(): React.ReactElement {
         <div className="nova-title-row">
           <img src={novaAvatar} alt="" className="nova-header-avatar" />
           <div>
-            <p className="nova-eyebrow">Kompass-Begleitung</p>
+            <p className="nova-eyebrow">Melforia-Begleitung</p>
             <h1>Nova</h1>
           </div>
           <Link to="/nova/settings" className="nova-settings-link" aria-label="Nova einstellen">

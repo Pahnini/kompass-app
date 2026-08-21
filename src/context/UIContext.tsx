@@ -69,14 +69,6 @@ export function UIProvider({ children }: UIProviderProps): React.ReactElement {
     if (!onboarding) storageService.set('onboardingCompleted', true);
   }, [onboarding]);
 
-  useEffect(() => {
-    const hintShown = storageService.get<boolean>('sidebarHintShown');
-    if (!hintShown) {
-      alert('Tipp: Über ☰ oben rechts erreichst du das Menü.');
-      storageService.set('sidebarHintShown', true);
-    }
-  }, []);
-
   // Memoize the context value to prevent unnecessary re-renders
   const value = React.useMemo<UIContextType>(
     () => ({

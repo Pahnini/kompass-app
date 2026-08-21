@@ -1,53 +1,35 @@
 // src/components/BackgroundCard.tsx
 
 import React from 'react';
-import type { BackgroundOptions } from '../../data/backgrounds';
+import { getBackgroundCss, type BackgroundOptions } from '../../data/backgrounds';
 
 interface BackgroundCardProps {
   background: BackgroundOptions;
   isActive: boolean;
   onSelect: () => void;
+  fallbackColor: string;
 }
 
 export default function BackgroundCard({
   background,
   isActive,
   onSelect,
+  fallbackColor,
 }: BackgroundCardProps): React.ReactElement {
   return (
     <button
+      type="button"
       onClick={onSelect}
-      className={`background-card ${isActive ? 'active' : ''}`}
+      className={`melforia-background-card ${isActive ? 'is-active' : ''}`}
+      aria-pressed={isActive}
+      aria-label={`${background.label}${isActive ? ', ausgewählt' : ''}`}
       style={{
-        border: isActive ? '3px solid #2f4f4f' : '1px solid #ccc',
-        padding: 0,
-        borderRadius: '10px',
-        overflow: 'hidden',
-        width: '160px',
-        height: '90px',
-        backgroundImage: `url(${background.url})`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        position: 'relative',
-        cursor: 'pointer',
+        backgroundImage: getBackgroundCss(background, fallbackColor),
+        backgroundColor: fallbackColor,
       }}
     >
-      <span
-        style={{
-          position: 'absolute',
-          bottom: 4,
-          left: 6,
-          right: 6,
-          backgroundColor: 'rgba(0,0,0,0.5)',
-          color: '#fff',
-          fontSize: '0.8rem',
-          padding: '2px 6px',
-          borderRadius: '4px',
-          textAlign: 'center',
-        }}
-      >
-        {background.name}
-      </span>
+      <span className="melforia-background-card__label">{background.label}</span>
+      {isActive && <span className="melforia-background-card__check">✓</span>}
     </button>
   );
 }

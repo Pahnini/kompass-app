@@ -1,0 +1,247 @@
+.melforia-landing {
+  min-height: 100vh;
+  padding: 24px clamp(22px, 5vw, 72px) 30px;
+  color: #f4f7fb;
+  background:
+    radial-gradient(circle at 73% 28%, rgba(114, 173, 240, 0.13), transparent 28%),
+    linear-gradient(155deg, #18283a 0%, #203247 52%, #293d53 100%);
+}
+
+.melforia-landing__header,
+.melforia-landing__main,
+.melforia-landing__features,
+.melforia-landing__footer {
+  width: min(1200px, 100%);
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.melforia-landing__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.melforia-landing__brand {
+  display: inline-flex;
+  gap: 9px;
+  align-items: center;
+  color: #f3f7fc;
+  text-decoration: none;
+}
+
+.melforia-landing__brand > span {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  color: #17283c;
+  border-radius: 12px;
+  background: #72adf0;
+  box-shadow: 0 0 24px rgba(114, 173, 240, 0.32);
+}
+
+.melforia-landing__brand small {
+  padding: 3px 8px;
+  color: #c0ddfb;
+  border-radius: 999px;
+  background: rgba(114, 173, 240, 0.14);
+  font-size: 0.67rem;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.melforia-landing__test-link {
+  color: #b8cbe0;
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.melforia-landing__main {
+  display: grid;
+  min-height: 64vh;
+  padding: clamp(70px, 11vw, 150px) 0 56px;
+  align-items: center;
+  grid-template-columns: minmax(0, 1.2fr) minmax(290px, 0.8fr);
+  gap: clamp(40px, 9vw, 130px);
+}
+
+.melforia-landing__copy > p:first-child {
+  margin: 0 0 12px;
+  color: #86a3c0;
+  font-size: 0.76rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.melforia-landing__copy h1 {
+  max-width: 760px;
+  margin: 0;
+  color: #f7f9fc;
+  font-size: clamp(3.4rem, 7vw, 7rem);
+  font-weight: 600;
+  letter-spacing: -0.06em;
+  line-height: 0.96;
+  text-wrap: balance;
+}
+
+.melforia-landing__copy h1 + p {
+  max-width: 640px;
+  margin: 28px 0 0;
+  color: #b6c6d7;
+  font-size: clamp(1rem, 1.8vw, 1.18rem);
+  line-height: 1.7;
+}
+
+.melforia-landing__actions {
+  display: flex;
+  gap: 11px;
+  margin-top: 30px;
+  flex-wrap: wrap;
+}
+
+.melforia-landing__actions a,
+.melforia-landing__actions button {
+  display: inline-flex;
+  min-height: 49px;
+  padding: 12px 18px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 14px;
+  font-size: 0.9rem;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.melforia-landing__actions a {
+  color: #182b40;
+  background: #8fbdf2;
+  box-shadow: 0 10px 30px rgba(73, 135, 203, 0.22);
+}
+
+.melforia-landing__actions button {
+  color: #d8e7f6;
+  border: 1px solid rgba(190, 214, 241, 0.2);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.melforia-landing__copy > small {
+  display: block;
+  margin-top: 15px;
+  color: #7f96ad;
+}
+
+.melforia-landing__compass {
+  display: grid;
+  width: clamp(210px, 27vw, 320px);
+  height: clamp(210px, 27vw, 320px);
+  place-self: center;
+  place-items: center;
+  color: #a4bad2;
+  border: 8px solid #72adf0;
+  border-radius: 50%;
+  background: rgba(49, 69, 92, 0.44);
+  box-shadow:
+    0 0 22px rgba(114, 173, 240, 0.62),
+    0 0 85px rgba(114, 173, 240, 0.26),
+    inset 0 0 38px rgba(114, 173, 240, 0.1);
+}
+
+.melforia-landing__features {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 13px;
+  border: 1px solid rgba(190, 214, 241, 0.14);
+  border-radius: 29px;
+  background: rgba(47, 67, 90, 0.78);
+  box-shadow: 0 25px 70px rgba(4, 12, 22, 0.25);
+  backdrop-filter: blur(20px);
+}
+
+.melforia-landing__features > div {
+  display: grid;
+  min-height: 130px;
+  padding: 20px;
+  align-content: center;
+  color: #91a6bc;
+  border-radius: 20px;
+}
+
+.melforia-landing__features svg {
+  margin-bottom: 12px;
+}
+
+.melforia-landing__features strong {
+  color: #edf4fb;
+}
+
+.melforia-landing__features small {
+  margin-top: 3px;
+  color: #91a5b9;
+}
+
+.melforia-landing__footer {
+  display: flex;
+  padding-top: 24px;
+  align-items: center;
+  justify-content: space-between;
+  color: #8197ad;
+  font-size: 0.76rem;
+}
+
+.melforia-landing__footer a {
+  color: #9db4ca;
+}
+
+@media (max-width: 800px) {
+  .melforia-landing {
+    padding: 18px 16px 25px;
+  }
+
+  .melforia-landing__brand small,
+  .melforia-landing__test-link {
+    display: none;
+  }
+
+  .melforia-landing__main {
+    min-height: auto;
+    padding: 76px 5px 44px;
+    grid-template-columns: 1fr;
+  }
+
+  .melforia-landing__copy h1 {
+    font-size: clamp(3.5rem, 16vw, 5.6rem);
+  }
+
+  .melforia-landing__compass {
+    width: 190px;
+    height: 190px;
+    border-width: 6px;
+  }
+
+  .melforia-landing__features {
+    padding: 7px;
+    border-radius: 23px;
+  }
+
+  .melforia-landing__features > div {
+    min-height: 110px;
+    padding: 12px 5px;
+    place-items: center;
+    text-align: center;
+  }
+
+  .melforia-landing__features small {
+    display: none;
+  }
+
+  .melforia-landing__footer {
+    gap: 12px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

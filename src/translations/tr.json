@@ -42,13 +42,16 @@
     "home": "Ana Sayfa",
     "skills": "Beceriler ve Farkındalık",
     "deinweg": "Pusulam",
+    "mood": "Ruh Hali",
     "achievements": "Başarılar",
     "designs": "Tasarım",
     "emergency": "Acil Durum",
     "guide": "Rehber",
     "chatbot": "Sohbet Botu",
     "schoolSupport": "Klinik Okulu",
-    "quickedit": "Hızlı Erişimi Düzenle"
+    "quickedit": "Hızlı Erişimi Düzenle",
+    "accessibility": "Erişilebilirlik",
+    "testing": "Test ve Geri Bildirim"
   },
   "moodCompass": {
     "title": "🧭 Duygu Pusulası",

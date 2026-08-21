@@ -66,10 +66,11 @@ cp .env.example .env
    // src/types/environment.d.ts
    interface ImportMetaEnv {
      readonly VITE_SUPABASE_URL: string;
-     readonly VITE_SUPABASE_ANON_KEY: string;
-     readonly VITE_OPENAI_API_KEY: string;
+     readonly VITE_SUPABASE_PUBLISHABLE_KEY: string;
    }
    ```
+
+   `OPENAI_API_KEY` ist ausschließlich serverseitig und gehört nicht in `ImportMetaEnv`.
 
 3. **Standardize storage service:**
    ```typescript

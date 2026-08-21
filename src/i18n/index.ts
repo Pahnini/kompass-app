@@ -6,6 +6,12 @@ import de from '../translations/de.json';
 import en from '../translations/en.json';
 import tr from '../translations/tr.json';
 
+i18n.on('languageChanged', language => {
+  if (typeof document !== 'undefined') {
+    document.documentElement.lang = language.split('-')[0] || 'de';
+  }
+});
+
 void i18n
   .use(LanguageDetector)
   .use(initReactI18next)

@@ -3,6 +3,7 @@
     "home": "Home",
     "skills": "Skills & Mindfulness",
     "deinweg": "My Compass",
+    "mood": "Mood",
     "achievements": "Achievements",
     "designs": "Designs",
     "emergency": "Emergency",
@@ -11,7 +12,9 @@
     "chatbot": "Chatbot",
     "chat": "Chatbot",
     "schoolSupport": "School Support",
-    "quickedit": "Edit Quick Access"
+    "quickedit": "Edit Quick Access",
+    "accessibility": "Accessibility",
+    "testing": "Testing & Feedback"
   },
   "buttons": {
     "back": "Back",

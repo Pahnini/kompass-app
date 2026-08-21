@@ -3,6 +3,7 @@
     "home": "Startseite",
     "skills": "Skills & Achtsamkeit",
     "deinweg": "Mein Kompass",
+    "mood": "Stimmung",
     "achievements": "Erfolge",
     "designs": "Designs",
     "emergency": "Notfall",
@@ -11,7 +12,9 @@
     "chatbot": "Chatbot",
     "chat": "Chatbot",
     "schoolSupport": "Klinikschule",
-    "quickedit": "Schnellzugriff bearbeiten"
+    "quickedit": "Schnellzugriff bearbeiten",
+    "accessibility": "Barrierefreiheit",
+    "testing": "Testen & Feedback"
   },
   "buttons": {
     "back": "Zurück",
@@ -48,7 +51,7 @@
     "appDescription": "Deine App für den Alltag nach der Klinik.",
     "featuresDescription": "Skills, Pläne, Chatbot & Hilfe bei Krisen – immer für dich da.",
     "quickAccessTitle": "Deine Schnellzugriffe",
-    "subtitle": "Dein digitaler Kompass für Achtsamkeit, Skills & Selbsthilfe",
+    "subtitle": "Dein digitaler Begleiter für Achtsamkeit, Skills & Selbsthilfe",
     "promise": "Immer für dich da – Skills, Pläne & Hilfe bei Krisen",
     "username": {
       "placeholder": "Wie kann ich dich nennen?"
@@ -56,7 +59,7 @@
   },
   "welcome": {
     "title": "Willkommen zurück!",
-    "subtitle": "Dein digitaler Kompass für Achtsamkeit, Skills & Selbsthilfe",
+    "subtitle": "Dein digitaler Begleiter für Achtsamkeit, Skills & Selbsthilfe",
     "promise": "Immer für dich da – Skills, Pläne & Hilfe bei Krisen",
     "features": {
       "skills": "Skills & Achtsamkeit",
@@ -252,7 +255,7 @@
     "description": "Wähle die Funktionen aus, die auf der Startseite angezeigt werden sollen:"
   },
   "onboarding": {
-    "title": "Willkommen bei Kompass!",
+    "title": "Willkommen bei Melforia!",
     "features": {
       "compass": {
         "title": "„Mein Kompass",

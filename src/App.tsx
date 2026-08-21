@@ -2,6 +2,8 @@ import type { Session } from '@supabase/supabase-js';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import AchievementPopup from './components/AchievementPopup';
+import AccessibilityToolbar from './components/accessibility/AccessibilityToolbar';
+import RouteAnnouncer from './components/accessibility/RouteAnnouncer';
 import DatenschutzModal from './components/DatenschutzModal';
 import GlobalStyle from './components/GlobalStyle';
 import InstallPromptBanner from './components/InstallPromptBanner';
@@ -10,11 +12,13 @@ import OfflineToast from './components/OfflineToast';
 import OnboardingModal from './components/OnboardingModal';
 import UpdateToast from './components/UpdateToast';
 import Sidebar from './components/layout/Sidebar';
+import MobileBottomNav from './components/layout/MobileBottomNav';
 import SmartLoading from './components/ui/SmartLoading';
 import { emojiList } from './data/emojis';
 import { helpResources } from './data/helpResources';
 import { sidebarItems } from './data/navigation';
 import { templates } from './data/templates';
+import { getBackgroundCss } from './data/backgrounds';
 import { usePageTitle } from './hooks/usePageTitle';
 import { useTheme } from './hooks/useTheme';
 import { useUI } from './hooks/useUI';
@@ -30,6 +34,7 @@ import MoodCompassView from './views/MoodCompassView';
 import NovaSettings from './views/NovaSettings';
 import PanicScreen from './views/PanicScreen';
 import SchoolSupportView from './views/SchoolSupport/SchoolSupportView';
+import './styles/MelforiaShell.css';
 
 // Lazy-loaded Komponenten
 const ChatPage = lazy(() => import('./pages/ChatPage'));
@@ -39,9 +44,10 @@ const GuidePage = lazy(() => import('./pages/GuidePage'));
 const EmergencyPage = lazy(() => import('./pages/EmergencyPage'));
 const QuickEditPage = lazy(() => import('./pages/QuickEditPage'));
 const SkillsPage = lazy(() => import('./pages/SkillsPage'));
+const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage'));
+const TestCenterPage = lazy(() => import('./pages/TestCenterPage'));
 
 function AuthenticatedApp() {
-  usePageTitle();
   const { theme, background } = useTheme();
   const [latestAchievement, setLatestAchievement] = useState<string | null>(null);
   const location = useLocation();
@@ -94,8 +100,12 @@ function AuthenticatedApp() {
   }, [achievements]);
 
   return (
-    <div>
+    <div className="melforia-app-shell">
       <GlobalStyle />
+      <a href="#main-content" className="melforia-skip-link">
+        Zum Hauptinhalt springen
+      </a>
+      <RouteAnnouncer />
       <Sidebar
         items={sidebarItems}
         isOpen={isSidebarOpen}
@@ -103,9 +113,16 @@ function AuthenticatedApp() {
         favorites={favorites}
       />
       <main
-        className="main-area"
+        id="main-content"
+        tabIndex={-1}
+        data-speech-content="true"
+        className="main-area melforia-main-area"
         style={{
-          background: background.url ? `url(${background.url}) center/cover` : theme.bg,
+          backgroundImage: getBackgroundCss(background, theme.bg),
+          backgroundColor: theme.bg,
+          backgroundPosition: 'center',
+          backgroundSize: 'cover',
+          backgroundAttachment: 'fixed',
           minHeight: '100vh',
         }}
       >
@@ -164,6 +181,8 @@ function AuthenticatedApp() {
             />
             <Route path="/notfall" element={<EmergencyPage helpResources={helpResources} />} />
             <Route path="/designs" element={<DesignsPage />} />
+            <Route path="/barrierefreiheit" element={<AccessibilityPage />} />
+            <Route path="/testen" element={<TestCenterPage />} />
             <Route path="/guide" element={<GuidePage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route
@@ -194,9 +213,11 @@ function AuthenticatedApp() {
       <OfflineToast />
       <InstallPromptBanner />
       <UpdateToast />
+      <AccessibilityToolbar />
+      <MobileBottomNav onOpenMenu={() => setIsSidebarOpen(true)} />
 
       {/* ✅ Nova ist global sichtbar (unten rechts) */}
-      <div className="fixed bottom-6 left-[260px] z-[100]" style={{ maxWidth: '240px' }}>
+      <div className="melforia-nova-assistant">
         <NovaAssistant context={novaContext} />
       </div>
     </div>
@@ -204,6 +225,7 @@ function AuthenticatedApp() {
 }
 
 export default function App(): React.ReactElement {
+  usePageTitle();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const { setShowWelcome } = useUI();
@@ -248,17 +270,26 @@ export default function App(): React.ReactElement {
   return (
     <div>
       <GlobalStyle />
-      <Suspense fallback={<SmartLoading message="Seite wird geladen..." />}>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          {/* Redirect any other routes to landing when not authenticated */}
-          <Route path="*" element={<LandingPage />} />
-        </Routes>
-      </Suspense>
+      <a href="#main-content" className="melforia-skip-link">
+        Zum Hauptinhalt springen
+      </a>
+      <RouteAnnouncer />
+      <main id="main-content" tabIndex={-1} data-speech-content="true">
+        <Suspense fallback={<SmartLoading message="Seite wird geladen..." />}>
+          <Routes>
+            <Route path="/" element={<LandingPage />} />
+            <Route path="/login" element={<LoginPage />} />
+            <Route path="/barrierefreiheit" element={<AccessibilityPage />} />
+            <Route path="/testen" element={<TestCenterPage />} />
+            {/* Redirect any other routes to landing when not authenticated */}
+            <Route path="*" element={<LandingPage />} />
+          </Routes>
+        </Suspense>
+      </main>
       <OfflineToast />
       <InstallPromptBanner />
       <UpdateToast />
+      <AccessibilityToolbar />
     </div>
   );
 }

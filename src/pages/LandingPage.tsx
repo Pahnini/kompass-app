@@ -1,46 +1,75 @@
+import { BookHeart, Compass, Download, Sparkles, Waves } from 'lucide-react';
+import type React from 'react';
 import { Link } from 'react-router-dom';
-import { Compass } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { APP_NAME, APP_VERSION_LABEL } from '../config/brand';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
+import './LandingPage.css';
 
-export default function LandingPage() {
+export default function LandingPage(): React.ReactElement {
   const { deferredPrompt, promptInstall } = useInstallPrompt();
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#2f4f4f] to-[#00b3b3] text-white px-6 text-center">
-      <motion.div
-        animate={{ rotate: 360 }}
-        transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
-        className="mb-6"
-      >
-        <Compass size={64} color="#5dade2" style={{ filter: 'drop-shadow(0 0 2px #5dade2)' }} />
-      </motion.div>
-      <h1 className="text-4xl font-bold mb-4">🧭 Kompass-App</h1>
-      <p className="text-lg max-w-md mb-6">
-        Dein digitaler Begleiter nach dem Klinikaufenthalt – für Stimmung, Skills und Orientierung
-        im Alltag.
-      </p>
-      <ul className="mb-6 space-y-1">
-        <li>✅ Mood-Tracking mit Kompass</li>
-        <li>✅ Skills & Notfallpläne</li>
-        <li>✅ Ratgeber für den Schul- & Lebensalltag</li>
-      </ul>
-      <div className="flex gap-4">
-        <Link
-          to="/login"
-          className="bg-white text-[#2f4f4f] font-semibold px-4 py-2 rounded-xl shadow hover:bg-gray-100 transition"
-        >
-          App starten
+    <div className="melforia-landing">
+      <header className="melforia-landing__header">
+        <Link to="/" className="melforia-landing__brand">
+          <span aria-hidden="true">
+            <Compass size={20} />
+          </span>
+          <strong>{APP_NAME}</strong>
+          <small>{APP_VERSION_LABEL}</small>
         </Link>
-        {deferredPrompt && (
-          <button
-            onClick={() => void promptInstall()}
-            className="bg-transparent border border-white font-semibold px-4 py-2 rounded-xl hover:bg-white hover:text-[#2f4f4f] transition"
-          >
-            Jetzt installieren
-          </button>
-        )}
-      </div>
+        <Link to="/testen" className="melforia-landing__test-link">
+          Hinweise für Testpersonen
+        </Link>
+      </header>
+
+      <main className="melforia-landing__main">
+        <section className="melforia-landing__copy">
+          <p>Dein digitaler Begleiter</p>
+          <h1>Ein ruhiger Ort für deinen Alltag.</h1>
+          <p>
+            Stimmung einordnen, hilfreiche Skills finden und den nächsten kleinen Schritt planen –
+            in deinem Tempo.
+          </p>
+          <div className="melforia-landing__actions">
+            <Link to="/login">Melforia öffnen</Link>
+            {deferredPrompt && (
+              <button type="button" onClick={() => void promptInstall()}>
+                <Download size={18} aria-hidden="true" />
+                Installieren
+              </button>
+            )}
+          </div>
+          <small>Frühe Testversion · keine Therapie und kein Notfalldienst</small>
+        </section>
+
+        <div className="melforia-landing__compass" aria-hidden="true">
+          <Compass size={90} strokeWidth={1.35} />
+        </div>
+      </main>
+
+      <nav className="melforia-landing__features" aria-label="Melforia Bereiche">
+        <div>
+          <Sparkles size={28} aria-hidden="true" />
+          <strong>Skills</strong>
+          <small>Für schwierige und ruhige Momente</small>
+        </div>
+        <div>
+          <Waves size={28} aria-hidden="true" />
+          <strong>Stimmung</strong>
+          <small>Kurz wahrnehmen und einordnen</small>
+        </div>
+        <div>
+          <BookHeart size={28} aria-hidden="true" />
+          <strong>Mein Weg</strong>
+          <small>Gedanken, Ziele und Fortschritte</small>
+        </div>
+      </nav>
+
+      <footer className="melforia-landing__footer">
+        <Link to="/barrierefreiheit">Barrierefreiheit & Vorlesen</Link>
+        <span>Bei unmittelbarer Gefahr: 112</span>
+      </footer>
     </div>
   );
 }

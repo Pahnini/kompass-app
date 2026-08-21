@@ -2,6 +2,7 @@ import { Auth } from '@supabase/auth-ui-react';
 import { ThemeSupa } from '@supabase/auth-ui-shared';
 import React, { useState } from 'react';
 import compassImg from '../assets/kompass-welcome.png';
+import { APP_NAME, APP_TAGLINE } from '../config/brand';
 import { supabase } from '../utils/supabase';
 import './WelcomePage.css';
 
@@ -12,11 +13,9 @@ export default function WelcomeScreen(): React.ReactElement {
     <div className="welcome-screen">
       <div className="welcome-content">
         <div className="welcome-header">
-          <img src={compassImg} alt="Kompass Illustration" className="welcome-image" />
-          <h1 className="welcome-title">Willkommen zurück!</h1>
-          <p className="welcome-subtitle">
-            Dein digitaler Kompass für Achtsamkeit, Skills & Selbsthilfe
-          </p>
+          <img src={compassImg} alt={`${APP_NAME} Illustration`} className="welcome-image" />
+          <h1 className="welcome-title">Willkommen bei {APP_NAME}!</h1>
+          <p className="welcome-subtitle">{APP_TAGLINE}</p>
         </div>
 
         <div className="welcome-actions">

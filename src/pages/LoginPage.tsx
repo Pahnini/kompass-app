@@ -2,7 +2,9 @@ import { motion } from 'framer-motion';
 import { Compass, Eye, EyeOff, Lock, Mail } from 'lucide-react';
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { APP_NAME } from '../config/brand';
 import { supabase } from '../utils/supabase';
+import './LoginPage.css';
 
 export default function LoginPage() {
   const navigate = useNavigate();
@@ -107,19 +109,23 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-b from-[#2f4f4f] to-[#00b3b3] text-white px-6">
-      <div className="w-full max-w-md bg-white/10 backdrop-blur-md rounded-2xl p-8 shadow-2xl">
+    <div className="melforia-login-page flex flex-col items-center justify-center min-h-screen text-white px-6">
+      <div className="melforia-login-card w-full max-w-md backdrop-blur-md rounded-2xl p-8 shadow-2xl">
         <div className="text-center mb-8">
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ repeat: Infinity, duration: 8, ease: 'linear' }}
             className="inline-block mb-4"
           >
-            <Compass size={48} color="#5dade2" style={{ filter: 'drop-shadow(0 0 2px #5dade2)' }} />
+            <Compass
+              size={48}
+              color="#72adf0"
+              style={{ filter: 'drop-shadow(0 0 9px rgba(114, 173, 240, 0.55))' }}
+            />
           </motion.div>
           <h1 className="text-2xl font-bold mb-2">{isSignUp ? 'Registrierung' : 'Anmeldung'}</h1>
           <p className="text-white/80">
-            {isSignUp ? 'Erstelle dein Kompass-Konto' : 'Willkommen zurück bei Kompass'}
+            {isSignUp ? `Erstelle dein ${APP_NAME}-Konto` : `Willkommen zurück bei ${APP_NAME}`}
           </p>
         </div>
 

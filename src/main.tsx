@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import ErrorBoundary from './components/ErrorBoundary';
+import { AccessibilityProvider } from './context/AccessibilityContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { UIProvider } from './context/UIContext';
 import { UserDataProvider } from './context/UserDataContext';
@@ -22,13 +23,15 @@ ReactDOM.createRoot(rootElement).render(
         {' '}
         {/* ✅ GANZ außen */}
         <BrowserRouter>
-          <UIProvider>
-            <ThemeProvider>
-              {' '}
-              {/* ✅ jetzt darf es useUserData verwenden */}
-              <App />
-            </ThemeProvider>
-          </UIProvider>
+          <AccessibilityProvider>
+            <UIProvider>
+              <ThemeProvider>
+                {' '}
+                {/* ✅ jetzt darf es useUserData verwenden */}
+                <App />
+              </ThemeProvider>
+            </UIProvider>
+          </AccessibilityProvider>
         </BrowserRouter>
       </UserDataProvider>
     </ErrorBoundary>

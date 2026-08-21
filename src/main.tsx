@@ -7,8 +7,11 @@ import { AccessibilityProvider } from './context/AccessibilityContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { UIProvider } from './context/UIContext';
 import { UserDataProvider } from './context/UserDataContext';
+import { retireLegacyServiceWorkers } from './utils/retireLegacyServiceWorkers';
 import './index.css';
 import './i18n'; // Importiere i18n für Übersetzungen
+
+void retireLegacyServiceWorkers();
 
 const rootElement = document.getElementById('root');
 

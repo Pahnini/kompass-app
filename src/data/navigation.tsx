@@ -9,6 +9,7 @@ import {
   GraduationCap,
   Home,
   Info,
+  Mic2,
   Paintbrush,
   Settings,
   Sparkles,
@@ -25,6 +26,7 @@ export const sidebarItems: SidebarItem[] = [
     icon: <Sparkles size={18} />,
   },
   { key: 'mood', label: 'navigation.mood', icon: <Waves size={18} /> },
+  { key: 'gedanken', label: 'navigation.thoughts', icon: <Mic2 size={18} /> },
   { key: 'deinweg', label: 'navigation.deinweg', icon: <BookHeart size={18} /> },
   {
     key: 'nova',
@@ -49,7 +51,14 @@ export const sidebarItems: SidebarItem[] = [
   },
 ];
 
-export const primaryNavigationKeys = ['home', 'skills', 'mood', 'deinweg', 'nova'] as const;
+export const primaryNavigationKeys = [
+  'home',
+  'skills',
+  'mood',
+  'gedanken',
+  'deinweg',
+  'nova',
+] as const;
 
 export function getNavigationPath(key: string): string {
   return key === 'home' ? '/' : `/${key}`;

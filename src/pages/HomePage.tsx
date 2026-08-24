@@ -4,6 +4,7 @@ import {
   Bot,
   Check,
   Compass,
+  Mic2,
   Pencil,
   Sparkles,
   Waves,
@@ -30,6 +31,12 @@ interface HomeScreenProps {
 }
 
 const primaryCards = [
+  {
+    to: '/gedanken',
+    label: 'Kurzer Gedanke',
+    description: 'Sprechen oder tippen und nur auf Wunsch speichern',
+    icon: Mic2,
+  },
   {
     to: '/skills',
     label: 'Skills',

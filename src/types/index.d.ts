@@ -10,7 +10,15 @@ export type Achievement = {
   icon?: React.ReactNode;
   date: string;
 };
-export type CalendarNote = { title: string; text: string };
+export type ThoughtConnection = 'mood' | 'reflection' | 'assistant';
+export type ThoughtEntry = {
+  id: string;
+  text: string;
+  createdAt: string;
+  inputMode: 'voice' | 'keyboard';
+  connections: ThoughtConnection[];
+};
+export type CalendarNote = { title: string; text: string; entries?: ThoughtEntry[] };
 export type CalendarNotes = { [date: string]: CalendarNote };
 export type Symptom = { title: string; intensity: number };
 export type Symptoms = { [date: string]: Symptom[] };

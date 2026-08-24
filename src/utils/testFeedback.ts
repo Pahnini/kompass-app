@@ -2,10 +2,21 @@ import { z } from 'zod';
 import { APP_VERSION } from '../config/brand';
 
 export const feedbackCategories = ['general', 'bug', 'nova', 'accessibility', 'design'] as const;
+export const feedbackTopics = [
+  'navigation',
+  'content',
+  'design',
+  'performance',
+  'accessibility',
+  'assistant',
+  'voice-notes',
+  'account',
+] as const;
 export const deviceTypes = ['mobile', 'tablet', 'desktop', 'unknown'] as const;
 
 export const testFeedbackSchema = z.object({
   category: z.enum(feedbackCategories),
+  topics: z.array(z.enum(feedbackTopics)).min(1).max(6),
   rating: z.number().int().min(1).max(5),
   deviceType: z.enum(deviceTypes),
   browser: z.string().trim().min(1).max(80),
@@ -16,6 +27,7 @@ export const testFeedbackSchema = z.object({
 
 export type TestFeedbackInput = z.infer<typeof testFeedbackSchema>;
 export type FeedbackCategory = (typeof feedbackCategories)[number];
+export type FeedbackTopic = (typeof feedbackTopics)[number];
 export type DeviceType = (typeof deviceTypes)[number];
 
 export function detectBrowser(userAgent: string): string {

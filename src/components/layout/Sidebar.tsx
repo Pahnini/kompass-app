@@ -17,7 +17,7 @@ interface SidebarProps {
 }
 
 const navigationGroups = [
-  { label: 'Mein Alltag', keys: ['home', 'skills', 'mood', 'deinweg', 'nova'] },
+  { label: 'Mein Alltag', keys: ['home', 'skills', 'mood', 'gedanken', 'deinweg', 'nova'] },
   { label: 'Entdecken', keys: ['designs', 'achievements', 'school'] },
   {
     label: 'Hilfe & Einstellungen',

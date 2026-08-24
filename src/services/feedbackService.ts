@@ -21,6 +21,7 @@ export async function submitTestFeedback(input: TestFeedbackInput): Promise<void
 
   const { error } = await supabase.from('test_feedback').insert({
     category: parsed.category,
+    feedback_topics: parsed.topics,
     rating: parsed.rating,
     device_type: parsed.deviceType,
     browser: parsed.browser,

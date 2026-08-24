@@ -10,7 +10,7 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import BackButton from '../components/ui/BackButton';
 import { APP_NAME, APP_VERSION, APP_VERSION_LABEL } from '../config/brand';
 import { TEST_TASKS } from '../data/testTasks';
@@ -21,6 +21,7 @@ import {
   detectDevice,
   type DeviceType,
   type FeedbackCategory,
+  type FeedbackTopic,
 } from '../utils/testFeedback';
 import './TestCenterPage.css';
 
@@ -41,6 +42,17 @@ const deviceLabels: Record<DeviceType, string> = {
   unknown: 'Anderes Gerät',
 };
 
+const feedbackTopicOptions: Array<{ value: FeedbackTopic; label: string }> = [
+  { value: 'navigation', label: 'Navigation' },
+  { value: 'content', label: 'Inhalte & Verständlichkeit' },
+  { value: 'design', label: 'Design & Lesbarkeit' },
+  { value: 'performance', label: 'Geschwindigkeit & Stabilität' },
+  { value: 'accessibility', label: 'Barrierefreiheit' },
+  { value: 'assistant', label: 'Begleitung' },
+  { value: 'voice-notes', label: 'Sprachnotizen' },
+  { value: 'account', label: 'Anmeldung & Konto' },
+];
+
 function readStoredProgress(): string[] {
   try {
     const stored = JSON.parse(localStorage.getItem(TEST_PROGRESS_KEY) ?? '[]') as unknown;
@@ -55,10 +67,12 @@ function readStoredProgress(): string[] {
 }
 
 export default function TestCenterPage(): React.ReactElement {
+  const location = useLocation();
   const [session, setSession] = useState<Session | null>(null);
   const [authLoaded, setAuthLoaded] = useState(false);
   const [completedTasks, setCompletedTasks] = useState<string[]>(readStoredProgress);
   const [category, setCategory] = useState<FeedbackCategory>('general');
+  const [topics, setTopics] = useState<FeedbackTopic[]>([]);
   const [rating, setRating] = useState(0);
   const [deviceType, setDeviceType] = useState<DeviceType>(() => detectDevice(window.innerWidth));
   const [message, setMessage] = useState('');
@@ -80,9 +94,23 @@ export default function TestCenterPage(): React.ReactElement {
     localStorage.setItem(TEST_PROGRESS_KEY, JSON.stringify(completedTasks));
   }, [completedTasks]);
 
+  useEffect(() => {
+    if (location.hash !== '#feedback') return;
+    const frame = window.requestAnimationFrame(() => {
+      document.getElementById('feedback')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [location.hash]);
+
   const toggleTask = (taskId: string): void => {
     setCompletedTasks(current =>
       current.includes(taskId) ? current.filter(id => id !== taskId) : [...current, taskId]
+    );
+  };
+
+  const toggleFeedbackTopic = (topic: FeedbackTopic): void => {
+    setTopics(current =>
+      current.includes(topic) ? current.filter(value => value !== topic) : [...current, topic]
     );
   };
 
@@ -98,6 +126,10 @@ export default function TestCenterPage(): React.ReactElement {
       setStatus({ type: 'error', text: 'Bitte wähle eine Bewertung von 1 bis 5 aus.' });
       return;
     }
+    if (topics.length === 0) {
+      setStatus({ type: 'error', text: 'Bitte wähle mindestens einen betroffenen Bereich aus.' });
+      return;
+    }
     if (!privacyConfirmed) {
       setStatus({ type: 'error', text: 'Bitte bestätige zuerst den Datenschutzhinweis.' });
       return;
@@ -107,6 +139,7 @@ export default function TestCenterPage(): React.ReactElement {
     try {
       await submitTestFeedback({
         category,
+        topics,
         rating,
         deviceType,
         browser,
@@ -116,6 +149,7 @@ export default function TestCenterPage(): React.ReactElement {
       });
       setMessage('');
       setRating(0);
+      setTopics([]);
       setPrivacyConfirmed(false);
       setStatus({
         type: 'success',
@@ -173,7 +207,7 @@ export default function TestCenterPage(): React.ReactElement {
         <div className="melforia-test-section-heading">
           <div>
             <p className="melforia-test-eyebrow">Geführter Test</p>
-            <h2 id="test-tasks-heading">Sieben kurze Aufgaben</h2>
+            <h2 id="test-tasks-heading">{TEST_TASKS.length} kurze Aufgaben</h2>
           </div>
           <strong>{progress}% erledigt</strong>
         </div>
@@ -190,7 +224,8 @@ export default function TestCenterPage(): React.ReactElement {
         </div>
 
         <p className="melforia-test-local-note">
-          Deine Häkchen bleiben nur in diesem Browser und werden nicht an {APP_NAME} übertragen.
+          Deine Häkchen bleiben in diesem Browser. Wenn du Feedback absendest, werden nur die
+          Kennungen der erledigten Testaufgaben zusammen mit deinem Feedback übertragen.
         </p>
 
         <div className="melforia-test-task-list">
@@ -227,7 +262,7 @@ export default function TestCenterPage(): React.ReactElement {
         </div>
       </section>
 
-      <section className="melforia-test-card" aria-labelledby="feedback-heading">
+      <section id="feedback" className="melforia-test-card" aria-labelledby="feedback-heading">
         <div className="melforia-test-section-heading">
           <div>
             <p className="melforia-test-eyebrow">Rückmeldung</p>
@@ -239,8 +274,8 @@ export default function TestCenterPage(): React.ReactElement {
         <div className="melforia-test-privacy-summary">
           <ShieldCheck aria-hidden="true" />
           <p>
-            Gespeichert werden nur Kategorie, Bewertung, dein Text, grobe Geräte-/Browserart,
-            erledigte Aufgaben und App-Version.{' '}
+            Gespeichert werden nur Kategorie, ausgewählte Bereiche, Bewertung, dein Text, grobe
+            Geräte-/Browserart, erledigte Aufgaben und App-Version.{' '}
             <strong>Kein Name, keine E-Mail, keine Nutzer-ID und kein Nova-Chat.</strong>
           </p>
         </div>
@@ -307,6 +342,28 @@ export default function TestCenterPage(): React.ReactElement {
               ))}
             </div>
             <small>1 = sehr schwierig · 5 = sehr einfach</small>
+          </fieldset>
+
+          <fieldset className="melforia-test-topics">
+            <legend>Welche Bereiche betrifft deine Rückmeldung?</legend>
+            <p>Wähle mindestens einen und höchstens sechs Punkte.</p>
+            <div>
+              {feedbackTopicOptions.map(option => {
+                const isChecked = topics.includes(option.value);
+                const isDisabled = !isChecked && topics.length >= 6;
+                return (
+                  <label key={option.value}>
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      disabled={isDisabled}
+                      onChange={() => toggleFeedbackTopic(option.value)}
+                    />
+                    <span>{option.label}</span>
+                  </label>
+                );
+              })}
+            </div>
           </fieldset>
 
           <label className="melforia-test-message">

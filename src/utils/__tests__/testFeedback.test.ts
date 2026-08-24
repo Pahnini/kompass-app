@@ -4,6 +4,7 @@ import { detectBrowser, detectDevice, testFeedbackSchema } from '../testFeedback
 
 const validFeedback = {
   category: 'general' as const,
+  topics: ['navigation', 'content'] as const,
   rating: 4,
   deviceType: 'desktop' as const,
   browser: 'Edge',
@@ -31,6 +32,27 @@ describe('test feedback validation', () => {
         ...validFeedback,
         completedTasks: Array.from({ length: 11 }, (_, index) => `task-${index}`),
       }).success
+    ).toBe(false);
+  });
+
+  it('requires one to six known feedback topics', () => {
+    expect(testFeedbackSchema.safeParse({ ...validFeedback, topics: [] }).success).toBe(false);
+    expect(
+      testFeedbackSchema.safeParse({
+        ...validFeedback,
+        topics: [
+          'navigation',
+          'content',
+          'design',
+          'performance',
+          'accessibility',
+          'assistant',
+          'voice-notes',
+        ],
+      }).success
+    ).toBe(false);
+    expect(
+      testFeedbackSchema.safeParse({ ...validFeedback, topics: ['unknown-area'] }).success
     ).toBe(false);
   });
 });

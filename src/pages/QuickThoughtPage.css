@@ -1,0 +1,282 @@
+.melforia-thoughts {
+  width: min(920px, 100%);
+  margin: 0 auto;
+  color: #f4f7fb;
+}
+
+.melforia-thoughts__hero {
+  padding: clamp(38px, 7vw, 76px) 4px 30px;
+}
+
+.melforia-thoughts__hero > p,
+.melforia-thoughts__heading p,
+.melforia-thoughts__connections > div p {
+  margin: 0 0 7px;
+  color: #8fa9c4;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.melforia-thoughts__hero h1 {
+  max-width: 760px;
+  margin: 0;
+  color: #f7f9fc;
+  font-size: clamp(2.35rem, 6vw, 4.8rem);
+  font-weight: 600;
+  letter-spacing: -0.045em;
+  line-height: 1.02;
+  text-wrap: balance;
+}
+
+.melforia-thoughts__hero > span {
+  display: block;
+  max-width: 680px;
+  margin-top: 20px;
+  color: #b5c6d7;
+  line-height: 1.65;
+}
+
+.melforia-thoughts__card,
+.melforia-thoughts__connections,
+.melforia-thoughts__saved {
+  margin-top: 18px;
+  padding: clamp(20px, 4vw, 32px);
+  border: 1px solid rgba(190, 214, 241, 0.14);
+  border-radius: 26px;
+  background: rgba(30, 47, 66, 0.9);
+  box-shadow: 0 22px 55px rgba(4, 13, 24, 0.22);
+  backdrop-filter: blur(18px);
+}
+
+.melforia-thoughts__heading {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.melforia-thoughts__heading h2,
+.melforia-thoughts__connections h2 {
+  margin: 0;
+  color: #f3f7fc;
+  font-size: clamp(1.25rem, 3vw, 1.7rem);
+}
+
+.melforia-thoughts__heading > svg {
+  color: #9fc9f7;
+}
+
+.melforia-thoughts__privacy {
+  display: flex;
+  gap: 12px;
+  margin: 22px 0 16px;
+  padding: 14px 16px;
+  color: #c5d8eb;
+  border-radius: 16px;
+  background: rgba(114, 173, 240, 0.1);
+}
+
+.melforia-thoughts__privacy svg {
+  flex: 0 0 auto;
+  margin-top: 2px;
+  color: #8fc2f6;
+}
+
+.melforia-thoughts__privacy p,
+.melforia-thoughts__connections > p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.melforia-thoughts textarea {
+  width: 100%;
+  margin: 0;
+  padding: 17px;
+  resize: vertical;
+  color: #f5f8fb;
+  border: 1px solid rgba(169, 204, 245, 0.28);
+  border-radius: 17px;
+  background: rgba(10, 24, 39, 0.55);
+  line-height: 1.6;
+}
+
+.melforia-thoughts textarea::placeholder {
+  color: #7f96ad;
+}
+
+.melforia-thoughts__interim {
+  margin: 10px 0 0;
+  color: #acc8e4;
+  font-style: italic;
+}
+
+.melforia-thoughts__meta {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  justify-content: space-between;
+  color: #8fa5ba;
+}
+
+.melforia-thoughts__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.melforia-thoughts__actions button,
+.melforia-thoughts__connections a {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: center;
+}
+
+.melforia-thoughts__actions button {
+  color: #10263b;
+  background: #8fc0f5;
+  font-weight: 800;
+}
+
+.melforia-thoughts__actions button.is-listening {
+  color: #fff;
+  background: #b54054;
+  box-shadow: 0 0 0 5px rgba(181, 64, 84, 0.18);
+}
+
+.melforia-thoughts__actions button.is-secondary {
+  color: #c2d2e1;
+  border: 1px solid rgba(190, 214, 241, 0.15);
+  background: rgba(255, 255, 255, 0.055);
+}
+
+.melforia-thoughts__actions button.is-save {
+  margin-left: auto;
+  color: #102438;
+  background: #a9ccf5;
+}
+
+.melforia-thoughts__actions button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.melforia-thoughts__status {
+  margin: 14px 0 0;
+  color: #b9d7f7;
+  font-weight: 700;
+}
+
+.melforia-thoughts__status.is-error {
+  color: #ffbbc5;
+}
+
+.melforia-thoughts__connections > div {
+  display: flex;
+  gap: 13px;
+  align-items: center;
+}
+
+.melforia-thoughts__connections > div > svg {
+  flex: 0 0 auto;
+  color: #8fc0f5;
+}
+
+.melforia-thoughts__connections > p {
+  margin-top: 17px;
+  color: #aebfd0;
+}
+
+.melforia-thoughts__connections nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-top: 17px;
+}
+
+.melforia-thoughts__connections a {
+  padding: 9px 12px;
+  color: #c6d8ea;
+  border: 1px solid rgba(190, 214, 241, 0.13);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.045);
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.melforia-thoughts__saved .melforia-thoughts__heading > strong {
+  display: grid;
+  width: 38px;
+  height: 38px;
+  place-items: center;
+  color: #a9ccf5;
+  border-radius: 12px;
+  background: rgba(114, 173, 240, 0.11);
+}
+
+.melforia-thoughts__saved ul {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.melforia-thoughts__saved li {
+  display: flex;
+  gap: 14px;
+  padding: 15px;
+  align-items: flex-start;
+  justify-content: space-between;
+  border: 1px solid rgba(190, 214, 241, 0.1);
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.melforia-thoughts__saved li small {
+  color: #8ba4bd;
+}
+
+.melforia-thoughts__saved li p {
+  margin: 6px 0 0;
+  color: #e8f0f8;
+  line-height: 1.55;
+  white-space: pre-wrap;
+}
+
+.melforia-thoughts__saved li button {
+  display: grid;
+  flex: 0 0 40px;
+  width: 40px;
+  min-height: 40px;
+  padding: 0;
+  place-items: center;
+  color: #ffb3be;
+  border: 1px solid rgba(255, 179, 190, 0.15);
+  background: rgba(155, 54, 70, 0.13);
+}
+
+@media (max-width: 700px) {
+  .melforia-thoughts__hero {
+    padding-top: 72px;
+  }
+
+  .melforia-thoughts__actions {
+    flex-direction: column;
+  }
+
+  .melforia-thoughts__actions button,
+  .melforia-thoughts__actions button.is-save {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .melforia-thoughts__meta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}

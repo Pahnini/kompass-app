@@ -36,6 +36,13 @@ export const TEST_TASKS: TestTask[] = [
     link: { label: 'Nova öffnen', to: '/nova' },
   },
   {
+    id: 'voice-thought',
+    title: 'Kurzen Gedanken festhalten',
+    description:
+      'Teste Sprache-zu-Text oder die Tastatureingabe mit einem harmlosen Beispielsatz. Speichere nur, wenn du das möchtest.',
+    link: { label: 'Gedanken öffnen', to: '/gedanken' },
+  },
+  {
     id: 'help',
     title: 'Hilfebereich finden',
     description: 'Prüfe, ob du die Hinweise und Hilfekontakte schnell findest.',

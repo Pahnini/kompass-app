@@ -288,7 +288,8 @@
 }
 
 .melforia-test-form label,
-.melforia-test-rating legend {
+.melforia-test-rating legend,
+.melforia-test-topics legend {
   color: #183b3b;
   font-weight: 700;
 }
@@ -305,6 +306,62 @@
   margin: 0;
   padding: 0;
   border: 0;
+}
+
+.melforia-test-topics {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.melforia-test-topics > p {
+  margin: 5px 0 10px;
+  color: #4a6e69 !important;
+  font-size: 0.82rem;
+}
+
+.melforia-test-topics > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.melforia-test-topics label {
+  cursor: pointer;
+}
+
+.melforia-test-topics input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.melforia-test-topics span {
+  display: inline-flex;
+  min-height: 40px;
+  padding: 8px 12px;
+  align-items: center;
+  border: 2px solid #86aaa3;
+  border-radius: 12px;
+  color: #315d59;
+  background: #fff;
+}
+
+.melforia-test-topics input:checked + span {
+  color: #fff;
+  border-color: #267160;
+  background: #267160;
+}
+
+.melforia-test-topics input:focus-visible + span {
+  outline: 4px solid #ffd166;
+  outline-offset: 3px;
+}
+
+.melforia-test-topics input:disabled + span {
+  cursor: not-allowed;
+  opacity: 0.45;
 }
 
 .melforia-test-rating > div {
@@ -420,7 +477,8 @@ body.night .melforia-test-hero h1,
 body.night .melforia-test-card h2,
 body.night .melforia-test-task strong,
 body.night .melforia-test-form label,
-body.night .melforia-test-rating legend {
+body.night .melforia-test-rating legend,
+body.night .melforia-test-topics legend {
   color: #f3fff9;
 }
 

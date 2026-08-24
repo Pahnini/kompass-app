@@ -1,6 +1,6 @@
 import type { Session } from '@supabase/supabase-js';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
-import { Route, Routes, useLocation } from 'react-router-dom';
+import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AchievementPopup from './components/AchievementPopup';
 import AccessibilityToolbar from './components/accessibility/AccessibilityToolbar';
 import RouteAnnouncer from './components/accessibility/RouteAnnouncer';
@@ -46,6 +46,7 @@ const QuickEditPage = lazy(() => import('./pages/QuickEditPage'));
 const SkillsPage = lazy(() => import('./pages/SkillsPage'));
 const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage'));
 const TestCenterPage = lazy(() => import('./pages/TestCenterPage'));
+const QuickThoughtPage = lazy(() => import('./pages/QuickThoughtPage'));
 
 function AuthenticatedApp() {
   const { theme, background } = useTheme();
@@ -56,6 +57,7 @@ function AuthenticatedApp() {
   let novaContext: 'free' | 'welcome' | 'mood' | 'skill' | 'goal' = 'free';
   if (path === '/') novaContext = 'welcome';
   if (path === '/mood') novaContext = 'mood';
+  if (path === '/gedanken') novaContext = 'goal';
   if (path === '/skills') novaContext = 'skill';
   if (path === '/deinweg') novaContext = 'goal';
 
@@ -142,6 +144,7 @@ function AuthenticatedApp() {
             />
             <Route path="/achievements" element={<AchievementsPage />} />
             <Route path="/mood" element={<MoodCompassView />} />
+            <Route path="/gedanken" element={<QuickThoughtPage />} />
             <Route path="/school" element={<SchoolSupportView />} />
             <Route path="/panic" element={<PanicScreen />} />
             <Route path="/nova" element={<ChatPage />} />
@@ -279,6 +282,7 @@ export default function App(): React.ReactElement {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/gedanken" element={<Navigate to="/login" replace />} />
             <Route path="/barrierefreiheit" element={<AccessibilityPage />} />
             <Route path="/testen" element={<TestCenterPage />} />
             {/* Redirect any other routes to landing when not authenticated */}

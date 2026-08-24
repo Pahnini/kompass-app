@@ -17,16 +17,15 @@ describe('DataService', () => {
   });
 
   describe('Data Processing Service (Server-Side Encryption)', () => {
-    it('should process data correctly (no client-side encryption)', async () => {
+    it('should process data and restore it correctly', async () => {
       const testData = { message: 'Hello Healthcare!', sensitive: true };
 
-      const processed = encryptionService.encrypt(testData, testUserId);
+      const processed = await encryptionService.encrypt(testData, testUserId);
       expect(processed).toBeDefined();
       expect(typeof processed).toBe('string');
-      // Data is now JSON, not encrypted on client
-      expect(processed).toContain('Hello Healthcare!');
+      expect(processed).not.toContain('Hello Healthcare!');
 
-      const parsed = encryptionService.decrypt(await processed, testUserId);
+      const parsed = await encryptionService.decrypt(processed, testUserId);
       expect(parsed).toEqual(testData);
     });
 
@@ -34,15 +33,15 @@ describe('DataService', () => {
       const metadata = encryptionService.getEncryptionMetadata();
 
       expect(metadata).toHaveProperty('algorithm');
-      expect(metadata.algorithm).toBe('NONE-SERVER-SIDE-ONLY');
+      expect(metadata.algorithm).toBe('SUPABASE-AES-256-AT-REST');
       expect(metadata).toHaveProperty('keySize');
-      expect(metadata.keySize).toBe(0);
+      expect(metadata.keySize).toBe(256);
       expect(metadata).toHaveProperty('deviceFingerprint');
-      expect(metadata.deviceFingerprint).toBe('NO-CLIENT-SIDE-FINGERPRINT');
+      expect(metadata.deviceFingerprint).toBe('SERVER-SIDE-SUPABASE');
     });
 
-    it('should pass data processing test', () => {
-      const testResult = encryptionService.testEncryption(testUserId);
+    it('should pass data processing test', async () => {
+      const testResult = await encryptionService.testEncryption(testUserId);
       expect(testResult).toBe(true);
     });
   });

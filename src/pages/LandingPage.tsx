@@ -6,6 +6,7 @@ import {
   CheckCircle2,
   Compass,
   Download,
+  ListChecks,
   MessageSquareText,
   Mic2,
   ShieldCheck,
@@ -14,7 +15,7 @@ import {
 } from 'lucide-react';
 import type React from 'react';
 import { Link } from 'react-router-dom';
-import { APP_NAME, APP_VERSION_LABEL } from '../config/brand';
+import { APP_VERSION_LABEL } from '../config/brand';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
 import './LandingPage.css';
 
@@ -52,14 +53,14 @@ export default function LandingPage(): React.ReactElement {
           <span aria-hidden="true">
             <Compass size={20} />
           </span>
-          <strong>{APP_NAME}</strong>
+          <strong>App-Testprojekt</strong>
           <small>{APP_VERSION_LABEL}</small>
         </Link>
 
         <nav aria-label="Seitennavigation">
           <a href="#funktionen">Funktionen</a>
           <a href="#sicherheit">Sicherheit</a>
-          <Link to="/testen#feedback">Feedback</Link>
+          <Link to="/testen#funktionen-waehlen">Mitentscheiden</Link>
         </nav>
 
         <Link to="/login" className="melforia-landing__login">
@@ -71,19 +72,19 @@ export default function LandingPage(): React.ReactElement {
       <div className="melforia-landing__content">
         <section className="melforia-landing__main">
           <div className="melforia-landing__copy">
-            <p>Dein digitaler Begleiter</p>
-            <h1>Ein ruhiger Ort für deinen Alltag.</h1>
+            <p>Der Name und die Funktionen sind noch offen</p>
+            <h1>Teste mit, was wirklich hilfreich ist.</h1>
             <p>
-              Gedanken festhalten, Stimmung einordnen, hilfreiche Skills finden und den nächsten
-              kleinen Schritt planen – in deinem Tempo.
+              Probiere erste Bereiche aus, wähle deine wichtigsten Funktionen und hilf dabei, aus
+              der Idee eine alltagstaugliche Begleit-App zu machen.
             </p>
             <div className="melforia-landing__actions">
-              <Link to="/login">
-                {APP_NAME} öffnen
+              <Link to="/testen#funktionen-waehlen">
+                Funktionen mitentscheiden
                 <ArrowRight size={18} aria-hidden="true" />
               </Link>
-              <Link to="/testen" className="is-secondary">
-                Testen & Feedback
+              <Link to="/login" className="is-secondary">
+                App ausprobieren
               </Link>
               {deferredPrompt && (
                 <button type="button" onClick={() => void promptInstall()}>
@@ -93,7 +94,7 @@ export default function LandingPage(): React.ReactElement {
               )}
             </div>
             <small>
-              Frühe Testversion · keine Therapie, kein Medizinprodukt und kein Notfalldienst
+              Frühe Testversion · Projektname noch offen · keine Therapie und kein Notfalldienst
             </small>
           </div>
 
@@ -109,11 +110,11 @@ export default function LandingPage(): React.ReactElement {
 
         <section id="funktionen" className="melforia-landing__section">
           <div className="melforia-landing__section-heading">
-            <p>Was dich erwartet</p>
-            <h2>Kleine Werkzeuge statt großer Versprechen.</h2>
+            <p>Was bereits testbar ist</p>
+            <h2>Erste Werkzeuge statt fertiger Versprechen.</h2>
             <span>
-              Du entscheidest selbst, welchen Bereich du öffnest und welche Inhalte du speichern
-              möchtest.
+              Diese Bereiche sind ein Ausgangspunkt. Tester entscheiden mit, was bleibt, was
+              verbessert wird und was noch fehlt.
             </span>
           </div>
           <div className="melforia-landing__features">
@@ -130,6 +131,24 @@ export default function LandingPage(): React.ReactElement {
           </div>
         </section>
 
+        <section className="melforia-landing__co-design" aria-labelledby="co-design-heading">
+          <span aria-hidden="true">
+            <ListChecks size={34} />
+          </span>
+          <div>
+            <p>Funktionslabor</p>
+            <h2 id="co-design-heading">Was soll die App unbedingt können?</h2>
+            <span>
+              Wähle bis zu fünf wichtige Funktionen – auch Ideen, die noch nicht eingebaut sind.
+              Eine fehlende Funktion kannst du selbst ergänzen.
+            </span>
+          </div>
+          <Link to="/testen#funktionen-waehlen">
+            Auswahl öffnen
+            <ArrowRight size={18} aria-hidden="true" />
+          </Link>
+        </section>
+
         <section className="melforia-landing__steps" aria-labelledby="landing-steps-heading">
           <div className="melforia-landing__section-heading">
             <p>So beginnt dein Test</p>
@@ -139,18 +158,17 @@ export default function LandingPage(): React.ReactElement {
             <li>
               <span>01</span>
               <div>
-                <strong>Testkonto anlegen</strong>
-                <p>
-                  Registriere dich mit E-Mail und Passwort oder nutze ein vorbereitetes Testkonto.
-                </p>
+                <strong>Funktionen auswählen</strong>
+                <p>Markiere, welche Bereiche für dich am wichtigsten wären.</p>
               </div>
             </li>
             <li>
               <span>02</span>
               <div>
-                <strong>Bereiche ausprobieren</strong>
+                <strong>Testkonto nutzen</strong>
                 <p>
-                  Nutze harmlose Beispiele und teste nur die Funktionen, die dich interessieren.
+                  Melde dich an und teste mit harmlosen Beispielen nur die Bereiche, die dich
+                  interessieren.
                 </p>
               </div>
             </li>
@@ -177,7 +195,7 @@ export default function LandingPage(): React.ReactElement {
               <CheckCircle2 aria-hidden="true" /> Keine gespeicherten Audioaufnahmen
             </li>
             <li>
-              <CheckCircle2 aria-hidden="true" /> Nova-Chat wird in Test 0.1 nicht gespeichert
+              <CheckCircle2 aria-hidden="true" /> Chat wird in Test 0.1 nicht gespeichert
             </li>
             <li>
               <CheckCircle2 aria-hidden="true" /> Keine Diagnosen oder autonome Therapie
@@ -196,8 +214,8 @@ export default function LandingPage(): React.ReactElement {
             <p>Digitale Begleitung im Testmodus</p>
             <h2>Orientierung in der App – klar begrenzt und transparent.</h2>
             <span>
-              Die Begleitung nutzt derzeit geprüfte, regelbasierte Antworten. Sie ist keine
-              Therapeutin, stellt keine Diagnosen und ersetzt keine persönliche Hilfe.
+              Die Begleitung nutzt derzeit geprüfte, regelbasierte Antworten. Sie stellt keine
+              Diagnosen und ersetzt keine persönliche Hilfe.
             </span>
           </div>
         </section>
@@ -208,8 +226,8 @@ export default function LandingPage(): React.ReactElement {
             <p>Gemeinsam verbessern</p>
             <h2 id="landing-feedback-heading">Dein Feedback prägt die nächste Version.</h2>
             <span>
-              Wähle die betroffenen Bereiche aus, vergib eine Bewertung und teile uns mit, wo du
-              nicht weitergekommen bist.
+              Wähle wichtige Funktionen, bewerte die Bedienung und teile mit, wo du nicht
+              weitergekommen bist oder was noch fehlt.
             </span>
           </div>
           <Link to="/testen#feedback">
@@ -221,8 +239,8 @@ export default function LandingPage(): React.ReactElement {
 
       <footer className="melforia-landing__footer">
         <div>
-          <strong>{APP_NAME}</strong>
-          <span>Frühe Testversion für Alltag, Selbstorganisation und Reflexion.</span>
+          <strong>App-Testprojekt</strong>
+          <span>Projektname und endgültiger Funktionsumfang werden gemeinsam entwickelt.</span>
         </div>
         <nav aria-label="Weitere Informationen">
           <Link to="/barrierefreiheit">Barrierefreiheit & Vorlesen</Link>

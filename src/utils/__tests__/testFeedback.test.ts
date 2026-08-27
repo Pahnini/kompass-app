@@ -5,8 +5,6 @@ import { detectBrowser, detectDevice, testFeedbackSchema } from '../testFeedback
 const validFeedback = {
   category: 'general' as const,
   topics: ['navigation', 'content'] as const,
-  featurePriorities: ['quick-thoughts', 'mood'] as const,
-  missingFeature: 'Eine frei einstellbare Erinnerung wäre hilfreich.',
   rating: 4,
   deviceType: 'desktop' as const,
   browser: 'Edge',
@@ -55,37 +53,6 @@ describe('test feedback validation', () => {
     ).toBe(false);
     expect(
       testFeedbackSchema.safeParse({ ...validFeedback, topics: ['unknown-area'] }).success
-    ).toBe(false);
-  });
-
-  it('requires one to five known feature priorities', () => {
-    expect(testFeedbackSchema.safeParse({ ...validFeedback, featurePriorities: [] }).success).toBe(
-      false
-    );
-    expect(
-      testFeedbackSchema.safeParse({
-        ...validFeedback,
-        featurePriorities: [
-          'quick-thoughts',
-          'mood',
-          'skills',
-          'assistant',
-          'reflection',
-          'personalization',
-        ],
-      }).success
-    ).toBe(false);
-    expect(
-      testFeedbackSchema.safeParse({
-        ...validFeedback,
-        featurePriorities: ['unknown-feature'],
-      }).success
-    ).toBe(false);
-  });
-
-  it('limits a missing feature suggestion to 300 characters', () => {
-    expect(
-      testFeedbackSchema.safeParse({ ...validFeedback, missingFeature: 'x'.repeat(301) }).success
     ).toBe(false);
   });
 });

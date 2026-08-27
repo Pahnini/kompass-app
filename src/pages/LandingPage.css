@@ -13,7 +13,6 @@
 .melforia-landing__section,
 .melforia-landing__steps,
 .melforia-landing__trust,
-.melforia-landing__co-design,
 .melforia-landing__assistant,
 .melforia-landing__feedback,
 .melforia-landing__footer {
@@ -98,7 +97,6 @@
 .melforia-landing__copy > p:first-child,
 .melforia-landing__section-heading > p,
 .melforia-landing__trust > div p,
-.melforia-landing__co-design > div > p,
 .melforia-landing__assistant > div > p,
 .melforia-landing__feedback > div > p {
   margin: 0 0 12px;
@@ -230,7 +228,6 @@
 
 .melforia-landing__section-heading h2,
 .melforia-landing__trust h2,
-.melforia-landing__co-design h2,
 .melforia-landing__assistant h2,
 .melforia-landing__feedback h2 {
   margin: 0;
@@ -325,7 +322,6 @@
 }
 
 .melforia-landing__trust,
-.melforia-landing__co-design,
 .melforia-landing__assistant,
 .melforia-landing__feedback {
   border: 1px solid rgba(190, 214, 241, 0.14);
@@ -377,7 +373,6 @@
   color: #83b5e9;
 }
 
-.melforia-landing__co-design,
 .melforia-landing__assistant,
 .melforia-landing__feedback {
   display: grid;
@@ -388,7 +383,6 @@
   align-items: center;
 }
 
-.melforia-landing__co-design > span,
 .melforia-landing__assistant > span {
   display: grid;
   width: 68px;
@@ -399,14 +393,12 @@
   background: rgba(114, 173, 240, 0.12);
 }
 
-.melforia-landing__co-design h2,
 .melforia-landing__assistant h2,
 .melforia-landing__feedback h2 {
   max-width: 820px;
   font-size: clamp(1.65rem, 3.2vw, 2.8rem);
 }
 
-.melforia-landing__co-design > div > span,
 .melforia-landing__assistant > div > span,
 .melforia-landing__feedback > div > span {
   display: block;
@@ -419,28 +411,6 @@
 .melforia-landing__feedback {
   margin-bottom: 100px;
   grid-template-columns: auto 1fr auto;
-}
-
-.melforia-landing__co-design {
-  margin-top: 22px;
-  grid-template-columns: auto 1fr auto;
-}
-
-.melforia-landing__co-design > a {
-  display: inline-flex;
-  min-height: 49px;
-  padding: 12px 18px;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  color: #182b40;
-  border-radius: 14px;
-  background: #8fbdf2;
-  box-shadow: 0 10px 30px rgba(73, 135, 203, 0.22);
-  font-size: 0.9rem;
-  font-weight: 800;
-  text-decoration: none;
-  white-space: nowrap;
 }
 
 .melforia-landing__feedback > svg {
@@ -494,11 +464,6 @@
     grid-template-columns: auto 1fr;
   }
 
-  .melforia-landing__co-design {
-    grid-template-columns: auto 1fr;
-  }
-
-  .melforia-landing__co-design > a,
   .melforia-landing__feedback > a {
     grid-column: 1 / -1;
   }
@@ -570,7 +535,6 @@
     margin-bottom: 27px;
   }
 
-  .melforia-landing__co-design,
   .melforia-landing__assistant,
   .melforia-landing__feedback {
     grid-template-columns: 1fr;

@@ -4,7 +4,6 @@ import {
   Check,
   ClipboardCheck,
   ExternalLink,
-  Lightbulb,
   LockKeyhole,
   MessageSquareText,
   ShieldCheck,
@@ -13,8 +12,7 @@ import type React from 'react';
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import BackButton from '../components/ui/BackButton';
-import { APP_VERSION, APP_VERSION_LABEL } from '../config/brand';
-import { FEATURE_CANDIDATES, type FeatureCandidateId } from '../data/featureCandidates';
+import { APP_NAME, APP_VERSION, APP_VERSION_LABEL } from '../config/brand';
 import { TEST_TASKS } from '../data/testTasks';
 import { submitTestFeedback } from '../services/feedbackService';
 import { supabase } from '../utils/supabase';
@@ -28,13 +26,11 @@ import {
 import './TestCenterPage.css';
 
 const TEST_PROGRESS_KEY = 'melforia_test_tasks_v1';
-const FEATURE_PRIORITY_KEY = 'melforia_feature_priorities_v1';
-const MAX_FEATURE_PRIORITIES = 5;
 
 const categoryOptions: Array<{ value: FeedbackCategory; label: string }> = [
   { value: 'general', label: 'Allgemeiner Eindruck' },
   { value: 'bug', label: 'Fehler oder Problem' },
-  { value: 'nova', label: 'Digitale Begleitung' },
+  { value: 'nova', label: 'Nova' },
   { value: 'accessibility', label: 'Barrierefreiheit' },
   { value: 'design', label: 'Design' },
 ];
@@ -70,22 +66,6 @@ function readStoredProgress(): string[] {
   }
 }
 
-function readStoredFeaturePriorities(): FeatureCandidateId[] {
-  try {
-    const stored = JSON.parse(localStorage.getItem(FEATURE_PRIORITY_KEY) ?? '[]') as unknown;
-    if (!Array.isArray(stored)) return [];
-    const knownFeatureIds = new Set(FEATURE_CANDIDATES.map(feature => feature.id));
-    return stored
-      .filter(
-        (value): value is FeatureCandidateId =>
-          typeof value === 'string' && knownFeatureIds.has(value as FeatureCandidateId)
-      )
-      .slice(0, MAX_FEATURE_PRIORITIES);
-  } catch {
-    return [];
-  }
-}
-
 export default function TestCenterPage(): React.ReactElement {
   const location = useLocation();
   const [session, setSession] = useState<Session | null>(null);
@@ -93,10 +73,6 @@ export default function TestCenterPage(): React.ReactElement {
   const [completedTasks, setCompletedTasks] = useState<string[]>(readStoredProgress);
   const [category, setCategory] = useState<FeedbackCategory>('general');
   const [topics, setTopics] = useState<FeedbackTopic[]>([]);
-  const [featurePriorities, setFeaturePriorities] = useState<FeatureCandidateId[]>(
-    readStoredFeaturePriorities
-  );
-  const [missingFeature, setMissingFeature] = useState('');
   const [rating, setRating] = useState(0);
   const [deviceType, setDeviceType] = useState<DeviceType>(() => detectDevice(window.innerWidth));
   const [message, setMessage] = useState('');
@@ -119,14 +95,9 @@ export default function TestCenterPage(): React.ReactElement {
   }, [completedTasks]);
 
   useEffect(() => {
-    localStorage.setItem(FEATURE_PRIORITY_KEY, JSON.stringify(featurePriorities));
-  }, [featurePriorities]);
-
-  useEffect(() => {
-    const targetId = location.hash === '#feedback' ? 'feedback' : location.hash.slice(1);
-    if (!targetId) return;
+    if (location.hash !== '#feedback') return;
     const frame = window.requestAnimationFrame(() => {
-      document.getElementById(targetId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      document.getElementById('feedback')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
     return () => window.cancelAnimationFrame(frame);
   }, [location.hash]);
@@ -141,16 +112,6 @@ export default function TestCenterPage(): React.ReactElement {
     setTopics(current =>
       current.includes(topic) ? current.filter(value => value !== topic) : [...current, topic]
     );
-  };
-
-  const toggleFeaturePriority = (featureId: FeatureCandidateId): void => {
-    setFeaturePriorities(current => {
-      if (current.includes(featureId)) {
-        return current.filter(value => value !== featureId);
-      }
-      if (current.length >= MAX_FEATURE_PRIORITIES) return current;
-      return [...current, featureId];
-    });
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
@@ -169,10 +130,6 @@ export default function TestCenterPage(): React.ReactElement {
       setStatus({ type: 'error', text: 'Bitte wähle mindestens einen betroffenen Bereich aus.' });
       return;
     }
-    if (featurePriorities.length === 0) {
-      setStatus({ type: 'error', text: 'Bitte wähle mindestens eine wichtige Funktion aus.' });
-      return;
-    }
     if (!privacyConfirmed) {
       setStatus({ type: 'error', text: 'Bitte bestätige zuerst den Datenschutzhinweis.' });
       return;
@@ -183,8 +140,6 @@ export default function TestCenterPage(): React.ReactElement {
       await submitTestFeedback({
         category,
         topics,
-        featurePriorities,
-        missingFeature,
         rating,
         deviceType,
         browser,
@@ -195,7 +150,6 @@ export default function TestCenterPage(): React.ReactElement {
       setMessage('');
       setRating(0);
       setTopics([]);
-      setMissingFeature('');
       setPrivacyConfirmed(false);
       setStatus({
         type: 'success',
@@ -224,7 +178,7 @@ export default function TestCenterPage(): React.ReactElement {
         </div>
         <div>
           <span className="melforia-test-badge">{APP_VERSION_LABEL}</span>
-          <h1>Die Testversion gemeinsam gestalten</h1>
+          <h1>{APP_NAME} gemeinsam testen</h1>
           <p>
             Probiere die wichtigsten Bereiche in Ruhe aus. Die Aufgaben sind Vorschläge, kein Test
             deiner Person.
@@ -237,84 +191,14 @@ export default function TestCenterPage(): React.ReactElement {
         <div>
           <h2 id="test-safety-heading">Wichtig vor dem Test</h2>
           <p>
-            Dies ist eine frühe Testversion, keine Therapie und kein Medizinprodukt. Die digitale
-            Begleitung arbeitet im kostenlosen Testmodus mit festen Regeln und kann Krisen nicht
-            zuverlässig erkennen. Nutze nur harmlose oder erfundene Beispiele und trage keine echten
-            Gesundheits-, Kontakt- oder Krisendaten ein.
+            Dies ist eine frühe Testversion, keine Therapie und kein Medizinprodukt. Nova arbeitet
+            im kostenlosen Testmodus mit festen Regeln und kann Krisen nicht zuverlässig erkennen.
+            Nutze nur harmlose oder erfundene Beispiele und trage keine echten Gesundheits-,
+            Kontakt- oder Krisendaten ein.
           </p>
           <p>
             Bei unmittelbarer Gefahr: <strong>112 anrufen</strong> oder eine vertraute Person in
             deiner Nähe ansprechen.
-          </p>
-        </div>
-      </section>
-
-      <section
-        id="funktionen-waehlen"
-        className="melforia-test-card"
-        aria-labelledby="feature-priorities-heading"
-      >
-        <div className="melforia-test-section-heading">
-          <div>
-            <p className="melforia-test-eyebrow">Funktionslabor</p>
-            <h2 id="feature-priorities-heading">Was soll die App unbedingt können?</h2>
-          </div>
-          <strong aria-live="polite">
-            {featurePriorities.length} / {MAX_FEATURE_PRIORITIES} gewählt
-          </strong>
-        </div>
-        <p className="melforia-test-local-note" id="feature-priorities-help">
-          Wähle bis zu fünf Funktionen, die dir für eine hilfreiche Testversion am wichtigsten
-          wären. Deine Auswahl bleibt zunächst nur in diesem Browser und wird erst mit deinem
-          Feedback übertragen.
-        </p>
-
-        <div className="melforia-feature-grid" aria-describedby="feature-priorities-help">
-          {FEATURE_CANDIDATES.map(feature => {
-            const isSelected = featurePriorities.includes(feature.id);
-            const isDisabled = !isSelected && featurePriorities.length >= MAX_FEATURE_PRIORITIES;
-            return (
-              <article
-                className={`melforia-feature-card ${isSelected ? 'is-selected' : ''}`}
-                key={feature.id}
-              >
-                <label>
-                  <input
-                    type="checkbox"
-                    checked={isSelected}
-                    disabled={isDisabled}
-                    onChange={() => toggleFeaturePriority(feature.id)}
-                  />
-                  <span className="melforia-feature-card__check" aria-hidden="true">
-                    {isSelected && <Check size={17} />}
-                  </span>
-                  <span className="melforia-feature-card__copy">
-                    <small className={`is-${feature.status}`}>
-                      {feature.status === 'testable' ? 'Bereits testbar' : 'Idee für später'}
-                    </small>
-                    <strong>{feature.title}</strong>
-                    <span>{feature.description}</span>
-                  </span>
-                </label>
-                {feature.link && (
-                  <Link
-                    to={session ? feature.link.to : '/login'}
-                    className="melforia-feature-card__link"
-                  >
-                    {session ? feature.link.label : 'Zum Anmelden'}
-                    <ExternalLink size={14} aria-hidden="true" />
-                  </Link>
-                )}
-              </article>
-            );
-          })}
-        </div>
-
-        <div className="melforia-feature-hint">
-          <Lightbulb aria-hidden="true" />
-          <p>
-            Eine wichtige Funktion fehlt? Du kannst sie unten im Feedback in einem kurzen Satz
-            ergänzen.
           </p>
         </div>
       </section>
@@ -390,9 +274,9 @@ export default function TestCenterPage(): React.ReactElement {
         <div className="melforia-test-privacy-summary">
           <ShieldCheck aria-hidden="true" />
           <p>
-            Gespeichert werden nur Kategorie, ausgewählte Bereiche und Funktionen, Bewertung, dein
-            Text, grobe Geräte-/Browserart, erledigte Aufgaben und App-Version.{' '}
-            <strong>Kein Name, keine E-Mail, keine Nutzer-ID und kein Chatverlauf.</strong>
+            Gespeichert werden nur Kategorie, ausgewählte Bereiche, Bewertung, dein Text, grobe
+            Geräte-/Browserart, erledigte Aufgaben und App-Version.{' '}
+            <strong>Kein Name, keine E-Mail, keine Nutzer-ID und kein Nova-Chat.</strong>
           </p>
         </div>
 
@@ -403,8 +287,8 @@ export default function TestCenterPage(): React.ReactElement {
             <div>
               <strong>Zum Senden bitte anmelden</strong>
               <p>
-                Funktionsauswahl und Aufgaben kannst du schon ansehen. Rückmeldungen nehmen wir nur
-                von angemeldeten Testpersonen an.
+                Die Aufgaben kannst du schon ansehen. Rückmeldungen nehmen wir nur von angemeldeten
+                Testpersonen an.
               </p>
               <Link to="/login">Anmelden oder Testkonto erstellen</Link>
             </div>
@@ -481,18 +365,6 @@ export default function TestCenterPage(): React.ReactElement {
               })}
             </div>
           </fieldset>
-
-          <label className="melforia-test-message">
-            Welche Funktion fehlt dir noch? <span>(optional)</span>
-            <textarea
-              value={missingFeature}
-              onChange={event => setMissingFeature(event.currentTarget.value.slice(0, 300))}
-              maxLength={300}
-              rows={3}
-              placeholder="Zum Beispiel: Eine freiwillige Erinnerung, die ich selbst einstellen kann."
-            />
-            <small>{missingFeature.length} / 300 Zeichen</small>
-          </label>
 
           <label className="melforia-test-message">
             Deine Rückmeldung

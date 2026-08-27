@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import { APP_VERSION } from '../config/brand';
-import { featureCandidateIds } from '../data/featureCandidates';
 
 export const feedbackCategories = ['general', 'bug', 'nova', 'accessibility', 'design'] as const;
 export const feedbackTopics = [
@@ -18,8 +17,6 @@ export const deviceTypes = ['mobile', 'tablet', 'desktop', 'unknown'] as const;
 export const testFeedbackSchema = z.object({
   category: z.enum(feedbackCategories),
   topics: z.array(z.enum(feedbackTopics)).min(1).max(6),
-  featurePriorities: z.array(z.enum(featureCandidateIds)).min(1).max(5),
-  missingFeature: z.string().trim().max(300),
   rating: z.number().int().min(1).max(5),
   deviceType: z.enum(deviceTypes),
   browser: z.string().trim().min(1).max(80),

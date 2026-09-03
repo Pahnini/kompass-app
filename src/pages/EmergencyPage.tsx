@@ -3,6 +3,7 @@ import type { HelpResource } from '../data/helpResources';
 import BackButton from '../components/ui/BackButton';
 import { useTranslation } from 'react-i18next';
 import FailsafeWrapper from '../components/FailsafeWrapper';
+import { Link } from 'react-router-dom';
 
 interface NotfallProps {
   helpResources: HelpResource[];
@@ -27,6 +28,12 @@ export default function Notfall({ helpResources }: NotfallProps): React.ReactEle
             {t('emergency.emergencyNumber')}
           </a>
         </div>
+        <Link
+          to="/sicherheitsplan"
+          style={{ display: 'inline-block', margin: '12px 0', color: '#abebc6', fontWeight: 800 }}
+        >
+          Meinen persönlichen Sicherheitsplan öffnen
+        </Link>
         <div
           style={{
             margin: '18px 0 10px 0',

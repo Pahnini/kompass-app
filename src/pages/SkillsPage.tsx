@@ -5,6 +5,7 @@ import DeleteButton from '../components/ui/DeleteButton';
 import Loading from '../components/ui/Loading';
 import ShareButton from '../components/ui/ShareButton';
 import WordFilePreview from '../components/WordFilePreview';
+import GuidedExercises from '../components/skills/GuidedExercises';
 import type { Skill, WordFile } from '../types/index';
 import { showSuccessToast } from '../utils/toastUtils';
 import { parseWordDocument } from '../utils/wordParser';
@@ -97,6 +98,7 @@ export default function Skills({
     <div className="card">
       <BackButton />
       <h2>{t('skills.title')}</h2>
+      <GuidedExercises />
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {skillsList.map((skill, i) => {
           const skillKey = skill.startsWith('skills.defaultSkills.') ? t(skill) : skill;

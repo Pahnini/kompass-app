@@ -49,6 +49,27 @@ export const TEST_TASKS: TestTask[] = [
     link: { label: 'Hilfe öffnen', to: '/notfall' },
   },
   {
+    id: 'guided-skill',
+    title: 'Kurzübung ausprobieren',
+    description:
+      'Öffne eine geführte Übung, starte den Timer und prüfe, ob die Schritte verständlich sind.',
+    link: { label: 'Kurzübungen öffnen', to: '/skills' },
+  },
+  {
+    id: 'mood-history',
+    title: 'Check-in lokal speichern',
+    description:
+      'Speichere testweise eine Stimmung, prüfe den Verlauf und lösche den Eintrag wieder.',
+    link: { label: 'Stimmung öffnen', to: '/mood' },
+  },
+  {
+    id: 'safety-plan',
+    title: 'Sicherheitsplan prüfen',
+    description:
+      'Nutze ausschließlich erfundene Angaben und kontrolliere anschließend, ob du den Plan löschen kannst.',
+    link: { label: 'Sicherheitsplan öffnen', to: '/sicherheitsplan' },
+  },
+  {
     id: 'accessibility',
     title: 'Vorlesen oder Tastatur testen',
     description: 'Teste die Sprachausgabe oder navigiere mit der Tab-Taste durch eine Seite.',

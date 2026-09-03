@@ -1,0 +1,120 @@
+.guided-exercises {
+  margin: 0 0 2rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(171, 235, 198, 0.42);
+  border-radius: 18px;
+  background: rgba(14, 38, 45, 0.6);
+  color: #fff;
+}
+.guided-exercises__heading {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 1rem;
+}
+.guided-exercises__heading p {
+  margin: 0 0 0.2rem;
+  color: #abebc6;
+  font-weight: 700;
+}
+.guided-exercises__heading h2 {
+  margin: 0;
+  font-size: 1.35rem;
+}
+.guided-exercises__heading > span {
+  font-size: 0.82rem;
+  color: #d8e9e5;
+}
+.guided-exercises__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+.guided-exercises__grid button {
+  min-height: 82px;
+  padding: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.08);
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+.guided-exercises__grid button.is-active {
+  border-color: #abebc6;
+  background: rgba(171, 235, 198, 0.16);
+}
+.guided-exercises__grid strong,
+.guided-exercises__grid small {
+  display: block;
+}
+.guided-exercises__grid small {
+  margin-top: 0.35rem;
+  color: #cfe3df;
+}
+.guided-exercises__player {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 1.5rem;
+  margin-top: 1rem;
+  padding: 1rem;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.1);
+}
+.guided-exercises__player p {
+  margin-top: 0;
+}
+.guided-exercises__player ol {
+  margin-bottom: 0;
+  padding-left: 1.25rem;
+}
+.guided-exercises__player li + li {
+  margin-top: 0.45rem;
+}
+.guided-exercises__timer {
+  min-width: 160px;
+  text-align: center;
+}
+.guided-exercises__timer output {
+  display: block;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-bottom: 0.6rem;
+}
+.guided-exercises__timer div {
+  display: flex;
+  flex-direction: column;
+  gap: 0.45rem;
+}
+.guided-exercises__timer button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  min-height: 42px;
+  padding: 0.55rem 0.75rem;
+  border: 0;
+  border-radius: 10px;
+  cursor: pointer;
+}
+.guided-exercises__timer svg {
+  width: 18px;
+}
+@media (max-width: 800px) {
+  .guided-exercises__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .guided-exercises__player {
+    grid-template-columns: 1fr;
+  }
+}
+@media (max-width: 520px) {
+  .guided-exercises__heading {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .guided-exercises__grid {
+    grid-template-columns: 1fr;
+  }
+}

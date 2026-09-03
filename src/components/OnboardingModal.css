@@ -1,0 +1,63 @@
+.melforia-onboarding__box {
+  width: min(92vw, 540px);
+  padding: 1.5rem !important;
+  text-align: left !important;
+}
+.melforia-onboarding__progress {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.45rem;
+  margin-bottom: 1.5rem;
+}
+.melforia-onboarding__progress span {
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.18);
+}
+.melforia-onboarding__progress span.is-active {
+  background: #abebc6;
+}
+.melforia-onboarding__icon {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 15px;
+  background: rgba(171, 235, 198, 0.15);
+  color: #abebc6;
+}
+.melforia-onboarding__box > p {
+  margin: 1rem 0 0.25rem;
+  color: #abebc6;
+  font-weight: 800;
+}
+.melforia-onboarding__box h2 {
+  margin: 0;
+  font-size: clamp(1.5rem, 4vw, 2rem);
+}
+.melforia-onboarding__copy {
+  margin: 1rem 0 1.5rem;
+  line-height: 1.65;
+}
+.melforia-onboarding__actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.7rem;
+}
+.melforia-onboarding__actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  min-height: 44px;
+  padding: 0.65rem 0.9rem;
+  border: 0;
+  border-radius: 10px;
+  background: #abebc6;
+  color: #173b37;
+  font-weight: 800;
+  cursor: pointer;
+}
+.melforia-onboarding__actions button.is-secondary {
+  background: rgba(255, 255, 255, 0.12);
+  color: inherit;
+}

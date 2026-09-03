@@ -14,6 +14,7 @@ import UpdateToast from './components/UpdateToast';
 import Sidebar from './components/layout/Sidebar';
 import MobileBottomNav from './components/layout/MobileBottomNav';
 import SmartLoading from './components/ui/SmartLoading';
+import PanicButton from './components/shared/PanicButton';
 import { emojiList } from './data/emojis';
 import { helpResources } from './data/helpResources';
 import { sidebarItems } from './data/navigation';
@@ -47,6 +48,7 @@ const SkillsPage = lazy(() => import('./pages/SkillsPage'));
 const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage'));
 const TestCenterPage = lazy(() => import('./pages/TestCenterPage'));
 const QuickThoughtPage = lazy(() => import('./pages/QuickThoughtPage'));
+const SafetyPlanPage = lazy(() => import('./pages/SafetyPlanPage'));
 
 function AuthenticatedApp() {
   const { theme, background } = useTheme();
@@ -183,6 +185,7 @@ function AuthenticatedApp() {
               }
             />
             <Route path="/notfall" element={<EmergencyPage helpResources={helpResources} />} />
+            <Route path="/sicherheitsplan" element={<SafetyPlanPage />} />
             <Route path="/designs" element={<DesignsPage />} />
             <Route path="/barrierefreiheit" element={<AccessibilityPage />} />
             <Route path="/testen" element={<TestCenterPage />} />
@@ -218,6 +221,7 @@ function AuthenticatedApp() {
       <UpdateToast />
       <AccessibilityToolbar />
       <MobileBottomNav onOpenMenu={() => setIsSidebarOpen(true)} />
+      {path !== '/notfall' && path !== '/sicherheitsplan' && <PanicButton />}
 
       {/* ✅ Nova ist global sichtbar (unten rechts) */}
       <div className="melforia-nova-assistant">

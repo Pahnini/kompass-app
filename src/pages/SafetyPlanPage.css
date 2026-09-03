@@ -1,0 +1,92 @@
+.safety-plan-page {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 1.25rem;
+  color: #fff;
+}
+.safety-plan-page header {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-start;
+  margin: 1rem 0;
+}
+.safety-plan-page header > svg {
+  width: 42px;
+  height: 42px;
+  padding: 0.65rem;
+  border-radius: 14px;
+  background: rgba(171, 235, 198, 0.14);
+  color: #abebc6;
+}
+.safety-plan-page header p {
+  margin: 0;
+  color: #abebc6;
+  font-weight: 800;
+}
+.safety-plan-page header h1 {
+  margin: 0.2rem 0 0.35rem;
+}
+.safety-plan-alert {
+  margin: 1rem 0;
+  padding: 1rem;
+  border: 1px solid #f2c45c;
+  border-radius: 12px;
+  background: rgba(91, 68, 13, 0.72);
+}
+.safety-plan-alert a {
+  color: #fff;
+  font-weight: 900;
+}
+.safety-plan-page form {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  border-radius: 16px;
+  background: rgba(21, 48, 54, 0.8);
+}
+.safety-plan-page label {
+  display: grid;
+  gap: 0.45rem;
+  font-weight: 750;
+}
+.safety-plan-page textarea {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.75rem;
+  border: 1px solid #a7c8c0;
+  border-radius: 10px;
+  font: inherit;
+  resize: vertical;
+}
+.safety-plan-privacy {
+  margin: 0;
+  color: #cfe3df;
+  font-size: 0.9rem;
+}
+.safety-plan-status {
+  margin: 0;
+  color: #abebc6;
+  font-weight: 700;
+}
+.safety-plan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.7rem;
+}
+.safety-plan-actions button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.65rem 0.9rem;
+  border: 0;
+  border-radius: 10px;
+  background: #abebc6;
+  color: #153a37;
+  font-weight: 800;
+  cursor: pointer;
+}
+.safety-plan-actions button.is-delete {
+  background: #ffe0e4;
+  color: #7a2030;
+}

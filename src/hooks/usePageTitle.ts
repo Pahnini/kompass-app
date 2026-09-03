@@ -17,6 +17,7 @@ const pageTitles: PageTitles = {
   '/barrierefreiheit': 'Barrierefreiheit',
   '/testen': 'Testen & Feedback',
   '/notfall': 'Notfall & Hilfe',
+  '/panic': 'Soforthilfe – Atemübung',
   '/sicherheitsplan': 'Persönlicher Sicherheitsplan',
   '/guide': 'Psychotherapeut:in finden',
   '/nova': 'Nova',

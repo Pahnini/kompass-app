@@ -350,10 +350,25 @@
     }
   },
   "panic": {
-    "breatheIn": "Atme tief ein …",
-    "breatheOut": "… und aus",
+    "breatheIn": "Ruhig einatmen",
+    "breatheOut": "Langsam ausatmen",
     "focus": "Konzentriere dich auf deinen Atem. Du schaffst das.",
     "feelBetter": "Ich fühle mich besser",
-    "buttonLabel": "Panikhilfe starten"
+    "buttonLabel": "Soforthilfe mit Atemübung starten",
+    "buttonText": "Soforthilfe",
+    "eyebrow": "Direkte Atemhilfe",
+    "title": "Atme mit dem Kreis",
+    "intro": "Die Übung beginnt sofort und dauert zwei Minuten. Atme ohne Druck und höre auf, wenn es unangenehm wird.",
+    "followCircle": "Lass dir Zeit und folge dem Kreis.",
+    "paused": "Die Übung ist pausiert.",
+    "finished": "Geschafft. Bleib noch einen Moment sitzen.",
+    "pause": "Pause",
+    "continue": "Weiter",
+    "restart": "Neu starten",
+    "close": "Atemhilfe schließen",
+    "timeRemaining": "Verbleibende Zeit der Atemübung",
+    "safetyNote": "Bei starker Atemnot, Brustschmerz, Ohnmacht oder unmittelbarer Gefahr: 112 anrufen. Diese Übung ersetzt keine medizinische Hilfe.",
+    "call112": "112 anrufen",
+    "moreHelp": "Weitere Hilfe"
   }
 }

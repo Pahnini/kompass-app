@@ -9,12 +9,13 @@ export default function PanicButton() {
 
   return (
     <button
-      onClick={() => void navigate('/notfall')}
+      type="button"
+      onClick={() => void navigate('/panic')}
       aria-label={t('panic.buttonLabel')}
       className="melforia-help-fab"
     >
       <AlertTriangle className="w-6 h-6" />
-      <span>Hilfe</span>
+      <span>{t('panic.buttonText')}</span>
     </button>
   );
 }

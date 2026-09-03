@@ -221,7 +221,7 @@ function AuthenticatedApp() {
       <UpdateToast />
       <AccessibilityToolbar />
       <MobileBottomNav onOpenMenu={() => setIsSidebarOpen(true)} />
-      {path !== '/notfall' && path !== '/sicherheitsplan' && <PanicButton />}
+      {path !== '/panic' && <PanicButton />}
 
       {/* ✅ Nova ist global sichtbar (unten rechts) */}
       <div className="melforia-nova-assistant">
@@ -233,6 +233,7 @@ function AuthenticatedApp() {
 
 export default function App(): React.ReactElement {
   usePageTitle();
+  const location = useLocation();
   const [session, setSession] = useState<Session | null>(null);
   const [loading, setLoading] = useState(true);
   const { setShowWelcome } = useUI();
@@ -286,6 +287,8 @@ export default function App(): React.ReactElement {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/panic" element={<PanicScreen />} />
+            <Route path="/notfall" element={<EmergencyPage helpResources={helpResources} />} />
             <Route path="/gedanken" element={<Navigate to="/login" replace />} />
             <Route path="/barrierefreiheit" element={<AccessibilityPage />} />
             <Route path="/testen" element={<TestCenterPage />} />
@@ -298,6 +301,7 @@ export default function App(): React.ReactElement {
       <InstallPromptBanner />
       <UpdateToast />
       <AccessibilityToolbar />
+      {location.pathname !== '/panic' && <PanicButton />}
     </div>
   );
 }

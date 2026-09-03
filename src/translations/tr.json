@@ -95,10 +95,25 @@
     }
   },
   "panic": {
-    "breatheIn": "Derin bir nefes al …",
-    "breatheOut": "… ve ver",
+    "breatheIn": "Sakin bir şekilde nefes al",
+    "breatheOut": "Yavaşça nefes ver",
     "focus": "Nefesine odaklan. Bunu başarabilirsin.",
     "feelBetter": "Kendimi daha iyi hissediyorum",
-    "buttonLabel": "Panik yardımı başlat"
+    "buttonLabel": "Hızlı nefes desteğini başlat",
+    "buttonText": "Hızlı yardım",
+    "eyebrow": "Hızlı nefes desteği",
+    "title": "Daireyle birlikte nefes al",
+    "intro": "Egzersiz hemen başlar ve iki dakika sürer. Kendini zorlamadan nefes al ve rahatsız hissedersen dur.",
+    "followCircle": "Acele etme ve daireyi takip et.",
+    "paused": "Egzersiz duraklatıldı.",
+    "finished": "Tamamlandı. Biraz daha oturmaya devam et.",
+    "pause": "Duraklat",
+    "continue": "Devam et",
+    "restart": "Yeniden başlat",
+    "close": "Nefes desteğini kapat",
+    "timeRemaining": "Nefes egzersizinde kalan süre",
+    "safetyNote": "Şiddetli nefes darlığı, göğüs ağrısı, bayılma veya acil tehlike durumunda 112'yi ara. Bu egzersiz tıbbi yardımın yerini tutmaz.",
+    "call112": "112'yi ara",
+    "moreHelp": "Daha fazla yardım"
   }
 }

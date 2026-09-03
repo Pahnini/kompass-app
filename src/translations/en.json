@@ -350,10 +350,25 @@
     }
   },
   "panic": {
-    "breatheIn": "Breathe in deeply …",
-    "breatheOut": "… and out",
+    "breatheIn": "Breathe in gently",
+    "breatheOut": "Breathe out slowly",
     "focus": "Focus on your breath. You've got this.",
     "feelBetter": "I feel better now",
-    "buttonLabel": "Start Panic Help"
+    "buttonLabel": "Start immediate breathing support",
+    "buttonText": "Quick help",
+    "eyebrow": "Immediate breathing support",
+    "title": "Breathe with the circle",
+    "intro": "The exercise starts immediately and lasts two minutes. Breathe without pressure and stop if it feels uncomfortable.",
+    "followCircle": "Take your time and follow the circle.",
+    "paused": "The exercise is paused.",
+    "finished": "Done. Stay seated for another moment.",
+    "pause": "Pause",
+    "continue": "Continue",
+    "restart": "Restart",
+    "close": "Close breathing support",
+    "timeRemaining": "Breathing exercise time remaining",
+    "safetyNote": "If you have severe shortness of breath, chest pain, fainting, or are in immediate danger, call 112. This exercise does not replace medical help.",
+    "call112": "Call 112",
+    "moreHelp": "More help"
   }
 }

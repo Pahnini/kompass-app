@@ -1,0 +1,162 @@
+.melforia-app-shell {
+  line-height: 1.55;
+}
+.melforia-app-shell .card {
+  border-radius: 20px;
+  background: var(--melforia-surface);
+  box-shadow: 0 8px 26px rgba(7, 17, 29, 0.12);
+  backdrop-filter: none;
+}
+.melforia-home {
+  color: var(--melforia-text);
+}
+.melforia-home__primary {
+  padding: 10px;
+  gap: 10px;
+  border-radius: 20px;
+  background: var(--melforia-surface);
+  box-shadow: none;
+}
+.melforia-home__primary a {
+  border-radius: 14px;
+  padding: 20px 16px;
+  min-height: 140px;
+}
+.melforia-home__primary a > span {
+  margin-bottom: 12px;
+}
+.melforia-home__compass-orbit {
+  width: 128px;
+  height: 128px;
+  border-width: 4px;
+  box-shadow: 0 0 32px rgba(114, 173, 240, 0.12);
+}
+.melforia-home__compass-orbit svg {
+  width: 66px;
+  height: 66px;
+}
+.melforia-home__nova,
+.melforia-home__section {
+  border-radius: 18px;
+  padding: 22px;
+  background: var(--melforia-surface);
+  box-shadow: none;
+}
+.melforia-home__brand small,
+.melforia-sidebar__group > h2,
+.melforia-sidebar__group > h3,
+.melforia-home__greeting > p {
+  font-size: 0.875rem !important;
+}
+.melforia-bottom-nav a,
+.melforia-bottom-nav button {
+  font-size: 0.8rem;
+}
+.home-test-link {
+  display: inline-block;
+  color: var(--melforia-text);
+  padding: 14px 0;
+  font-size: 0.95rem;
+}
+.melforia-app-shell button,
+.melforia-app-shell a {
+  touch-action: manipulation;
+}
+.melforia-app-shell button:focus-visible,
+.melforia-app-shell a:focus-visible {
+  outline: 3px solid #a9ccf5;
+  outline-offset: 4px;
+}
+.melforia-app-shell[data-appearance='light'] .melforia-home__brand,
+.melforia-app-shell[data-appearance='light'] .melforia-home__primary a,
+.melforia-app-shell[data-appearance='light'] .melforia-home__greeting h1,
+.melforia-app-shell[data-appearance='light'] .melforia-home__compass,
+.melforia-app-shell[data-appearance='light'] .melforia-home__nova h2,
+.melforia-app-shell[data-appearance='light'] .melforia-home__section-heading h2 {
+  color: var(--melforia-text);
+}
+.melforia-app-shell[data-appearance='light'] .melforia-home__primary a small,
+.melforia-app-shell[data-appearance='light'] .melforia-home__compass small,
+.melforia-app-shell[data-appearance='light'] .melforia-home__nova small,
+.melforia-app-shell[data-appearance='light'] .melforia-home__greeting > p {
+  color: var(--melforia-muted);
+}
+.melforia-app-shell[data-appearance='light'] .game-quest-top strong,
+.melforia-app-shell[data-appearance='light'] .game-quests a {
+  color: #245980;
+}
+.melforia-app-shell[data-appearance='light'] .melforia-home__progress {
+  color: var(--melforia-text);
+}
+.melforia-app-shell[data-appearance='light'] .melforia-sidebar {
+  background: #f4f7fb;
+  color: #162b40 !important;
+}
+.melforia-app-shell[data-appearance='light'] .melforia-sidebar .sidebar-item,
+.melforia-app-shell[data-appearance='light'] .melforia-sidebar .sidebar-brand {
+  color: #162b40;
+}
+.melforia-app-shell[data-appearance='light'] .melforia-sidebar__group > p,
+.melforia-app-shell[data-appearance='light'] .melforia-sidebar .sidebar-brand small,
+.melforia-app-shell[data-appearance='light'] .melforia-sidebar .sidebar-language-toggle button {
+  color: #50647a;
+}
+.melforia-sidebar__group > p {
+  font-size: 0.8rem;
+}
+@media (min-width: 701px) {
+  .melforia-nova-assistant {
+    left: 256px;
+  }
+}
+@media (max-width: 700px) {
+  .melforia-home__hero {
+    min-height: 0;
+    padding: 24px 4px;
+    gap: 18px;
+    grid-template-columns: 1fr;
+  }
+  .melforia-home__greeting-row h1 {
+    font-size: 2.15rem;
+    line-height: 1.15;
+  }
+  .melforia-home__compass {
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 12px;
+  }
+  .melforia-home__compass-orbit {
+    width: 64px;
+    height: 64px;
+    border-width: 3px;
+    flex-shrink: 0;
+  }
+  .melforia-home__compass-orbit svg {
+    width: 34px;
+    height: 34px;
+  }
+  .melforia-home__compass small {
+    display: none;
+  }
+  .melforia-home__primary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .melforia-home__primary a {
+    padding: 16px 12px;
+    min-height: 110px;
+  }
+  .melforia-home__primary a small {
+    display: none;
+  }
+  .melforia-bottom-nav {
+    box-shadow: 0 8px 24px rgba(4, 12, 21, 0.2);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .melforia-app-shell *,
+  .demo-page * {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}

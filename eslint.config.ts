@@ -53,7 +53,7 @@ export default [
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       ...prettierConfig.rules,
-      'prettier/prettier': 'error',
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
       'no-unused-vars': 'off', // Vollständig deaktiviert wegen Interface-Parameter False Positives
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
     },
@@ -80,7 +80,7 @@ export default [
       ...js.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
       ...prettierConfig.rules,
-      'prettier/prettier': 'error',
+      'prettier/prettier': ['error', { endOfLine: 'auto' }],
       // Disable JS rule and use TS rule instead
       'no-unused-vars': 'off', // TypeScript-Regel wird verwendet
       '@typescript-eslint/no-unused-vars': 'off', // Deaktiviert - False Positives bei Interface-Parametern

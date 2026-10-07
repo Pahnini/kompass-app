@@ -7,14 +7,15 @@ import ShareButton from '../components/ui/ShareButton';
 import type { Emoji } from '../data/emojis';
 import type { Achievement, CalendarNotes, Goal, Symptoms } from '../types/index';
 import { showErrorToast, showSuccessToast } from '../utils/toastUtils';
+import { useGamification } from '../context/GamificationContext';
 
 interface DeinWegProps {
   goals: Goal[];
-  setGoals: (goals: Goal[]) => void;
+  setGoals: (goals: Goal[]) => Promise<boolean>;
   achievements: Achievement[];
   setAchievements: (achievements: Achievement[]) => void;
   calendarNotes: CalendarNotes;
-  setCalendarNotes: (notes: CalendarNotes) => void;
+  setCalendarNotes: (notes: CalendarNotes) => Promise<boolean>;
   symptoms: Symptoms;
   setSymptoms: (symptoms: Symptoms) => void;
   shareAchievement: (achievement: Achievement) => void;
@@ -38,6 +39,8 @@ export default function DeinWeg({
   templates = [],
 }: DeinWegProps): React.ReactElement {
   const { t } = useTranslation();
+  const { record } = useGamification();
+  const [savingGoal, setSavingGoal] = useState(false);
   const [goalInput, setGoalInput] = useState('');
   const [achievementInput, setAchievementInput] = useState('');
   const [selectedDate, setSelectedDate] = useState(new Date().toISOString().split('T')[0]);
@@ -50,22 +53,35 @@ export default function DeinWeg({
   const [justSelectedEmoji, setJustSelectedEmoji] = useState('');
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
 
-  const addGoal = () => {
-    if (goalInput.trim())
-      setGoals([
-        ...goals,
-        {
-          id: Date.now().toString(),
-          text: goalInput,
-          completed: false,
-          title: '',
-        },
-      ]);
-    setGoalInput('');
+  const addGoal = async () => {
+    if (!goalInput.trim() || savingGoal) return;
+    setSavingGoal(true);
+    const saved = await setGoals([
+      ...goals,
+      {
+        id: Date.now().toString(),
+        text: goalInput,
+        completed: false,
+        title: '',
+      },
+    ]);
+    if (saved) setGoalInput('');
+    else showErrorToast('Das Ziel konnte nicht gespeichert werden.');
+    setSavingGoal(false);
   };
 
-  const toggleGoal = (i: number): void =>
-    setGoals(goals.map((g, idx) => (idx === i ? { ...g, completed: !g.completed } : g)));
+  const toggleGoal = async (id: string): Promise<void> => {
+    if (savingGoal) return;
+    const goal = goals.find(g => g.id === id);
+    if (!goal) return;
+    setSavingGoal(true);
+    const saved = await setGoals(
+      goals.map(g => (g.id === id ? { ...g, completed: !g.completed } : g))
+    );
+    if (saved && !goal.completed) record('goal', goal.id);
+    if (!saved) showErrorToast('Das Ziel konnte nicht gespeichert werden.');
+    setSavingGoal(false);
+  };
 
   const addAchievement = () => {
     if (achievementInput.trim())
@@ -94,7 +110,7 @@ export default function DeinWeg({
     setSelectedMood(dateSymptoms && dateSymptoms.length > 0 ? dateSymptoms[0].title : null);
   }, [selectedDate, calendarNotes, symptoms]);
 
-  const saveNote = () => {
+  const saveNote = async () => {
     if (!noteText.trim() && symptomScore === 0) {
       showErrorToast(t('errors.addNoteOrSymptom'));
       return;
@@ -102,9 +118,12 @@ export default function DeinWeg({
 
     const updatedCalendarNotes = {
       ...calendarNotes,
-      [selectedDate]: { text: noteText, title: '' },
+      [selectedDate]: { ...calendarNotes[selectedDate], text: noteText, title: '' },
     };
-    setCalendarNotes(updatedCalendarNotes);
+    if (!(await setCalendarNotes(updatedCalendarNotes))) {
+      showErrorToast('Dein Eintrag konnte nicht gespeichert werden.');
+      return;
+    }
 
     const updatedSymptoms = {
       ...symptoms,
@@ -267,17 +286,21 @@ export default function DeinWeg({
         <ul>
           {goals
             .filter(g => g && g.text)
-            .map((g, i) => (
-              <li key={i} className={g.completed ? 'done' : ''}>
+            .map(g => (
+              <li key={g.id} className={g.completed ? 'done' : ''}>
                 <input
                   type="checkbox"
                   checked={g.completed || false}
-                  onChange={() => toggleGoal(i)}
+                  disabled={savingGoal}
+                  aria-label={`Ziel ${g.text} erledigt`}
+                  onChange={() => void toggleGoal(g.id)}
                 />
                 <span className="text-content">{g.text}</span>
                 <div className="actions">
                   <DeleteButton
-                    onDelete={() => setGoals(goals.filter((_, idx) => idx !== i))}
+                    onDelete={() => {
+                      void setGoals(goals.filter(goal => goal.id !== g.id));
+                    }}
                     ariaLabel={t('ariaLabels.removeGoal')}
                   />
                 </div>

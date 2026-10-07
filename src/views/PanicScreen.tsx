@@ -1,4 +1,4 @@
-import { CirclePause, CirclePlay, Phone, RotateCcw, X } from 'lucide-react';
+import { CirclePause, CirclePlay, RotateCcw, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -103,9 +103,6 @@ export default function PanicScreen() {
 
         <p className="panic-screen__safety-note">{t('panic.safetyNote')}</p>
         <div className="panic-screen__help-actions">
-          <a href="tel:112" className="panic-screen__emergency-call">
-            <Phone aria-hidden="true" /> {t('panic.call112')}
-          </a>
           <button type="button" onClick={() => void navigate('/notfall')}>
             {t('panic.moreHelp')}
           </button>

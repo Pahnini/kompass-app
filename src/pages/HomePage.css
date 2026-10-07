@@ -61,8 +61,8 @@
 
 .melforia-home__hero {
   display: grid;
-  min-height: clamp(410px, 58vh, 650px);
-  padding: clamp(46px, 8vw, 100px) clamp(6px, 4vw, 48px) 38px;
+  min-height: 280px;
+  padding: 36px 10px 28px;
   align-items: center;
   grid-template-columns: minmax(0, 1.15fr) minmax(280px, 0.85fr);
   gap: clamp(28px, 6vw, 90px);
@@ -90,7 +90,7 @@
   max-width: 720px;
   margin: 0;
   color: #f7f9fc;
-  font-size: clamp(3rem, 7vw, 6.7rem);
+  font-size: clamp(2rem, 4vw, 3.4rem);
   font-weight: 600;
   letter-spacing: -0.055em;
   line-height: 0.98;

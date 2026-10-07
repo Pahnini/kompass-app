@@ -1,11 +1,11 @@
 import { LogOut, Sparkles, X } from 'lucide-react';
 import type React from 'react';
-import { useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useLocation } from 'react-router-dom';
 import { APP_NAME, APP_VERSION_LABEL } from '../../config/brand';
 import { getNavigationPath } from '../../data/navigation';
-import { useUserData } from '../../hooks/useUserData';
+import { useGamification } from '../../context/GamificationContext';
 import type { SidebarItem } from '../../types/index';
 import { supabase } from '../../utils/supabase';
 
@@ -18,7 +18,7 @@ interface SidebarProps {
 
 const navigationGroups = [
   { label: 'Mein Alltag', keys: ['home', 'skills', 'mood', 'gedanken', 'deinweg', 'nova'] },
-  { label: 'Entdecken', keys: ['designs', 'achievements', 'school'] },
+  { label: 'Entdecken', keys: ['designs', 'achievements', 'arcade', 'school'] },
   {
     label: 'Hilfe & Einstellungen',
     keys: ['notfall', 'guide', 'barrierefreiheit', 'testen', 'quickedit'],
@@ -27,8 +27,45 @@ const navigationGroups = [
 
 export default function Sidebar({ items, isOpen, setIsOpen }: SidebarProps): React.ReactElement {
   const location = useLocation();
-  const { points } = useUserData();
+  const aside = useRef<HTMLElement>(null);
+  const [mobile, setMobile] = useState(() => window.matchMedia('(max-width:700px)').matches);
+  const { state } = useGamification();
+  const points = state.xp;
   const { t, i18n } = useTranslation();
+  useEffect(() => {
+    const media = window.matchMedia('(max-width:700px)');
+    const update = () => setMobile(media.matches);
+    media.addEventListener('change', update);
+    return () => media.removeEventListener('change', update);
+  }, []);
+  useEffect(() => {
+    if (!mobile || !isOpen || !aside.current) return;
+    const previous = document.activeElement as HTMLElement | null;
+    const node = aside.current;
+    const elements = () =>
+      Array.from(node.querySelectorAll<HTMLElement>('a[href],button:not(:disabled)')).filter(
+        el => el.getClientRects().length > 0
+      );
+    elements()[0]?.focus();
+    const trap = (event: KeyboardEvent) => {
+      if (event.key !== 'Tab') return;
+      const targets = elements();
+      const first = targets[0];
+      const last = targets.at(-1);
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last?.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first?.focus();
+      }
+    };
+    node.addEventListener('keydown', trap);
+    return () => {
+      node.removeEventListener('keydown', trap);
+      if (previous?.isConnected) previous.focus();
+    };
+  }, [mobile, isOpen]);
 
   useEffect(() => {
     setIsOpen(false);
@@ -62,6 +99,10 @@ export default function Sidebar({ items, isOpen, setIsOpen }: SidebarProps): Rea
       />
 
       <aside
+        ref={aside}
+        inert={mobile && !isOpen}
+        role={mobile ? 'dialog' : undefined}
+        aria-modal={mobile && isOpen ? true : undefined}
         id="melforia-sidebar"
         className={`sidebar melforia-sidebar ${isOpen ? 'open' : ''}`}
         aria-label="Melforia Seitenmenü"

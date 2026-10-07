@@ -6,6 +6,7 @@ import BackButton from '../components/ui/BackButton';
 import { APP_NAME } from '../config/brand';
 import { useSpeechRecognition } from '../hooks/useSpeechRecognition';
 import { useUserData } from '../hooks/useUserData';
+import { useGamification } from '../context/GamificationContext';
 import type { CalendarNote, ThoughtEntry } from '../types/index';
 import './QuickThoughtPage.css';
 
@@ -32,6 +33,8 @@ function formatTime(isoDate: string): string {
 
 export default function QuickThoughtPage(): React.ReactElement {
   const { calendarNotes, setCalendarNotes } = useUserData();
+  const { record } = useGamification();
+  const [saving, setSaving] = useState(false);
   const [draft, setDraft] = useState('');
   const [usedVoice, setUsedVoice] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
@@ -60,7 +63,8 @@ export default function QuickThoughtPage(): React.ReactElement {
     [calendarNotes, todayKey]
   );
 
-  const saveThought = (): void => {
+  const saveThought = async (): Promise<void> => {
+    if (saving) return;
     const text = draft.trim();
     if (!text) {
       setStatus('Schreibe oder sprich zuerst einen kurzen Gedanken.');
@@ -76,31 +80,44 @@ export default function QuickThoughtPage(): React.ReactElement {
       connections: [],
     };
 
-    setCalendarNotes({
+    setSaving(true);
+    const saved = await setCalendarNotes({
       ...calendarNotes,
       [todayKey]: {
         ...currentNote,
         entries: [...(currentNote.entries ?? []), entry],
       },
     });
+    setSaving(false);
+    if (!saved) {
+      setStatus('Dein Gedanke konnte nicht gespeichert werden. Der Entwurf bleibt erhalten.');
+      return;
+    }
+    record('thought', entry.id);
     setDraft('');
     setUsedVoice(false);
     clearError();
     setStatus('Dein Gedanke wurde als privater Eintrag gespeichert.');
   };
 
-  const removeThought = (id: string): void => {
+  const removeThought = async (id: string): Promise<void> => {
     const currentNote = calendarNotes[todayKey];
-    if (!currentNote) return;
+    if (!currentNote || saving) return;
 
-    setCalendarNotes({
+    setSaving(true);
+    const saved = await setCalendarNotes({
       ...calendarNotes,
       [todayKey]: {
         ...currentNote,
         entries: (currentNote.entries ?? []).filter(entry => entry.id !== id),
       },
     });
-    setStatus('Der Eintrag wurde gelöscht.');
+    setSaving(false);
+    setStatus(
+      saved
+        ? 'Der Eintrag wurde gelöscht.'
+        : 'Der Eintrag konnte nicht gelöscht werden. Bitte versuche es erneut.'
+    );
   };
 
   return (
@@ -183,9 +200,14 @@ export default function QuickThoughtPage(): React.ReactElement {
             <Trash2 aria-hidden="true" />
             Entwurf verwerfen
           </button>
-          <button type="button" className="is-save" onClick={saveThought} disabled={!draft.trim()}>
+          <button
+            type="button"
+            className="is-save"
+            onClick={() => void saveThought()}
+            disabled={saving || !draft.trim()}
+          >
             <Save aria-hidden="true" />
-            Als Eintrag speichern
+            {saving ? 'Wird gespeichert …' : 'Als Eintrag speichern'}
           </button>
         </div>
 
@@ -242,7 +264,8 @@ export default function QuickThoughtPage(): React.ReactElement {
                 </div>
                 <button
                   type="button"
-                  onClick={() => removeThought(entry.id)}
+                  onClick={() => void removeThought(entry.id)}
+                  disabled={saving}
                   aria-label="Gedanken löschen"
                 >
                   <Trash2 aria-hidden="true" />

@@ -1,6 +1,8 @@
 import { Save, ShieldCheck, Trash2 } from 'lucide-react';
 import type React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useUserData } from '../hooks/useUserData';
+import { accountStorageKey, useScopedStorage } from '../hooks/useScopedStorage';
 import BackButton from '../components/ui/BackButton';
 import './SafetyPlanPage.css';
 
@@ -19,20 +21,31 @@ const emptyPlan: SafetyPlan = {
   safePlace: '',
 };
 
-function loadPlan(): SafetyPlan {
-  try {
-    const value = JSON.parse(
-      localStorage.getItem(STORAGE_KEY) ?? 'null'
-    ) as Partial<SafetyPlan> | null;
-    return value ? { ...emptyPlan, ...value } : emptyPlan;
-  } catch {
-    return emptyPlan;
-  }
+function validatePlan(value: unknown): SafetyPlan {
+  if (!value || typeof value !== 'object') return emptyPlan;
+  return Object.fromEntries(
+    Object.keys(emptyPlan).map(key => [
+      key,
+      typeof (value as Record<string, unknown>)[key] === 'string'
+        ? String((value as Record<string, unknown>)[key]).slice(0, 500)
+        : '',
+    ])
+  ) as SafetyPlan;
 }
 
 export default function SafetyPlanPage(): React.ReactElement {
-  const [plan, setPlan] = useState<SafetyPlan>(loadPlan);
+  const { userId } = useUserData();
+  const [stored, writePlan] = useScopedStorage(
+    accountStorageKey(STORAGE_KEY, userId),
+    emptyPlan,
+    validatePlan
+  );
+  const [plan, setPlan] = useState<SafetyPlan>(stored);
   const [status, setStatus] = useState('');
+  useEffect(() => {
+    setPlan(stored);
+    setStatus('');
+  }, [stored]);
 
   const update = (field: keyof SafetyPlan, value: string): void => {
     setPlan(current => ({ ...current, [field]: value.slice(0, 500) }));
@@ -40,12 +53,18 @@ export default function SafetyPlanPage(): React.ReactElement {
   };
 
   const save = (): void => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(plan));
-    setStatus('Dein Plan wurde nur in diesem Browser gespeichert.');
+    setStatus(
+      writePlan(plan)
+        ? 'Dein Plan wurde kontogetrennt in diesem Browser gespeichert.'
+        : 'Der Browser konnte den Plan nicht speichern. Deine Eingabe bleibt erhalten.'
+    );
   };
 
   const remove = (): void => {
-    localStorage.removeItem(STORAGE_KEY);
+    if (!writePlan(null)) {
+      setStatus('Der Plan konnte nicht gelöscht werden.');
+      return;
+    }
     setPlan(emptyPlan);
     setStatus('Der lokale Sicherheitsplan wurde gelöscht.');
   };

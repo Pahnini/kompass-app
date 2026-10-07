@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { AlertTriangle } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 import './PanicButton.css';
 
@@ -12,10 +11,10 @@ export default function PanicButton() {
       type="button"
       onClick={() => void navigate('/panic')}
       aria-label={t('panic.buttonLabel')}
+      title={t('panic.buttonLabel')}
       className="melforia-help-fab"
     >
-      <AlertTriangle className="w-6 h-6" />
-      <span>{t('panic.buttonText')}</span>
+      <span aria-hidden="true">!</span>
     </button>
   );
 }

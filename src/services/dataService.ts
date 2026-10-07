@@ -15,7 +15,6 @@
 import type { Achievement, CalendarNotes, Goal, Skill, Symptoms, WordFile } from '../types/index';
 import { supabase } from '../utils/supabase';
 import { encryptionService } from './encryptionService';
-import * as storageService from './storageService';
 
 // Storage backend interface
 interface StorageBackend {
@@ -90,15 +89,8 @@ class SupabaseStorageBackend implements StorageBackend {
         if (import.meta.env.DEV) {
           console.log('🔧 Continuing with fallback behavior to prevent app crash');
         }
-        // Re-throw only for critical auth errors
-        if (
-          error instanceof Error &&
-          (error.message.includes('user_id') || error.message.includes('auth'))
-        ) {
-          throw error;
-        }
-        // For other errors, return null to indicate no data
-        return null;
+        // Unreadable existing data is not an empty record.
+        throw error;
       }
     }
 
@@ -398,24 +390,19 @@ class SupabaseStorageBackend implements StorageBackend {
 
       case 'favorites': {
         // Get existing preferences or create new
-        const { data: existingProfile } = await supabase
+        const { data: existingProfile, error: profileError } = await supabase
           .from('user_profiles')
           .select('encrypted_preferences')
           .eq('user_id', userId)
-          .single();
+          .maybeSingle();
+        if (profileError) throw profileError;
 
         let preferences: any = {};
         if (existingProfile?.encrypted_preferences) {
-          try {
-            preferences = await this.decryptData(existingProfile.encrypted_preferences, userId);
-            // Ensure preferences is an object
-            if (typeof preferences !== 'object' || preferences === null) {
-              console.warn('⚠️ Decrypted preferences is not an object, using empty object');
-              preferences = {};
-            }
-          } catch (error) {
-            console.warn('⚠️ Failed to decrypt preferences, using empty object:', error);
-            preferences = {};
+          preferences = await this.decryptData(existingProfile.encrypted_preferences, userId);
+          // Ensure preferences is an object
+          if (typeof preferences !== 'object' || preferences === null) {
+            throw new Error('Existing preferences could not be read safely');
           }
         }
 
@@ -463,17 +450,6 @@ class SupabaseStorageBackend implements StorageBackend {
             title: typeof goal.title === 'string' ? goal.title : '',
           }));
 
-        // First, mark all existing goals as deleted
-        await supabase
-          .from('user_goals')
-          .update({
-            is_deleted: true,
-            deleted_at: new Date().toISOString(),
-            deletion_reason: 'replaced_by_update',
-          })
-          .eq('user_id', userId)
-          .eq('is_deleted', false);
-
         if (validGoals && validGoals.length > 0) {
           const goalRows = await Promise.all(
             validGoals.map(async goal => ({
@@ -494,6 +470,24 @@ class SupabaseStorageBackend implements StorageBackend {
 
           if (error) throw error;
         }
+        // Prepare/save retained rows first. An encryption failure must never delete old goals.
+        let removedGoals = supabase
+          .from('user_goals')
+          .update({
+            is_deleted: true,
+            deleted_at: new Date().toISOString(),
+            deletion_reason: 'removed_by_user',
+          })
+          .eq('user_id', userId)
+          .eq('is_deleted', false);
+        if (validGoals.length)
+          removedGoals = removedGoals.not(
+            'goal_id',
+            'in',
+            `(${validGoals.map(g => JSON.stringify(g.id)).join(',')})`
+          );
+        const { error: removeError } = await removedGoals;
+        if (removeError) throw removeError;
         break;
       }
 
@@ -516,17 +510,6 @@ class SupabaseStorageBackend implements StorageBackend {
                 : new Date().toISOString().split('T')[0],
           }));
 
-        // First, mark all existing achievements as deleted
-        await supabase
-          .from('user_achievements')
-          .update({
-            is_deleted: true,
-            deleted_at: new Date().toISOString(),
-            deletion_reason: 'replaced_by_update',
-          })
-          .eq('user_id', userId)
-          .eq('is_deleted', false);
-
         if (validAchievements && validAchievements.length > 0) {
           const achievementRows = await Promise.all(
             validAchievements.map(async achievement => ({
@@ -548,6 +531,23 @@ class SupabaseStorageBackend implements StorageBackend {
 
           if (error) throw error;
         }
+        let removedAchievements = supabase
+          .from('user_achievements')
+          .update({
+            is_deleted: true,
+            deleted_at: new Date().toISOString(),
+            deletion_reason: 'removed_by_user',
+          })
+          .eq('user_id', userId)
+          .eq('is_deleted', false);
+        if (validAchievements.length)
+          removedAchievements = removedAchievements.not(
+            'achievement_id',
+            'in',
+            `(${validAchievements.map(a => JSON.stringify(a.id)).join(',')})`
+          );
+        const { error: removeError } = await removedAchievements;
+        if (removeError) throw removeError;
         break;
       }
 
@@ -735,16 +735,22 @@ class SupabaseStorageBackend implements StorageBackend {
 
 // localStorage backend (existing implementation with encryption support)
 class LocalStorageBackend implements StorageBackend {
-  async get<T>(key: string, _userId: string): Promise<T | null> {
-    return storageService.get<T>(key);
+  async get<T>(key: string, userId: string): Promise<T | null> {
+    const raw = localStorage.getItem(`melforia_account:${userId}:${key}`);
+    if (raw === null) return null;
+    try {
+      return JSON.parse(raw) as T;
+    } catch {
+      return null;
+    }
   }
 
-  async set<T>(key: string, data: T, _userId: string): Promise<void> {
-    storageService.set(key, data);
+  async set<T>(key: string, data: T, userId: string): Promise<void> {
+    localStorage.setItem(`melforia_account:${userId}:${key}`, JSON.stringify(data));
   }
 
-  async remove(key: string, _userId: string): Promise<void> {
-    storageService.remove(key);
+  async remove(key: string, userId: string): Promise<void> {
+    localStorage.removeItem(`melforia_account:${userId}:${key}`);
   }
 
   async sync(_userId: string): Promise<void> {
@@ -758,6 +764,7 @@ export class HybridDataService {
   private localStorageBackend: LocalStorageBackend;
   private isOnline: boolean = navigator.onLine;
   private syncQueue: Map<string, any> = new Map();
+  private failedReads = new Set<string>();
 
   constructor() {
     this.supabaseBackend = new SupabaseStorageBackend();
@@ -782,14 +789,24 @@ export class HybridDataService {
     if (!userId || typeof userId !== 'string' || userId.trim() === '') {
       throw new Error(`Invalid userId provided for getData: ${userId}`);
     }
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+    if (error || session?.user.id !== userId) throw new Error('Session user ID mismatch');
 
     try {
       if (this.isOnline) {
         // Try Supabase first
         const supabaseData = await this.supabaseBackend.get<T>(key, userId);
+        this.failedReads.delete(`${userId}:${key}`);
         if (supabaseData !== null) {
           // Cache in localStorage for offline access
-          await this.localStorageBackend.set(key, supabaseData, userId);
+          try {
+            await this.localStorageBackend.set(key, supabaseData, userId);
+          } catch {
+            console.warn('Read succeeded but local cache could not be updated.');
+          }
           return supabaseData;
         }
       }
@@ -797,6 +814,7 @@ export class HybridDataService {
       // Fallback to localStorage only if no decryption errors occurred
       return await this.localStorageBackend.get<T>(key, userId);
     } catch (error) {
+      if (this.isOnline) this.failedReads.add(`${userId}:${key}`);
       // Check if this is a critical auth error - if so, don't fallback to localStorage
       if (
         error instanceof Error &&
@@ -860,6 +878,16 @@ export class HybridDataService {
    * Set data with Supabase-first approach for healthcare compliance
    */
   async setData<T>(key: string, data: T, userId: string): Promise<void> {
+    if (this.failedReads.has(`${userId}:${key}`)) {
+      throw new Error(
+        'Existing data could not be loaded; reload successfully before saving changes'
+      );
+    }
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+    if (error || session?.user.id !== userId) throw new Error('Session user ID mismatch');
     // Healthcare-first: Always try Supabase first for data integrity
     if (this.isOnline) {
       try {
@@ -872,16 +900,7 @@ export class HybridDataService {
         console.log(`✅ Healthcare data ${key} saved to Supabase and cached locally`);
       } catch (error) {
         console.warn(`⚠️ Failed to save ${key} to Supabase:`, error);
-
-        // For healthcare data, we still want to cache locally but warn user
-        await this.localStorageBackend.set(key, data, userId);
-
-        // Queue for retry when connection is restored
-        this.queueForSync(key, data, userId);
-
-        if (import.meta.env.DEV) {
-          console.log(`💾 ${key} cached locally, will retry Supabase sync when online`);
-        }
+        throw error;
       }
     } else {
       // Offline: Save to localStorage and queue for sync
@@ -896,6 +915,13 @@ export class HybridDataService {
    * Remove data from both storage backends
    */
   async removeData(key: string, userId: string): Promise<void> {
+    if (this.failedReads.has(`${userId}:${key}`))
+      throw new Error('Existing data could not be loaded; reload successfully before removing it');
+    const {
+      data: { session },
+      error,
+    } = await supabase.auth.getSession();
+    if (error || session?.user.id !== userId) throw new Error('Session user ID mismatch');
     // Remove from localStorage immediately
     await this.localStorageBackend.remove(key, userId);
 
@@ -1113,7 +1139,7 @@ export class HybridDataService {
 
     for (const [queueKey, queueData] of entries) {
       try {
-        await this.supabaseBackend.set(queueData.key, queueData.data, queueData.userId);
+        await this.setData(queueData.key, queueData.data, queueData.userId);
         this.syncQueue.delete(queueKey);
         console.log(`Synced queued data: ${queueData.key}`);
       } catch (error) {

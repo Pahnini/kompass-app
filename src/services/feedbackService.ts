@@ -9,6 +9,9 @@ export class FeedbackAuthenticationError extends Error {
 }
 
 export async function submitTestFeedback(input: TestFeedbackInput): Promise<void> {
+  // Paused until the feedback process and legal information have been reviewed.
+  if (import.meta.env.VITE_FEEDBACK_ENABLED !== 'true')
+    throw new Error('Die Feedbackübermittlung ist derzeit pausiert.');
   const parsed = testFeedbackSchema.parse(input);
   const {
     data: { session },

@@ -10,6 +10,27 @@ export interface TestTask {
 
 export const TEST_TASKS: TestTask[] = [
   {
+    id: 'arcade-rewards',
+    title: 'Arcade-Spiele freischalten',
+    description:
+      'Sammle Demo-XP, prüfe die Freischaltung bei 20, 60 und 120 XP und spiele eine Runde. Deine XP werden nicht verbraucht.',
+    link: { label: 'Arcade-Demo öffnen', to: '/arcade-demo' },
+  },
+  {
+    id: 'daily-quests',
+    title: 'Tagesaufgaben & XP testen',
+    description:
+      'Wähle Aufgaben im Demobereich, schließe sie ab und prüfe, dass Wiederholungen keine doppelten Belohnungen vergeben.',
+    link: { label: 'Quest-Demo öffnen', to: '/demo' },
+  },
+  {
+    id: 'gamification-day',
+    title: 'Tageswechsel & Abzeichen',
+    description:
+      'Wechsle zum nächsten Demotag. Tagesaufgaben starten neu; XP und Abzeichen bleiben erhalten.',
+    link: { label: 'Tageswechsel testen', to: '/demo' },
+  },
+  {
     id: 'navigation',
     title: 'Orientierung prüfen',
     description: 'Öffne zwei Bereiche über das Menü und finde anschließend zurück zur Startseite.',

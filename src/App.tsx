@@ -1,7 +1,7 @@
-import type { Session } from '@supabase/supabase-js';
 import React, { lazy, Suspense, useEffect, useState } from 'react';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import AchievementPopup from './components/AchievementPopup';
+import AuthConnectionNotice from './components/AuthConnectionNotice';
 import AccessibilityToolbar from './components/accessibility/AccessibilityToolbar';
 import RouteAnnouncer from './components/accessibility/RouteAnnouncer';
 import DatenschutzModal from './components/DatenschutzModal';
@@ -24,18 +24,20 @@ import { usePageTitle } from './hooks/usePageTitle';
 import { useTheme } from './hooks/useTheme';
 import { useUI } from './hooks/useUI';
 import { useUserData } from './hooks/useUserData';
+import { useStartupSession } from './hooks/useStartupSession';
 import AchievementsPage from './pages/AchievementsPage';
 import HomePage from './pages/HomePage';
 import LandingPage from './pages/LandingPage';
 import LoginPage from './pages/LoginPage';
 import NotFoundPage from './pages/NotFoundPage';
 import { shareAchievement, shareSkill } from './utils/shareUtils';
-import { supabase } from './utils/supabase';
 import MoodCompassView from './views/MoodCompassView';
 import NovaSettings from './views/NovaSettings';
 import PanicScreen from './views/PanicScreen';
 import SchoolSupportView from './views/SchoolSupport/SchoolSupportView';
 import './styles/MelforiaShell.css';
+import './styles/SlimDesign.css';
+import { GamificationProvider } from './context/GamificationContext';
 
 // Lazy-loaded Komponenten
 const ChatPage = lazy(() => import('./pages/ChatPage'));
@@ -49,6 +51,9 @@ const AccessibilityPage = lazy(() => import('./pages/AccessibilityPage'));
 const TestCenterPage = lazy(() => import('./pages/TestCenterPage'));
 const QuickThoughtPage = lazy(() => import('./pages/QuickThoughtPage'));
 const SafetyPlanPage = lazy(() => import('./pages/SafetyPlanPage'));
+const DemoPage = lazy(() => import('./pages/DemoPage'));
+const ArcadePage = lazy(() => import('./pages/ArcadePage'));
+const ArcadeDemoPage = lazy(() => import('./pages/ArcadeDemoPage'));
 
 function AuthenticatedApp() {
   const { theme, background } = useTheme();
@@ -104,7 +109,18 @@ function AuthenticatedApp() {
   }, [achievements]);
 
   return (
-    <div className="melforia-app-shell">
+    <div
+      className="melforia-app-shell"
+      data-appearance={theme.dark ? 'dark' : 'light'}
+      style={
+        {
+          '--melforia-surface': theme.dark ? '#22364b' : '#ffffff',
+          '--melforia-text': theme.text,
+          '--melforia-muted': theme.dark ? '#bacada' : '#4c6275',
+          '--melforia-border': theme.dark ? 'rgba(190,214,241,.18)' : 'rgba(32,53,71,.18)',
+        } as React.CSSProperties
+      }
+    >
       <GlobalStyle />
       <a href="#main-content" className="melforia-skip-link">
         Zum Hauptinhalt springen
@@ -145,6 +161,9 @@ function AuthenticatedApp() {
               }
             />
             <Route path="/achievements" element={<AchievementsPage />} />
+            <Route path="/erfolge" element={<Navigate to="/achievements" replace />} />
+            <Route path="/arcade" element={<ArcadePage />} />
+            <Route path="/arcade-demo" element={<ArcadeDemoPage />} />
             <Route path="/mood" element={<MoodCompassView />} />
             <Route path="/gedanken" element={<QuickThoughtPage />} />
             <Route path="/school" element={<SchoolSupportView />} />
@@ -189,6 +208,7 @@ function AuthenticatedApp() {
             <Route path="/designs" element={<DesignsPage />} />
             <Route path="/barrierefreiheit" element={<AccessibilityPage />} />
             <Route path="/testen" element={<TestCenterPage />} />
+            <Route path="/demo" element={<DemoPage />} />
             <Route path="/guide" element={<GuidePage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route
@@ -234,30 +254,8 @@ function AuthenticatedApp() {
 export default function App(): React.ReactElement {
   usePageTitle();
   const location = useLocation();
-  const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { session, loading, connectionIssue } = useStartupSession();
   const { setShowWelcome } = useUI();
-
-  useEffect(() => {
-    if (!supabase) {
-      console.error('Supabase client is not initialized.');
-      setLoading(false);
-      return;
-    }
-
-    void supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setLoading(false);
-    });
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
 
   useEffect(() => {
     if (session) {
@@ -265,13 +263,42 @@ export default function App(): React.ReactElement {
     }
   }, [session, setShowWelcome]);
 
-  if (loading) {
+  // Keep an active exercise independent of auth recovery and account data loading.
+  if (location.pathname === '/panic') {
+    return (
+      <>
+        <GlobalStyle />
+        <RouteAnnouncer />
+        <main id="main-content" tabIndex={-1} data-speech-content="true">
+          <PanicScreen />
+        </main>
+        <AccessibilityToolbar />
+      </>
+    );
+  }
+
+  const publicDuringStartup = [
+    '/',
+    '/login',
+    '/panic',
+    '/notfall',
+    '/barrierefreiheit',
+    '/testen',
+    '/demo',
+    '/arcade-demo',
+  ].includes(location.pathname);
+
+  if (loading && !publicDuringStartup) {
     return <SmartLoading message="Verbindung wird hergestellt..." />;
   }
 
   // If there's a session, show the authenticated app
   if (session) {
-    return <AuthenticatedApp />;
+    return (
+      <GamificationProvider key={session.user.id}>
+        <AuthenticatedApp />
+      </GamificationProvider>
+    );
   }
 
   // If no session, show public routes (landing, login)
@@ -282,6 +309,7 @@ export default function App(): React.ReactElement {
         Zum Hauptinhalt springen
       </a>
       <RouteAnnouncer />
+      {connectionIssue && location.pathname !== '/panic' && <AuthConnectionNotice />}
       <main id="main-content" tabIndex={-1} data-speech-content="true">
         <Suspense fallback={<SmartLoading message="Seite wird geladen..." />}>
           <Routes>
@@ -292,7 +320,10 @@ export default function App(): React.ReactElement {
             <Route path="/gedanken" element={<Navigate to="/login" replace />} />
             <Route path="/barrierefreiheit" element={<AccessibilityPage />} />
             <Route path="/testen" element={<TestCenterPage />} />
+            <Route path="/demo" element={<DemoPage />} />
             {/* Redirect any other routes to landing when not authenticated */}
+            <Route path="/arcade-demo" element={<ArcadeDemoPage />} />
+            <Route path="/arcade" element={<Navigate to="/arcade-demo" replace />} />
             <Route path="*" element={<LandingPage />} />
           </Routes>
         </Suspense>

@@ -9,9 +9,9 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . || echo 'ESLint errors - mostly false positives (interface parameters)'",
-    "lint:strict": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "lint": "eslint src api",
+    "lint:strict": "eslint src api",
+    "lint:fix": "eslint src api --fix",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "format:check": "prettier --check \"**/*.{js,jsx,ts,tsx,json,css,md}\"",
     "preview": "vite preview",
@@ -21,7 +21,7 @@
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
     "contributor": "./contributor-helper.sh",
-    "prepare": "npm run format && npm run lint:fix && npm run type-check"
+    "prepare": "npm run type-check"
   },
   "dependencies": {
     "@ai-sdk/openai": "4.0.36",
@@ -59,7 +59,8 @@
     "@typescript-eslint/eslint-plugin": "^8.38.0",
     "@typescript-eslint/parser": "^8.38.0",
     "@vitejs/plugin-react": "^4.4.1",
-    "@vitest/ui": "^3.2.4",
+    "@vitest/ui": "4.1.11",
+    "@tailwindcss/postcss": "4.3.3",
     "autoprefixer": "^10.4.19",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.5",
@@ -74,11 +75,11 @@
     "lint-staged": "^16.1.2",
     "postcss": "^8.4.38",
     "prettier": "^3.6.2",
-    "tailwindcss": "^3.4.3",
+    "tailwindcss": "4.3.3",
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
     "vite": "^6.3.5",
-    "vitest": "^3.2.4"
+    "vitest": "4.1.11"
   },
   "lint-staged": {
     "src/**/*.{js,jsx}": [

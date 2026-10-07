@@ -18,6 +18,8 @@ import { APP_NAME, APP_VERSION_LABEL } from '../config/brand';
 import { useInstallPrompt } from '../hooks/useInstallPrompt';
 import './LandingPage.css';
 
+const feedbackEnabled = import.meta.env.VITE_FEEDBACK_ENABLED === 'true';
+
 const featureCards = [
   {
     icon: Mic2,
@@ -157,8 +159,14 @@ export default function LandingPage(): React.ReactElement {
             <li>
               <span>03</span>
               <div>
-                <strong>Rückmeldung geben</strong>
-                <p>Bewerte Bedienung und Bereiche und beschreibe, was wir verbessern sollten.</p>
+                <strong>
+                  {feedbackEnabled ? 'Rückmeldung geben' : 'Demobereich ausprobieren'}
+                </strong>
+                <p>
+                  {feedbackEnabled
+                    ? 'Bewerte Bedienung und Bereiche und beschreibe, was wir verbessern sollten.'
+                    : 'Teste Aufgaben und Belohnungen ohne persönliche Einträge. Die Feedbackübermittlung ist derzeit pausiert.'}
+                </p>
               </div>
             </li>
           </ol>
@@ -208,12 +216,13 @@ export default function LandingPage(): React.ReactElement {
             <p>Gemeinsam verbessern</p>
             <h2 id="landing-feedback-heading">Dein Feedback prägt die nächste Version.</h2>
             <span>
-              Wähle die betroffenen Bereiche aus, vergib eine Bewertung und teile uns mit, wo du
-              nicht weitergekommen bist.
+              {feedbackEnabled
+                ? 'Wähle die betroffenen Bereiche aus, vergib eine Bewertung und teile uns mit, wo du nicht weitergekommen bist.'
+                : 'Du kannst die Funktionen bereits ausprobieren. Rückmeldungen nehmen wir über die App erst entgegen, wenn die Datenschutzfragen geklärt sind.'}
             </span>
           </div>
-          <Link to="/testen#feedback">
-            Feedback geben
+          <Link to={feedbackEnabled ? '/testen#feedback' : '/demo'}>
+            {feedbackEnabled ? 'Feedback geben' : 'Demo ausprobieren'}
             <ArrowRight size={18} aria-hidden="true" />
           </Link>
         </section>

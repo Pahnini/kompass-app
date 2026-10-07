@@ -7,7 +7,8 @@ import ShareButton from '../components/ui/ShareButton';
 import WordFilePreview from '../components/WordFilePreview';
 import GuidedExercises from '../components/skills/GuidedExercises';
 import type { Skill, WordFile } from '../types/index';
-import { showSuccessToast } from '../utils/toastUtils';
+import { showErrorToast, showSuccessToast } from '../utils/toastUtils';
+import { useGamification } from '../context/GamificationContext';
 import { parseWordDocument } from '../utils/wordParser';
 
 interface SkillsProps {
@@ -17,7 +18,7 @@ interface SkillsProps {
   skillsList: Skill[];
   setSkillsList: (skills: Skill[]) => void;
   skillsCompleted: Record<string, boolean>;
-  setSkillsCompleted: (completed: Record<string, boolean>) => void;
+  setSkillsCompleted: (completed: Record<string, boolean>) => Promise<boolean>;
 }
 
 export default function Skills({
@@ -30,6 +31,8 @@ export default function Skills({
   setSkillsCompleted,
 }: SkillsProps): React.ReactElement {
   const { t } = useTranslation();
+  const { record } = useGamification();
+  const [savingSkill, setSavingSkill] = useState(false);
 
   const [isUploading, setIsUploading] = useState<boolean>(false);
   const [parsedLines, setParsedLines] = useState<string[]>([]);
@@ -98,7 +101,7 @@ export default function Skills({
     <div className="card">
       <BackButton />
       <h2>{t('skills.title')}</h2>
-      <GuidedExercises />
+      <GuidedExercises onComplete={id => record('skill', id)} />
       <ul style={{ listStyle: 'none', padding: 0 }}>
         {skillsList.map((skill, i) => {
           const skillKey = skill.startsWith('skills.defaultSkills.') ? t(skill) : skill;
@@ -119,14 +122,23 @@ export default function Skills({
               <input
                 type="checkbox"
                 checked={isCompleted}
-                onChange={() => {
+                disabled={savingSkill}
+                aria-label={`${skillKey} als angewendet markieren`}
+                onChange={async () => {
+                  setSavingSkill(true);
                   const newCompleted = { ...skillsCompleted };
                   if (isCompleted) {
                     delete newCompleted[skill];
                   } else {
                     newCompleted[skill] = true;
                   }
-                  setSkillsCompleted(newCompleted);
+                  const saved = await setSkillsCompleted(newCompleted);
+                  if (saved && !isCompleted) record('skill', skill);
+                  if (!saved)
+                    showErrorToast(
+                      'Der Skill konnte nicht gespeichert werden. Bitte versuche es erneut.'
+                    );
+                  setSavingSkill(false);
                 }}
                 style={{
                   width: '18px',

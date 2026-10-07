@@ -3,23 +3,39 @@ import React, { useState } from 'react';
 import MoodCompass from '../components/shared/MoodCompass';
 import { t } from 'i18next';
 import './MoodCompassView.css';
+import { useUserData } from '../hooks/useUserData';
+import { useGamification } from '../context/GamificationContext';
+import { accountStorageKey, useScopedStorage } from '../hooks/useScopedStorage';
 
 type MoodEntry = { id: string; mood: string; note: string; createdAt: string };
 const STORAGE_KEY = 'melforia_mood_history_v1';
 
-function loadHistory(): MoodEntry[] {
-  try {
-    const value = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? '[]') as unknown;
-    return Array.isArray(value) ? (value as MoodEntry[]).slice(0, 30) : [];
-  } catch {
-    return [];
-  }
+const EMPTY_HISTORY: MoodEntry[] = [];
+function validateHistory(value: unknown): MoodEntry[] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .filter(
+      (entry): entry is MoodEntry =>
+        entry &&
+        typeof entry.id === 'string' &&
+        typeof entry.mood === 'string' &&
+        typeof entry.note === 'string' &&
+        typeof entry.createdAt === 'string' &&
+        Number.isFinite(Date.parse(entry.createdAt))
+    )
+    .slice(0, 30);
 }
 
 const MoodCompassView: React.FC = () => {
   const [selectedMood, setSelectedMood] = useState<string | null>(null);
   const [note, setNote] = useState('');
-  const [history, setHistory] = useState<MoodEntry[]>(loadHistory);
+  const { userId } = useUserData();
+  const { record } = useGamification();
+  const [history, setHistory] = useScopedStorage(
+    accountStorageKey(STORAGE_KEY, userId),
+    EMPTY_HISTORY,
+    validateHistory
+  );
   const [status, setStatus] = useState('');
 
   const handleMoodSelect = (mood: string) => {
@@ -39,8 +55,11 @@ const MoodCompassView: React.FC = () => {
       createdAt: new Date().toISOString(),
     };
     const next = [entry, ...history].slice(0, 30);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    setHistory(next);
+    if (!setHistory(next)) {
+      setStatus('Der Browser konnte den Check-in nicht speichern. Deine Eingabe bleibt erhalten.');
+      return;
+    }
+    record('mood', entry.id);
     setSelectedMood(null);
     setNote('');
     setStatus('Dein Check-in wurde nur in diesem Browser gespeichert.');
@@ -48,8 +67,7 @@ const MoodCompassView: React.FC = () => {
 
   const deleteMood = (id: string): void => {
     const next = history.filter(entry => entry.id !== id);
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
-    setHistory(next);
+    if (!setHistory(next)) setStatus('Der Eintrag konnte nicht gelöscht werden.');
   };
 
   return (

@@ -24,8 +24,10 @@ import {
   type FeedbackTopic,
 } from '../utils/testFeedback';
 import './TestCenterPage.css';
+import { accountStorageKey, useScopedStorage } from '../hooks/useScopedStorage';
 
 const TEST_PROGRESS_KEY = 'melforia_test_tasks_v1';
+const feedbackEnabled = import.meta.env.VITE_FEEDBACK_ENABLED === 'true';
 
 const categoryOptions: Array<{ value: FeedbackCategory; label: string }> = [
   { value: 'general', label: 'Allgemeiner Eindruck' },
@@ -53,24 +55,28 @@ const feedbackTopicOptions: Array<{ value: FeedbackTopic; label: string }> = [
   { value: 'account', label: 'Anmeldung & Konto' },
 ];
 
-function readStoredProgress(): string[] {
-  try {
-    const stored = JSON.parse(localStorage.getItem(TEST_PROGRESS_KEY) ?? '[]') as unknown;
-    if (!Array.isArray(stored)) return [];
-    const knownTaskIds = new Set(TEST_TASKS.map(task => task.id));
-    return stored.filter(
-      (value): value is string => typeof value === 'string' && knownTaskIds.has(value)
-    );
-  } catch {
-    return [];
-  }
+const EMPTY_PROGRESS: string[] = [];
+function validateProgress(stored: unknown): string[] {
+  if (!Array.isArray(stored)) return [];
+  const knownTaskIds = new Set(TEST_TASKS.map(task => task.id));
+  return [
+    ...new Set(
+      stored.filter(
+        (value): value is string => typeof value === 'string' && knownTaskIds.has(value)
+      )
+    ),
+  ];
 }
 
 export default function TestCenterPage(): React.ReactElement {
   const location = useLocation();
   const [session, setSession] = useState<Session | null>(null);
   const [authLoaded, setAuthLoaded] = useState(false);
-  const [completedTasks, setCompletedTasks] = useState<string[]>(readStoredProgress);
+  const [completedTasks, setCompletedTasks] = useScopedStorage(
+    accountStorageKey(TEST_PROGRESS_KEY, session?.user.id ?? null),
+    EMPTY_PROGRESS,
+    validateProgress
+  );
   const [category, setCategory] = useState<FeedbackCategory>('general');
   const [topics, setTopics] = useState<FeedbackTopic[]>([]);
   const [rating, setRating] = useState(0);
@@ -84,15 +90,23 @@ export default function TestCenterPage(): React.ReactElement {
   const progress = Math.round((completedTasks.length / TEST_TASKS.length) * 100);
 
   useEffect(() => {
+    let active = true;
     void supabase.auth.getSession().then(({ data }) => {
+      if (!active) return;
       setSession(data.session);
       setAuthLoaded(true);
     });
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, next) => {
+      setSession(next);
+      setAuthLoaded(true);
+    });
+    return () => {
+      active = false;
+      subscription.unsubscribe();
+    };
   }, []);
-
-  useEffect(() => {
-    localStorage.setItem(TEST_PROGRESS_KEY, JSON.stringify(completedTasks));
-  }, [completedTasks]);
 
   useEffect(() => {
     if (location.hash !== '#feedback') return;
@@ -103,9 +117,15 @@ export default function TestCenterPage(): React.ReactElement {
   }, [location.hash]);
 
   const toggleTask = (taskId: string): void => {
-    setCompletedTasks(current =>
-      current.includes(taskId) ? current.filter(id => id !== taskId) : [...current, taskId]
-    );
+    if (
+      !setCompletedTasks(
+        completedTasks.includes(taskId)
+          ? completedTasks.filter(id => id !== taskId)
+          : [...completedTasks, taskId]
+      )
+    ) {
+      setStatus({ type: 'error', text: 'Der Browser konnte den Testfortschritt nicht speichern.' });
+    }
   };
 
   const toggleFeedbackTopic = (topic: FeedbackTopic): void => {
@@ -116,6 +136,10 @@ export default function TestCenterPage(): React.ReactElement {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>): Promise<void> => {
     event.preventDefault();
+    if (!feedbackEnabled) {
+      setStatus({ type: 'error', text: 'Die Feedbackübermittlung ist derzeit pausiert.' });
+      return;
+    }
     setStatus(null);
 
     if (!session) {
@@ -206,6 +230,24 @@ export default function TestCenterPage(): React.ReactElement {
       <section className="melforia-test-card" aria-labelledby="test-tasks-heading">
         <div className="melforia-test-section-heading">
           <div>
+            <p className="melforia-test-eyebrow">Ohne echte Einträge</p>
+            <h2>Deine Testauswahl</h2>
+            <p>
+              Wähle ein Szenario. Im Demobereich kannst du Quests, Belohnungen und Tageswechsel
+              getrennt von deinem Konto prüfen.
+            </p>
+          </div>
+        </div>
+        <nav className="demo-controls" aria-label="Demoszenarien">
+          <Link to="/demo">Alles testen</Link>
+          <Link to="/demo?scenario=mood">Stimmung</Link>
+          <Link to="/demo?scenario=skill">Skills</Link>
+          <Link to="/demo?scenario=thought">Gedanken</Link>
+          <Link to="/demo?scenario=goal">Ziele</Link>
+          <Link to="/arcade-demo">Arcade-Belohnungen</Link>
+        </nav>
+        <div className="melforia-test-section-heading">
+          <div>
             <p className="melforia-test-eyebrow">Geführter Test</p>
             <h2 id="test-tasks-heading">{TEST_TASKS.length} kurze Aufgaben</h2>
           </div>
@@ -274,14 +316,14 @@ export default function TestCenterPage(): React.ReactElement {
         <div className="melforia-test-privacy-summary">
           <ShieldCheck aria-hidden="true" />
           <p>
-            Gespeichert werden nur Kategorie, ausgewählte Bereiche, Bewertung, dein Text, grobe
-            Geräte-/Browserart, erledigte Aufgaben und App-Version.{' '}
+            Bei aktivierter Übermittlung werden nur Kategorie, ausgewählte Bereiche, Bewertung, dein
+            Text, grobe Geräte-/Browserart, erledigte Aufgaben und App-Version.{' '}
             <strong>Kein Name, keine E-Mail, keine Nutzer-ID und kein Nova-Chat.</strong>
           </p>
         </div>
 
-        {!authLoaded && <p role="status">Anmeldestatus wird geprüft …</p>}
-        {authLoaded && !session && (
+        {feedbackEnabled && !authLoaded && <p role="status">Anmeldestatus wird geprüft …</p>}
+        {feedbackEnabled && authLoaded && !session && (
           <div className="melforia-test-login-note">
             <LockKeyhole aria-hidden="true" />
             <div>
@@ -296,114 +338,130 @@ export default function TestCenterPage(): React.ReactElement {
         )}
 
         <form className="melforia-test-form" onSubmit={event => void handleSubmit(event)}>
-          <div className="melforia-test-form__row">
-            <label>
-              Bereich
-              <select
-                value={category}
-                onChange={event => setCategory(event.currentTarget.value as FeedbackCategory)}
-              >
-                {categoryOptions.map(option => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <label>
-              Gerät
-              <select
-                value={deviceType}
-                onChange={event => setDeviceType(event.currentTarget.value as DeviceType)}
-              >
-                {Object.entries(deviceLabels).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </label>
-          </div>
-
-          <fieldset className="melforia-test-rating">
-            <legend>Wie gut konntest du die App bedienen?</legend>
-            <div>
-              {[1, 2, 3, 4, 5].map(value => (
-                <label key={value}>
-                  <input
-                    type="radio"
-                    name="rating"
-                    value={value}
-                    checked={rating === value}
-                    onChange={() => setRating(value)}
-                  />
-                  <span>{value}</span>
-                </label>
-              ))}
-            </div>
-            <small>1 = sehr schwierig · 5 = sehr einfach</small>
-          </fieldset>
-
-          <fieldset className="melforia-test-topics">
-            <legend>Welche Bereiche betrifft deine Rückmeldung?</legend>
-            <p>Wähle mindestens einen und höchstens sechs Punkte.</p>
-            <div>
-              {feedbackTopicOptions.map(option => {
-                const isChecked = topics.includes(option.value);
-                const isDisabled = !isChecked && topics.length >= 6;
-                return (
-                  <label key={option.value}>
-                    <input
-                      type="checkbox"
-                      checked={isChecked}
-                      disabled={isDisabled}
-                      onChange={() => toggleFeedbackTopic(option.value)}
-                    />
-                    <span>{option.label}</span>
-                  </label>
-                );
-              })}
-            </div>
-          </fieldset>
-
-          <label className="melforia-test-message">
-            Deine Rückmeldung
-            <textarea
-              value={message}
-              onChange={event => setMessage(event.currentTarget.value)}
-              minLength={10}
-              maxLength={1500}
-              rows={6}
-              placeholder="Was hat gut funktioniert? Wo bist du nicht weitergekommen?"
-              required
-            />
-            <small>
-              {message.length} / 1500 Zeichen · Erkannter Browser: {browser}
-            </small>
-          </label>
-
-          <label className="melforia-test-consent">
-            <input
-              type="checkbox"
-              checked={privacyConfirmed}
-              onChange={event => setPrivacyConfirmed(event.currentTarget.checked)}
-              required
-            />
-            <span>
-              Ich habe keine Namen, Kontaktdaten, Gesundheitsdaten oder echten Kriseninhalte in
-              meine Rückmeldung geschrieben.
-            </span>
-          </label>
-
-          {status && (
-            <p className={`melforia-test-status is-${status.type}`} role="status">
-              {status.text}
+          {!feedbackEnabled && (
+            <p role="status">
+              Feedback wird vorbereitet. Bis zur Prüfung der Datenschutzhinweise und des Verfahrens
+              werden über dieses Formular keine Rückmeldungen entgegengenommen.
             </p>
           )}
+          <fieldset disabled={!feedbackEnabled} style={{ border: 0, padding: 0, margin: 0 }}>
+            <div className="melforia-test-form__row">
+              <label>
+                Bereich
+                <select
+                  value={category}
+                  onChange={event => setCategory(event.currentTarget.value as FeedbackCategory)}
+                >
+                  {categoryOptions.map(option => (
+                    <option key={option.value} value={option.value}>
+                      {option.label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                Gerät
+                <select
+                  value={deviceType}
+                  onChange={event => setDeviceType(event.currentTarget.value as DeviceType)}
+                >
+                  {Object.entries(deviceLabels).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            </div>
 
-          <button type="submit" className="melforia-test-submit" disabled={submitting || !session}>
-            {submitting ? 'Feedback wird gesendet …' : 'Feedback sicher senden'}
-          </button>
+            <fieldset className="melforia-test-rating">
+              <legend>Wie gut konntest du die App bedienen?</legend>
+              <div>
+                {[1, 2, 3, 4, 5].map(value => (
+                  <label key={value}>
+                    <input
+                      type="radio"
+                      name="rating"
+                      value={value}
+                      checked={rating === value}
+                      onChange={() => setRating(value)}
+                    />
+                    <span>{value}</span>
+                  </label>
+                ))}
+              </div>
+              <small>1 = sehr schwierig · 5 = sehr einfach</small>
+            </fieldset>
+
+            <fieldset className="melforia-test-topics">
+              <legend>Welche Bereiche betrifft deine Rückmeldung?</legend>
+              <p>Wähle mindestens einen und höchstens sechs Punkte.</p>
+              <div>
+                {feedbackTopicOptions.map(option => {
+                  const isChecked = topics.includes(option.value);
+                  const isDisabled = !isChecked && topics.length >= 6;
+                  return (
+                    <label key={option.value}>
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        disabled={isDisabled}
+                        onChange={() => toggleFeedbackTopic(option.value)}
+                      />
+                      <span>{option.label}</span>
+                    </label>
+                  );
+                })}
+              </div>
+            </fieldset>
+
+            <label className="melforia-test-message">
+              Deine Rückmeldung
+              <textarea
+                value={message}
+                onChange={event => setMessage(event.currentTarget.value)}
+                minLength={10}
+                maxLength={1500}
+                rows={6}
+                placeholder="Was hat gut funktioniert? Wo bist du nicht weitergekommen?"
+                required
+              />
+              <small>
+                {message.length} / 1500 Zeichen · Erkannter Browser: {browser}
+              </small>
+            </label>
+
+            <label className="melforia-test-consent">
+              <input
+                type="checkbox"
+                checked={privacyConfirmed}
+                onChange={event => setPrivacyConfirmed(event.currentTarget.checked)}
+                required
+              />
+              <span>
+                Ich habe keine Namen, Kontaktdaten, Gesundheitsdaten oder echten Kriseninhalte in
+                meine Rückmeldung geschrieben.
+              </span>
+            </label>
+
+            {status && (
+              <p className={`melforia-test-status is-${status.type}`} role="status">
+                {status.text}
+              </p>
+            )}
+
+            <button
+              type="submit"
+              className="melforia-test-submit"
+              disabled={!feedbackEnabled || submitting || !session}
+            >
+              {!feedbackEnabled
+                ? 'Feedbackübermittlung derzeit pausiert'
+                : submitting
+                  ? 'Wird gesendet …'
+                  : 'Feedback senden'}
+            </button>
+          </fieldset>
         </form>
       </section>
     </div>

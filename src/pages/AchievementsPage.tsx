@@ -1,51 +1,23 @@
 import React from 'react';
-import { achievementList } from '../data/achievementList';
-import { useTranslation } from 'react-i18next'; // ✅
-import { useUserData } from '../hooks/useUserData';
+import { GameBadges } from '../components/shared/GameBadges';
+import { useGamification } from '../context/GamificationContext';
+import BackButton from '../components/ui/BackButton';
+import { Link } from 'react-router-dom';
 
 export default function AchievementsScreen(): React.ReactElement {
-  const { t } = useTranslation();
-  const { achievements } = useUserData();
-
-  const unlockedIds = new Set(achievements.map(a => a.id));
+  const { state } = useGamification();
 
   return (
     <div className="card" style={{ padding: '2rem' }}>
-      <h2>{t('achievements.title')}</h2>
-      <ul style={{ listStyle: 'none', padding: 0 }}>
-        {achievementList.map(a => {
-          const unlocked = unlockedIds.has(a.id);
-          const date = achievements.find(e => e.id === a.id)?.date;
-
-          return (
-            <li
-              key={a.id}
-              style={{
-                background: unlocked ? '#e0f7fa' : '#eee',
-                color: unlocked ? '#000' : '#999',
-                borderRadius: '8px',
-                padding: '12px 16px',
-                margin: '12px 0',
-                fontSize: '16px',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                opacity: unlocked ? 1 : 0.6,
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <span>{unlocked ? (a.icon as React.ReactNode) : '🔒'}</span>
-                <span>{t(a.label ?? '')}</span>
-              </div>
-              {unlocked && date && (
-                <span style={{ fontSize: '12px', color: '#555' }}>
-                  {new Date(date).toLocaleDateString()}
-                </span>
-              )}
-            </li>
-          );
-        })}
-      </ul>
+      <BackButton />
+      <h1>Deine Erfolge</h1>
+      <p className="game-caption">
+        {state.xp} XP · An {state.activeDays.length} Tagen aktiv. Pausen kosten dich keine Punkte.
+      </p>
+      <GameBadges />
+      <Link to="/arcade" className="home-test-link">
+        Deine Arcade-Belohnungen öffnen →
+      </Link>
     </div>
   );
 }

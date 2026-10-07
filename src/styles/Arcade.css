@@ -1,0 +1,223 @@
+.arcade-page {
+  max-width: 1100px;
+  margin: auto;
+  padding: clamp(20px, 4vw, 40px);
+  padding-bottom: 150px;
+  color: var(--melforia-text, #edf4ff);
+  background: var(--melforia-surface, #182b3e);
+  min-height: 100dvh;
+}
+.arcade-hero h1 {
+  font-size: clamp(2.1rem, 5vw, 3.5rem);
+  margin: 12px 0;
+  letter-spacing: -0.04em;
+}
+.arcade-hero > p {
+  max-width: 740px;
+  line-height: 1.7;
+}
+.arcade-kicker,
+.arcade-xp {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.arcade-kicker {
+  color: #9ebfe9;
+  font-size: 0.9rem;
+}
+.arcade-xp {
+  padding: 18px 0;
+}
+.arcade-xp a {
+  margin-left: auto;
+  color: inherit;
+}
+.arcade-note {
+  color: var(--melforia-muted, #bbcbdc);
+  font-size: 0.9rem;
+  line-height: 1.7;
+}
+.arcade-catalog {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 30px 0;
+}
+.arcade-card {
+  border: 1px solid var(--melforia-border, #39516b);
+  border-radius: 20px;
+  overflow: hidden;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+.arcade-cover {
+  min-height: 130px;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, #305778, #29415d);
+  color: #d3e8ff;
+}
+.arcade-cover span {
+  font-size: 3.5rem;
+  letter-spacing: 0.3em;
+}
+.arcade-cover--lights {
+  background: linear-gradient(135deg, #304b4a, #25444b);
+  color: #bcebd3;
+}
+.arcade-cover--three {
+  background: linear-gradient(135deg, #44355f, #2f3c61);
+  color: #dfd0ff;
+}
+.arcade-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px;
+  flex: 1;
+}
+.arcade-card h2 {
+  font-size: 1.25rem;
+  margin: 0;
+}
+.arcade-card p {
+  margin: 0;
+  line-height: 1.55;
+}
+.arcade-card small {
+  color: var(--melforia-muted, #bbcbdc);
+}
+.arcade-lock {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.85rem;
+}
+.arcade-card progress {
+  width: 100%;
+  height: 8px;
+  accent-color: #93bdec;
+}
+.arcade-page button {
+  touch-action: manipulation;
+  padding: 12px 16px;
+  min-height: 44px;
+  border-radius: 12px;
+  border: 1px solid #6985a5;
+  background: #2b465f;
+  color: #f1f6ff;
+  font: inherit;
+  cursor: pointer;
+}
+.arcade-card button {
+  margin-top: auto;
+}
+.arcade-page button:disabled {
+  opacity: 0.65;
+  cursor: default;
+}
+.arcade-page button:focus-visible,
+.arcade-page a:focus-visible {
+  outline: 3px solid #f1c782;
+  outline-offset: 4px;
+}
+.arcade-card.is-unlocked {
+  border-color: #6cbea7;
+}
+.arcade-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 16px 0;
+}
+.arcade-game-area {
+  padding: clamp(16px, 3vw, 28px);
+  border: 1px solid var(--melforia-border, #39516b);
+  border-radius: 20px;
+  margin-top: 30px;
+}
+.arcade-player {
+  max-width: 600px;
+  margin: auto;
+}
+.arcade-player > p {
+  line-height: 1.65;
+}
+.arcade-player [role='status'] {
+  min-height: 48px;
+}
+.arcade-board {
+  display: grid;
+  gap: 10px;
+  margin: 20px auto;
+  max-width: 440px;
+}
+.memory-board {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+.three-board {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  max-width: 350px;
+}
+.arcade-board button {
+  aspect-ratio: 1;
+  padding: 8px;
+  font-size: clamp(1.8rem, 5vw, 2.8rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #d6e8ff;
+  background: #253e56;
+}
+.arcade-board button:disabled {
+  opacity: 1;
+}
+.arcade-board .is-open {
+  background: #38577a;
+  border-color: #9cc6f3;
+}
+.arcade-board small {
+  font-size: 0.8rem;
+}
+.arcade-board .is-lit {
+  background: #bcebd3;
+  color: #143b32;
+  border-color: #bcebd3;
+}
+.arcade-board .is-hint {
+  outline: 3px solid #f1c782;
+  outline-offset: 2px;
+}
+.arcade-notice {
+  padding: 16px;
+  border-left: 3px solid #83c8b0;
+  line-height: 1.6;
+}
+.arcade-reward-link {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  color: inherit;
+  padding: 16px 0;
+  text-decoration: none;
+}
+[data-appearance='light'] .arcade-kicker {
+  color: #385d84;
+}
+@media (max-width: 760px) {
+  .arcade-catalog {
+    grid-template-columns: 1fr;
+  }
+  .arcade-cover {
+    min-height: 95px;
+  }
+  .arcade-xp a {
+    margin-left: 0;
+    flex-basis: 100%;
+  }
+}

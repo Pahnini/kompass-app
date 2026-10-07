@@ -1,3 +1,8 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+@theme {
+  --color-primary: #2f4f4f;
+  --color-accent: #0b9444;
+  --color-light: #b7ffd0;
+  --color-background: #1f2f2f;
+  --font-sans: Inter, 'Segoe UI', sans-serif;
+}

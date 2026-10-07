@@ -61,7 +61,7 @@
   inset: 0 auto 0 0;
   z-index: 520 !important;
   display: flex !important;
-  width: 272px !important;
+  width: 240px !important;
   height: 100dvh !important;
   overflow: hidden !important;
   flex-direction: column;
@@ -255,7 +255,7 @@
 
 @media (min-width: 701px) {
   .melforia-app-shell .melforia-main-area {
-    margin-left: 272px !important;
+    margin-left: 240px !important;
   }
 }
 

@@ -4,12 +4,13 @@ import { vi, beforeEach } from 'vitest';
 // Mock localStorage with actual storage behavior
 const createLocalStorageMock = () => {
   let store: { [key: string]: string } = {};
-
-  return {
-    getItem: vi.fn((key: string) => store[key] || null),
-    setItem: vi.fn((key: string, value: string) => {
-      store[key] = value;
-    }),
+  const read = (key: string) => store[key] ?? null;
+  const write = (key: string, value: string) => {
+    store[key] = value;
+  };
+  const mock = {
+    getItem: vi.fn(read),
+    setItem: vi.fn(write),
     removeItem: vi.fn((key: string) => {
       delete store[key];
     }),
@@ -18,6 +19,14 @@ const createLocalStorageMock = () => {
     }),
     length: 0,
     key: vi.fn(),
+  };
+  return {
+    ...mock,
+    reset: () => {
+      store = {};
+      mock.getItem.mockImplementation(read);
+      mock.setItem.mockImplementation(write);
+    },
   };
 };
 
@@ -110,13 +119,24 @@ const createMockQuery = (
 vi.mock('../utils/supabase', () => ({
   supabase: {
     from: vi.fn().mockImplementation(() => createMockQuery()),
+    auth: {
+      getSession: vi
+        .fn()
+        .mockResolvedValue({ data: { session: { user: { id: 'test-user-123' } } }, error: null }),
+      onAuthStateChange: vi
+        .fn()
+        .mockReturnValue({ data: { subscription: { unsubscribe: vi.fn() } } }),
+    },
+    rpc: vi
+      .fn()
+      .mockResolvedValue({ data: null, error: { message: 'Encryption unavailable in mock' } }),
   },
 }));
 
 // Clear all mocks before each test
 beforeEach(() => {
   vi.clearAllMocks();
-  localStorageMock.clear();
+  localStorageMock.reset();
   sessionStorageMock.clear();
 
   // Reset navigator.onLine to default

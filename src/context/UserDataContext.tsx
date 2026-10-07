@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react';
-import React, { useEffect, useState } from 'react';
-import pointSound from '../assets/sounds/point.wav';
-import { achievementList } from '../data/achievementList';
+import React, { useEffect, useRef, useState } from 'react';
+import { levelFor } from '../utils/gamification';
 import { skillsList as defaultSkills } from '../data/skills';
 import { dataService } from '../services/dataService';
 import type { Achievement, CalendarNotes, Goal, Skill, Symptoms, WordFile } from '../types/index';
@@ -15,11 +14,11 @@ export interface UserDataContextType {
   username: string;
   setUsername: (username: string) => void;
   goals: Goal[];
-  setGoals: (goals: Goal[]) => void;
+  setGoals: (goals: Goal[]) => Promise<boolean>;
   achievements: Achievement[];
   setAchievements: (achievements: Achievement[]) => void;
   calendarNotes: CalendarNotes;
-  setCalendarNotes: (notes: CalendarNotes) => void;
+  setCalendarNotes: (notes: CalendarNotes) => Promise<boolean>;
   symptoms: Symptoms;
   setSymptoms: (symptoms: Symptoms) => void;
   favorites: string[];
@@ -29,10 +28,9 @@ export interface UserDataContextType {
   skillsList: Skill[];
   setSkillsList: (skills: Skill[]) => void;
   skillsCompleted: Record<string, boolean>;
-  setSkillsCompleted: (completed: Record<string, boolean>) => void;
+  setSkillsCompleted: (completed: Record<string, boolean>) => Promise<boolean>;
   hasGoalsReminder: boolean;
   points: number;
-  addPoints: (amount: number) => void;
   level: number;
   levelProgress: number;
   isLoading: boolean;
@@ -45,11 +43,7 @@ interface UserDataProviderProps {
 
 // Calculate level and progress based on points
 const getLevel = (points: number): { level: number; progress: number } => {
-  if (points < 10) return { level: 1, progress: (points / 10) * 100 };
-  if (points < 25) return { level: 2, progress: ((points - 10) / 15) * 100 };
-  if (points < 50) return { level: 3, progress: ((points - 25) / 25) * 100 };
-  if (points < 100) return { level: 4, progress: ((points - 50) / 50) * 100 };
-  return { level: 5, progress: 100 };
+  return levelFor(points);
 };
 
 export function UserDataProvider({ children }: UserDataProviderProps): React.ReactElement {
@@ -68,16 +62,25 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
   const [skillsList, setSkillsListState] = useState<Skill[]>(defaultSkills);
   const [skillsCompleted, setSkillsCompletedState] = useState<Record<string, boolean>>({});
   const [points, setPoints] = useState<number>(0);
+  const activeUser = useRef<string | null>(null);
 
   // Load user data when authentication changes
   useEffect(() => {
+    let active = true;
+    let generation = 0;
+    let deferred: number | undefined;
     const loadUserData = async () => {
+      if (!active) return;
+      const request = ++generation;
       try {
         const {
           data: { session },
         } = await supabase.auth.getSession();
+        if (!active || request !== generation) return;
 
         if (session?.user?.id) {
+          activeUser.current = session.user.id;
+          setIsLoading(true);
           setUserId(session.user.id);
           // Load all user data from the healthcare-compliant database with safe fallbacks
           const [
@@ -112,6 +115,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
             ),
             dataService.getDataSafe<number>('points', session.user.id, 0),
           ]);
+          if (!active || request !== generation || activeUser.current !== session.user.id) return;
 
           // Update state with safely loaded data
           setUsernameState(normalizeUsername(userData_username));
@@ -136,6 +140,7 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
           setSkillsCompletedState(userData_skillsCompleted);
           setPoints(userData_points);
         } else {
+          activeUser.current = null;
           // No user logged in, reset to defaults
           setUserId(null);
           setUsernameState('');
@@ -146,12 +151,13 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
           setFavoritesState(['home', 'skills', 'notfall', 'guide']);
           setWordFilesState([]);
           setSkillsListState(defaultSkills);
+          setSkillsCompletedState({});
           setPoints(0);
         }
       } catch (error) {
         console.error('❌ Failed to load user data:', error);
       } finally {
-        setIsLoading(false);
+        if (active && request === generation) setIsLoading(false);
       }
     };
 
@@ -160,10 +166,17 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(event => {
+    } = supabase.auth.onAuthStateChange((event, session) => {
+      if (!active) return;
+      activeUser.current = session?.user.id ?? null;
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
-        loadUserData();
+        generation++;
+        setIsLoading(true);
+        window.clearTimeout(deferred);
+        deferred = window.setTimeout(() => void loadUserData(), 0);
       } else if (event === 'SIGNED_OUT') {
+        generation++;
+        window.clearTimeout(deferred);
         setUserId(null);
         setIsLoading(false);
         // Reset to defaults on logout
@@ -175,11 +188,17 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
         setFavoritesState(['home', 'skills', 'notfall', 'guide']);
         setWordFilesState([]);
         setSkillsListState(defaultSkills);
+        setSkillsCompletedState({});
         setPoints(0);
       }
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      active = false;
+      generation++;
+      window.clearTimeout(deferred);
+      subscription.unsubscribe();
+    };
   }, []);
 
   // Calculate level and progress
@@ -202,13 +221,15 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
 
   const setGoals = React.useCallback(
     async (value: Goal[]) => {
-      setGoalsState(value);
-      if (userId) {
-        try {
-          await dataService.setData('goals', value, userId);
-        } catch (error) {
-          console.error('❌ Failed to save goals:', error);
-        }
+      if (!userId) return false;
+      try {
+        await dataService.setData('goals', value, userId);
+        if (activeUser.current !== userId) return false;
+        setGoalsState(value);
+        return true;
+      } catch (error) {
+        console.error('❌ Failed to save goals:', error);
+        return false;
       }
     },
     [userId]
@@ -230,13 +251,15 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
 
   const setCalendarNotes = React.useCallback(
     async (value: CalendarNotes) => {
-      setCalendarNotesState(value);
-      if (userId) {
-        try {
-          await dataService.setData('calendarNotes', value, userId);
-        } catch (error) {
-          console.error('❌ Failed to save calendar notes:', error);
-        }
+      if (!userId) return false;
+      try {
+        await dataService.setData('calendarNotes', value, userId);
+        if (activeUser.current !== userId) return false;
+        setCalendarNotesState(value);
+        return true;
+      } catch (error) {
+        console.error('❌ Failed to save calendar notes:', error);
+        return false;
       }
     },
     [userId]
@@ -300,56 +323,18 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
 
   const setSkillsCompleted = React.useCallback(
     async (value: Record<string, boolean>) => {
-      setSkillsCompletedState(value);
-      if (userId) {
-        try {
-          await dataService.setData('skillsCompleted', value, userId);
-        } catch (error) {
-          console.error('❌ Failed to save skills completion status:', error);
-        }
+      if (!userId) return false;
+      try {
+        await dataService.setData('skillsCompleted', value, userId);
+        if (activeUser.current !== userId) return false;
+        setSkillsCompletedState(value);
+        return true;
+      } catch (error) {
+        console.error('❌ Failed to save skills completion status:', error);
+        return false;
       }
     },
     [userId]
-  );
-
-  const addPoints = React.useCallback(
-    (amount: number) => {
-      setPoints(currentPoints => {
-        const newPoints = currentPoints + amount;
-        const audio = new Audio(pointSound);
-        audio.play().catch(() => {}); // Falls Browser blockiert, kein Fehler
-
-        // Save points to healthcare database
-        if (userId) {
-          dataService.setData('points', newPoints, userId).catch(error => {
-            console.error('❌ Failed to save points:', error);
-          });
-        }
-
-        // Achievement logic
-        const unlocked: Achievement[] = [];
-
-        achievementList.forEach(a => {
-          const alreadyUnlocked = achievements.some(existing => existing.id === a.id);
-          const match = a.id.startsWith('points-');
-          const targetPoints = parseInt(a.id.split('-')[1]);
-          if (match && newPoints >= targetPoints && !alreadyUnlocked) {
-            unlocked.push({
-              ...a,
-              date: new Date().toISOString(),
-            });
-          }
-        });
-
-        if (unlocked.length > 0) {
-          const newAchievements = [...achievements, ...unlocked];
-          setAchievements(newAchievements);
-        }
-
-        return newPoints;
-      });
-    },
-    [achievements, setAchievements, userId]
   );
 
   // Compute derived state separately to keep the dependency array smaller
@@ -382,7 +367,6 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       setSkillsCompleted,
       hasGoalsReminder,
       points,
-      addPoints,
       level,
       levelProgress: progress,
       isLoading,
@@ -409,7 +393,6 @@ export function UserDataProvider({ children }: UserDataProviderProps): React.Rea
       setSkillsCompleted,
       hasGoalsReminder,
       points,
-      addPoints,
       level,
       progress,
       isLoading,

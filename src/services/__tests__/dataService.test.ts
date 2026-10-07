@@ -1,132 +1,106 @@
-// src/services/__tests__/dataService.test.ts
-import { beforeEach, describe, expect, it } from 'vitest';
-import { dataService } from '../dataService';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { HybridDataService } from '../dataService';
 import { encryptionService } from '../encryptionService';
+import { supabase } from '../../utils/supabase';
 
-/**
- * Basic smoke tests for the dataService implementation
- * These tests verify the core functionality works without requiring Supabase setup
- */
-
-describe('DataService', () => {
-  const testUserId = 'test-user-123';
-
-  beforeEach(() => {
-    // Clear localStorage before each test
-    localStorage.clear();
-  });
-
-  describe('Data Processing Service (Server-Side Encryption)', () => {
-    it('should process data and restore it correctly', async () => {
-      const testData = { message: 'Hello Healthcare!', sensitive: true };
-
-      const processed = await encryptionService.encrypt(testData, testUserId);
-      expect(processed).toBeDefined();
-      expect(typeof processed).toBe('string');
-      expect(processed).not.toContain('Hello Healthcare!');
-
-      const parsed = await encryptionService.decrypt(processed, testUserId);
-      expect(parsed).toEqual(testData);
-    });
-
-    it('should handle metadata (server-side encryption mode)', () => {
-      const metadata = encryptionService.getEncryptionMetadata();
-
-      expect(metadata).toHaveProperty('algorithm');
-      expect(metadata.algorithm).toBe('SUPABASE-AES-256-AT-REST');
-      expect(metadata).toHaveProperty('keySize');
-      expect(metadata.keySize).toBe(256);
-      expect(metadata).toHaveProperty('deviceFingerprint');
-      expect(metadata.deviceFingerprint).toBe('SERVER-SIDE-SUPABASE');
-    });
-
-    it('should pass data processing test', async () => {
-      const testResult = await encryptionService.testEncryption(testUserId);
-      expect(testResult).toBe(true);
-    });
-  });
-
-  describe('Data Service - Offline Mode', () => {
-    beforeEach(() => {
-      // Simulate offline mode for these tests
-      Object.defineProperty(navigator, 'onLine', {
-        writable: true,
-        value: false,
-      });
-    });
-
-    it('should handle basic data operations when offline', async () => {
-      const testGoals = [
-        { id: '1', title: 'Test Goal 1', text: 'Description 1', completed: false },
-        { id: '2', title: 'Test Goal 2', text: 'Description 2', completed: true },
-      ];
-
-      // Set data (should use localStorage when offline)
-      await dataService.setData('goals', testGoals, testUserId);
-
-      // Get data back (should retrieve from localStorage)
-      const retrievedGoals = await dataService.getData('goals', testUserId);
-
-      expect(retrievedGoals).toEqual(testGoals);
-    });
-
-    it('should handle different data types when offline', async () => {
-      const testCases = [
-        { key: 'username', value: 'testuser' },
-        { key: 'points', value: 150 },
-        { key: 'favorites', value: ['home', 'skills', 'guide'] },
-        {
-          key: 'achievements',
-          value: [{ id: 'ach1', title: 'First Achievement', date: '2024-01-01' }],
-        },
-      ];
-
-      // Test each data type individually
-      for (const { key, value } of testCases) {
-        await dataService.setData(key, value, testUserId);
-        const retrieved = await dataService.getData(key, testUserId);
-        expect(retrieved).toEqual(value);
+const owner = 'test-user-123';
+const session = { data: { session: { user: { id: owner } } }, error: null };
+afterEach(() => vi.restoreAllMocks());
+beforeEach(() => {
+  vi.mocked(supabase.auth.getSession).mockResolvedValue(session as never);
+  vi.mocked(supabase.rpc).mockResolvedValue({
+    data: null,
+    error: { message: 'Encryption unavailable' },
+  } as never);
+});
+function offline() {
+  Object.defineProperty(navigator, 'onLine', { writable: true, value: false });
+  return new HybridDataService();
+}
+describe('Account data storage', () => {
+  it('blocks replacements after a failed read until existing data loads successfully', async () => {
+    const service = new HybridDataService();
+    const backend = (
+      service as unknown as {
+        supabaseBackend: { get: () => Promise<unknown>; set: () => Promise<void> };
       }
-    });
-
-    it('should handle data removal when offline', async () => {
-      const testData = { test: 'value' };
-
-      await dataService.setData('test', testData, testUserId);
-      let retrieved = await dataService.getData('test', testUserId);
-      expect(retrieved).toEqual(testData);
-
-      await dataService.removeData('test', testUserId);
-      retrieved = await dataService.getData('test', testUserId);
-      expect(retrieved).toBeNull();
-    });
+    ).supabaseBackend;
+    const read = vi.spyOn(backend, 'get').mockRejectedValue(new Error('Decryption failed'));
+    const write = vi.spyOn(backend, 'set').mockResolvedValue(undefined);
+    expect(await service.getDataSafe('goals', owner, [])).toEqual([]);
+    await expect(service.setData('goals', [], owner)).rejects.toThrow(
+      'Existing data could not be loaded'
+    );
+    await expect(service.removeData('goals', owner)).rejects.toThrow(
+      'Existing data could not be loaded'
+    );
+    expect(write).not.toHaveBeenCalled();
+    read.mockResolvedValue([]);
+    await service.getData('goals', owner);
+    await service.setData('goals', [], owner);
+    expect(write).toHaveBeenCalledTimes(1);
   });
-
-  describe('Data Service - Error Handling', () => {
-    it('should handle invalid data gracefully', async () => {
-      // This shouldn't throw an error
-      await expect(dataService.getData('nonexistent', testUserId)).resolves.toBeNull();
-    });
-
-    it('should handle null values correctly', async () => {
-      await dataService.setData('nullTest', null, testUserId);
-      const retrieved = await dataService.getData('nullTest', testUserId);
-      expect(retrieved).toBeNull();
-    });
+  it('stores offline records under the account key and restores them', async () => {
+    const service = offline();
+    const goals = [{ id: 'one', text: 'Read a book', title: '', completed: false }];
+    await service.setData('goals', goals, owner);
+    expect(await service.getData('goals', owner)).toEqual(goals);
+    expect(localStorage.getItem('goals')).toBeNull();
+    expect(localStorage.getItem(`melforia_account:${owner}:goals`)).toContain('Read a book');
   });
-
-  describe('Sync Status', () => {
-    it('should provide sync functionality interface', async () => {
-      // Test that the methods exist and don't throw
-      const testData = [{ id: '1', value: 'test' }];
-
-      await dataService.setData('testSync', testData, testUserId);
-
-      // These might not work without Supabase but shouldn't throw
-      expect(typeof dataService.syncAllData).toBe('function');
-      expect(typeof dataService.getSyncStatus).toBe('function');
-      expect(typeof dataService.testEncryption).toBe('function');
-      expect(typeof dataService.getEncryptionMetadata).toBe('function');
+  it('does not read, write or remove data belonging to another signed-in account', async () => {
+    const service = offline();
+    await service.setData('points', 25, owner);
+    await expect(service.getData('points', 'bob')).rejects.toThrow('Session user ID mismatch');
+    await expect(service.setData('points', 100, 'bob')).rejects.toThrow();
+    await expect(service.removeData('points', 'bob')).rejects.toThrow();
+    expect(await service.getData('points', owner)).toBe(25);
+  });
+  it('does not inherit ambiguous legacy browser records', async () => {
+    localStorage.setItem('goals', JSON.stringify([{ text: 'old account' }]));
+    expect(await offline().getData('goals', owner)).toBeNull();
+  });
+  it('removes only the selected account record', async () => {
+    const service = offline();
+    await service.setData('points', 25, owner);
+    localStorage.setItem('melforia_account:bob:points', '100');
+    await service.removeData('points', owner);
+    expect(await service.getData('points', owner)).toBeNull();
+    expect(localStorage.getItem('melforia_account:bob:points')).toBe('100');
+  });
+  it('does not claim success or cache a write when online encryption fails', async () => {
+    const service = new HybridDataService();
+    await expect(
+      service.setData('goals', [{ id: 'one', text: 'private', completed: false }], owner)
+    ).rejects.toThrow('Secure encryption unavailable');
+    expect(localStorage.getItem(`melforia_account:${owner}:goals`)).toBeNull();
+  });
+  it('preserves existing rows when encryption fails before saving goals', async () => {
+    const goalUpdate = vi.fn();
+    const original = supabase.from.bind(supabase);
+    vi.spyOn(supabase, 'from').mockImplementation((table: string) =>
+      table === 'user_goals' ? ({ update: goalUpdate } as never) : original(table)
+    );
+    const service = new HybridDataService();
+    await expect(
+      service.setData('goals', [{ id: 'one', text: 'private', completed: false }], owner)
+    ).rejects.toThrow();
+    expect(goalUpdate).not.toHaveBeenCalled();
+  });
+  it('does not silently swallow a failed local write', async () => {
+    const service = offline();
+    vi.spyOn(localStorage, 'setItem').mockImplementation(() => {
+      throw new Error('Storage full');
     });
+    await expect(service.setData('points', 5, owner)).rejects.toThrow('Storage full');
+  });
+  it('uses a fallback for corrupt records without deleting the original', async () => {
+    const service = offline();
+    localStorage.setItem(`melforia_account:${owner}:goals`, '{broken');
+    expect(await service.getDataSafe('goals', owner, [])).toEqual([]);
+    expect(localStorage.getItem(`melforia_account:${owner}:goals`)).toBe('{broken');
+  });
+  it('reports failed encryption health instead of treating base64 as encryption', async () => {
+    expect(await encryptionService.testEncryption(owner)).toBe(false);
   });
 });

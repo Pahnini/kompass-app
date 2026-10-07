@@ -1,6 +1,6 @@
 import { CirclePause, CirclePlay, RotateCcw } from 'lucide-react';
 import type React from 'react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import './GuidedExercises.css';
 
 type Exercise = {
@@ -63,36 +63,44 @@ function formatTime(seconds: number): string {
   return `${minutes}:${String(seconds % 60).padStart(2, '0')}`;
 }
 
-export default function GuidedExercises(): React.ReactElement {
+export default function GuidedExercises({
+  onComplete,
+}: {
+  onComplete?: (id: string) => void;
+}): React.ReactElement {
   const [activeId, setActiveId] = useState<string | null>(null);
   const [remaining, setRemaining] = useState(0);
   const [running, setRunning] = useState(false);
+  const completionReported = useRef(false);
   const activeExercise = exercises.find(exercise => exercise.id === activeId) ?? null;
 
   useEffect(() => {
     if (!running) return;
     const timer = window.setInterval(() => {
-      setRemaining(current => {
-        if (current <= 1) {
-          setRunning(false);
-          return 0;
-        }
-        return current - 1;
-      });
+      setRemaining(current => Math.max(0, current - 1));
     }, 1000);
     return () => window.clearInterval(timer);
   }, [running]);
+
+  useEffect(() => {
+    if (!running || remaining !== 0 || !activeExercise || completionReported.current) return;
+    completionReported.current = true;
+    setRunning(false);
+    onComplete?.(`exercise-${activeExercise.id}`);
+  }, [running, remaining, activeExercise, onComplete]);
 
   const selectExercise = (exercise: Exercise): void => {
     setActiveId(exercise.id);
     setRemaining(exercise.duration);
     setRunning(false);
+    completionReported.current = false;
   };
 
   const reset = (): void => {
     if (!activeExercise) return;
     setRemaining(activeExercise.duration);
     setRunning(false);
+    completionReported.current = false;
   };
 
   return (
@@ -121,7 +129,7 @@ export default function GuidedExercises(): React.ReactElement {
       </div>
 
       {activeExercise && (
-        <div className="guided-exercises__player" aria-live="polite">
+        <div className="guided-exercises__player">
           <div>
             <p>{activeExercise.intro}</p>
             <ol>
@@ -132,6 +140,9 @@ export default function GuidedExercises(): React.ReactElement {
           </div>
           <div className="guided-exercises__timer">
             <output aria-label={`${remaining} Sekunden verbleiben`}>{formatTime(remaining)}</output>
+            {remaining === 0 && (
+              <p role="status">Übung abgeschlossen. Du kannst sie jederzeit wiederholen.</p>
+            )}
             <div>
               <button
                 type="button"

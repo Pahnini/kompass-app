@@ -17,8 +17,8 @@ import { QuestTracker } from '../components/shared/QuestTracker';
 import SortableQuickList from '../components/shared/SortableQuickList';
 import { APP_NAME, APP_VERSION_LABEL } from '../config/brand';
 import { getNavigationPath } from '../data/navigation';
-import { useQuests } from '../hooks/useQuest';
-import { useUserData } from '../hooks/useUserData';
+import { useGamification } from '../context/GamificationContext';
+import { levelFor } from '../utils/gamification';
 import type { SidebarItem } from '../types/index';
 import './HomePage.css';
 
@@ -66,8 +66,8 @@ export default function HomeScreen({
 }: HomeScreenProps): React.ReactElement {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { addPoints, level, levelProgress } = useUserData();
-  const { updateQuestProgress } = useQuests();
+  const { state } = useGamification();
+  const { level, progress: levelProgress } = levelFor(state.xp);
   const [draftName, setDraftName] = useState(username);
   const [isEditingName, setIsEditingName] = useState(!username);
 
@@ -83,8 +83,6 @@ export default function HomeScreen({
     .map(item => ({ ...item, label: item.label === 'Nova' ? 'Nova' : t(item.label) }));
 
   const handleQuickClick = (key: string): void => {
-    addPoints(1);
-    updateQuestProgress('use-skills-3x');
     void navigate(getNavigationPath(key));
   };
 
@@ -228,10 +226,10 @@ export default function HomeScreen({
         </section>
       )}
 
-      <details className="melforia-home__quests">
-        <summary>Wöchentliche Aufgaben anzeigen</summary>
-        <QuestTracker />
-      </details>
+      <QuestTracker />
+      <Link to="/testen" className="home-test-link">
+        Testauswahl und Demobereich öffnen →
+      </Link>
     </div>
   );
 }

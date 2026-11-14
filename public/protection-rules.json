@@ -1,0 +1,37 @@
+[
+  {
+    "category": "threat",
+    "severity": 3,
+    "pattern": "(?:ich werde dir wehtun|ich bringe? dich um|ich werde dich verletzen)"
+  },
+  {
+    "category": "harassment",
+    "severity": 3,
+    "pattern": "(?:zeig (?:dich|mir).{0,80}ohne klamotten|schick(?:e)? mir.{0,80}nackt(?:bild|foto)|zieh dich (?:mal )?aus)"
+  },
+  {
+    "category": "insult",
+    "severity": 3,
+    "pattern": "(?:du bist (?:einfach |wirklich |so |nur )*(?:dumm|hässlich|ekelhaft|ein idiot|eine idiotin)|halt (?:dein|die) (?:maul|fresse))"
+  },
+  {
+    "category": "sexism",
+    "severity": 2,
+    "pattern": "(?:frauen haben .{0,100}nichts verloren|frauen gehören (?:an den herd|in die küche)|bleib (?:du )?(?:mal |lieber )?in der küche|frauen können (?:sowas|das) nicht)"
+  },
+  {
+    "category": "body",
+    "severity": 2,
+    "pattern": "(?:(?:mit|für) so (?:einem|einen) körper|du bist (?:viel |einfach )?zu (?:fett|dick|dünn)|dein körper ist (?:ekelhaft|widerlich))"
+  },
+  {
+    "category": "insult",
+    "severity": 1,
+    "pattern": "(?:du nervst|was für ein peinlicher auftritt)"
+  },
+  {
+    "category": "body",
+    "severity": 1,
+    "pattern": "(?:du solltest (?:mal )?abnehmen|das steht deinem körper nicht)"
+  }
+]

@@ -1,0 +1,24 @@
+[
+  { "text": "Danke für den schönen Beitrag.", "expected": null },
+  { "text": "Ich sehe das anders: Nicht jede Pause löst Stress.", "expected": null },
+  { "text": "Frauen haben in diesem Sport nichts verloren.", "expected": "sexism" },
+  { "text": "FRAUEN\u00a0HABEN in diesem Sport NICHTS verloren.", "expected": "sexism" },
+  {
+    "text": "Frauen haben in diesem Sport nichts verloren.",
+    "disabled": "sexism",
+    "expected": null
+  },
+  { "text": "Frauen haben in diesem Sport nichts verloren.", "level": "gentle", "expected": null },
+  { "text": "Mit so einem Körper solltest du dich verstecken.", "expected": "body" },
+  { "text": "Du bist einfach nur dumm.", "expected": "insult" },
+  { "text": "Du bist ein\u200bfach nur dumm.", "expected": "insult" },
+  { "text": "Zeig dich mal ohne Klamotten.", "expected": "harassment" },
+  { "text": "Ich werde dir wehtun.", "expected": "threat" },
+  { "text": "Du nervst.", "expected": null },
+  { "text": "Du nervst.", "level": "strict", "expected": "insult" },
+  { "text": "Danke für deine Erinnerung.", "customWords": ["Erinnerung"], "expected": "custom" },
+  { "text": "Das ist ein a.b Test.", "customWords": ["a.b"], "expected": "custom" },
+  { "text": "Das ist ein axb Test.", "customWords": ["a.b"], "expected": null },
+  { "text": "Frauen können alles lernen.", "expected": null },
+  { "text": "Das ist keine Beleidigung, sondern eine andere Meinung.", "expected": null }
+]

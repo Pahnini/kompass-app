@@ -22,6 +22,7 @@ const pageTitles: PageTitles = {
   '/achievements': 'Deine Erfolge',
   '/arcade': 'Arcade',
   '/arcade-demo': 'Arcade ausprobieren',
+  '/schutz': 'Digitaler Schutz',
   '/notfall': 'Notfall & Hilfe',
   '/panic': 'Soforthilfe – Atemübung',
   '/sicherheitsplan': 'Persönlicher Sicherheitsplan',

@@ -13,6 +13,7 @@ import {
   Mic2,
   Paintbrush,
   Settings,
+  ShieldCheck,
   Sparkles,
   Waves,
 } from 'lucide-react';
@@ -37,6 +38,7 @@ export const sidebarItems: SidebarItem[] = [
   { key: 'designs', label: 'navigation.designs', icon: <Paintbrush size={18} /> },
   { key: 'achievements', label: 'navigation.achievements', icon: <Award size={18} /> },
   { key: 'arcade', label: 'navigation.arcade', icon: <Gamepad2 size={18} /> },
+  { key: 'schutz', label: 'navigation.protection', icon: <ShieldCheck size={18} /> },
   { key: 'school', label: 'navigation.schoolSupport', icon: <GraduationCap size={18} /> },
   { key: 'notfall', label: 'navigation.notfall', icon: <AlertCircle size={18} /> },
   { key: 'guide', label: 'navigation.guide', icon: <Info size={18} /> },

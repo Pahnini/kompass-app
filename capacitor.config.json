@@ -1,0 +1,9 @@
+{
+  "appId": "io.github.pahnini.melforia",
+  "appName": "Melforia",
+  "webDir": "dist",
+  "loggingBehavior": "none",
+  "server": {
+    "appStartPath": "/schutz"
+  }
+}

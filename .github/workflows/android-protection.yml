@@ -1,0 +1,49 @@
+name: Android protection test build
+
+on:
+  pull_request:
+    paths:
+      - 'android/**'
+      - 'src/**'
+      - 'public/protection-*.json'
+      - 'capacitor.config.json'
+      - 'package*.json'
+      - 'scripts/check-native-protection.mjs'
+      - '.github/workflows/android-protection.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  android-debug:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - run: npm ci
+      - run: npm run test:run
+      - run: node scripts/check-native-protection.mjs
+      - name: Build web assets and sync Android
+        run: npm run android:sync
+        env:
+          # A deliberately nonfunctional backend for the public, local protection test screen.
+          # No production secrets or user accounts are needed for this debug artifact.
+          VITE_SUPABASE_URL: https://melforia-protection-test.invalid
+          VITE_SUPABASE_PUBLISHABLE_KEY: protection-test-placeholder-not-a-key
+      - name: Compile debug APK
+        working-directory: android
+        run: bash gradlew :app:assembleDebug --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: melforia-schutz-android-debug
+          path: android/app/build/outputs/apk/debug/app-debug.apk
+          retention-days: 7

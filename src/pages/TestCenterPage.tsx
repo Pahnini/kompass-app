@@ -245,6 +245,7 @@ export default function TestCenterPage(): React.ReactElement {
           <Link to="/demo?scenario=thought">Gedanken</Link>
           <Link to="/demo?scenario=goal">Ziele</Link>
           <Link to="/arcade-demo">Arcade-Belohnungen</Link>
+          <Link to="/schutz">Digitaler Schutz</Link>
         </nav>
         <div className="melforia-test-section-heading">
           <div>

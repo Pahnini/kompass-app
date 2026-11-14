@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<accessibility-service xmlns:android="http://schemas.android.com/apk/res/android"
+    android:description="@string/protection_service_description"
+    android:accessibilityEventTypes="typeWindowStateChanged|typeWindowContentChanged|typeViewScrolled|typeWindowsChanged"
+    android:accessibilityFeedbackType="feedbackGeneric"
+    android:accessibilityFlags="flagReportViewIds|flagRetrieveInteractiveWindows"
+    android:notificationTimeout="70"
+    android:canRetrieveWindowContent="true"
+    android:canPerformGestures="false"
+    android:canTakeScreenshot="false"
+    android:isAccessibilityTool="false"
+    android:settingsActivity="io.github.pahnini.melforia.MainActivity" />

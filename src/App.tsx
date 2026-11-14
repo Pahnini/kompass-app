@@ -54,6 +54,7 @@ const SafetyPlanPage = lazy(() => import('./pages/SafetyPlanPage'));
 const DemoPage = lazy(() => import('./pages/DemoPage'));
 const ArcadePage = lazy(() => import('./pages/ArcadePage'));
 const ArcadeDemoPage = lazy(() => import('./pages/ArcadeDemoPage'));
+const ProtectionPage = lazy(() => import('./pages/ProtectionPage'));
 
 function AuthenticatedApp() {
   const { theme, background } = useTheme();
@@ -164,6 +165,7 @@ function AuthenticatedApp() {
             <Route path="/erfolge" element={<Navigate to="/achievements" replace />} />
             <Route path="/arcade" element={<ArcadePage />} />
             <Route path="/arcade-demo" element={<ArcadeDemoPage />} />
+            <Route path="/schutz" element={<ProtectionPage />} />
             <Route path="/mood" element={<MoodCompassView />} />
             <Route path="/gedanken" element={<QuickThoughtPage />} />
             <Route path="/school" element={<SchoolSupportView />} />
@@ -286,6 +288,7 @@ export default function App(): React.ReactElement {
     '/testen',
     '/demo',
     '/arcade-demo',
+    '/schutz',
   ].includes(location.pathname);
 
   if (loading && !publicDuringStartup) {
@@ -321,6 +324,7 @@ export default function App(): React.ReactElement {
             <Route path="/barrierefreiheit" element={<AccessibilityPage />} />
             <Route path="/testen" element={<TestCenterPage />} />
             <Route path="/demo" element={<DemoPage />} />
+            <Route path="/schutz" element={<ProtectionPage />} />
             {/* Redirect any other routes to landing when not authenticated */}
             <Route path="/arcade-demo" element={<ArcadeDemoPage />} />
             <Route path="/arcade" element={<Navigate to="/arcade-demo" replace />} />

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="protection_service_description">Optionaler Kommentarfilter für Instagram und die Melforia-Testansicht. Der Dienst erhält App-Wechselmeldungen und liest nur zugängliche Kommentartexte in diesen beiden Ansichten. Er verdeckt passende Texte auf deinem Bildschirm. Er erfasst keine Tastatureingaben, Passwörter, Direktnachrichten, Bilder oder Videos und nimmt keine Screenshots auf. Texte bleiben auf deinem Gerät; Speichern erfolgt nur manuell oder mit aktiviertem automatischem Sammeln. Es gibt keine automatische Meldung, Kontosperre oder Weitergabe. Du kannst den Dienst hier jederzeit ausschalten. Der Filter kann Fehler machen und Inhalte kurz vor dem Verdecken anzeigen.</string>
+    <item name="protection_demo_comment" type="id" />
+</resources>
